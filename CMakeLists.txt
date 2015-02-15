@@ -11,15 +11,9 @@ project ( staticlib_serialization CXX )
 include ( ${CMAKE_CURRENT_LIST_DIR}/cmake/CMakeLists_common.cmake )
 
 # dependencies
-if ( NOT IS_DIRECTORY ${CMAKE_BINARY_DIR}/external_jansson )
-    add_subdirectory ( ${CMAKE_CURRENT_LIST_DIR}/deps/external_jansson ${CMAKE_BINARY_DIR}/external_jansson )
-endif ( )
-if ( NOT IS_DIRECTORY ${CMAKE_BINARY_DIR}/staticlib_utils )
-    add_subdirectory ( ${CMAKE_CURRENT_LIST_DIR}/deps/staticlib_utils ${CMAKE_BINARY_DIR}/staticlib_utils )
-endif ( )
-if ( NOT IS_DIRECTORY ${CMAKE_BINARY_DIR}/staticlib_reflection )
-    add_subdirectory ( ${CMAKE_CURRENT_LIST_DIR}/deps/staticlib_reflection ${CMAKE_BINARY_DIR}/staticlib_reflection )
-endif ( )
+staticlib_add_subdirectory ( external_jansson )
+staticlib_add_subdirectory ( staticlib_utils )
+staticlib_add_subdirectory ( staticlib_reflection )
 
 # build steps
 file ( GLOB_RECURSE ${PROJECT_NAME}_SRC ${CMAKE_CURRENT_LIST_DIR}/src/*.cpp )
