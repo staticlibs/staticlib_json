@@ -7,7 +7,7 @@ This project contains high level `dumps_*` and `loads_*` functions to convert
 objects to/from strings. Currently only JSON serialization (based on [Jansson library](https://github.com/akheron/jansson))
 is supported. More formats may be added in future.
 
-Link to [API documentation](http://staticlibs.github.com/staticlib_serialization/docs/html/namespacestaticlib_1_1serialization.html).
+Link to [API documentation](http://staticlibs.github.io/staticlib_serialization/docs/html/namespacestaticlib_1_1serialization.html).
 
 Serialization implementation
 -------------------------
