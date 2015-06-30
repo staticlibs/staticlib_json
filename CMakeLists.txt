@@ -20,14 +20,14 @@ set ( CMAKE_TOOLCHAIN_FILE ${CMAKE_CURRENT_LIST_DIR}/cmake/toolchains/${STATICLI
 
 # project setup
 project ( staticlib_serialization CXX )
-set ( ${PROJECT_NAME}_STATICLIB_VERSION 1.0.0 )
+set ( ${PROJECT_NAME}_STATICLIB_VERSION 1.0.1 )
 # common include
 include ( ${CMAKE_CURRENT_LIST_DIR}/cmake/staticlibs_common.cmake )
 
 # dependencies
-staticlib_add_subdirectory ( external_jansson )
-staticlib_add_subdirectory ( staticlib_utils )
-staticlib_add_subdirectory ( staticlib_reflection )
+staticlib_add_subdirectory ( deps external_jansson )
+staticlib_add_subdirectory ( deps staticlib_utils )
+staticlib_add_subdirectory ( deps staticlib_reflection )
 
 # build steps
 file ( GLOB_RECURSE ${PROJECT_NAME}_SRC ${CMAKE_CURRENT_LIST_DIR}/src/*.cpp )
