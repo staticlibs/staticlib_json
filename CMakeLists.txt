@@ -24,7 +24,13 @@ set ( ${PROJECT_NAME}_STATICLIB_VERSION 1.0.2 )
 # common include
 include ( ${CMAKE_CURRENT_LIST_DIR}/cmake/staticlibs_common.cmake )
 
+# options, use SET ( OPTNAME ON CACHE BOOL "") in parent to override
+option ( STATICLIB_WITH_ICU "Build with ICU support" OFF )
+
 # dependencies
+if ( STATICLIB_WITH_ICU )
+    staticlib_add_subdirectory ( deps external_icu )
+endif ( )
 staticlib_add_subdirectory ( deps external_jansson )
 staticlib_add_subdirectory ( deps staticlib_utils )
 staticlib_add_subdirectory ( deps staticlib_reflection )
@@ -32,13 +38,20 @@ staticlib_add_subdirectory ( deps staticlib_reflection )
 # build steps
 file ( GLOB_RECURSE ${PROJECT_NAME}_SRC ${CMAKE_CURRENT_LIST_DIR}/src/*.cpp )
 add_library ( ${PROJECT_NAME} STATIC ${${PROJECT_NAME}_SRC} )
-if ( STATICLIB_TOOLCHAIN MATCHES "windows_[^_]+_msvc" )
-    target_compile_options ( ${PROJECT_NAME} PRIVATE /wd4706 )
-endif ( )
+set ( ${PROJECT_NAME}_OPTIONS "" )
 set ( ${PROJECT_NAME}_INCLUDES ${CMAKE_CURRENT_LIST_DIR}/include 
         ${staticlib_utils_INCLUDES} 
         ${staticlib_reflection_INCLUDES} )
-target_include_directories ( ${PROJECT_NAME} BEFORE PRIVATE ${${PROJECT_NAME}_INCLUDES}
+if ( STATICLIB_TOOLCHAIN MATCHES "windows_[^_]+_msvc" )
+    set ( ${PROJECT_NAME}_OPTIONS ${${PROJECT_NAME}_OPTIONS} /wd4706 )
+endif ( )
+if ( STATICLIB_WITH_ICU )
+    set ( ${PROJECT_NAME}_OPTIONS ${${PROJECT_NAME}_OPTIONS} ${external_icu_OPTIONS} -DSTATICLIB_WITH_ICU )
+    set ( ${PROJECT_NAME}_INCLUDES ${${PROJECT_NAME}_INCLUDES} ${external_icu_INCLUDES} )
+endif ( )
+target_compile_options ( ${PROJECT_NAME} PRIVATE ${${PROJECT_NAME}_OPTIONS} )
+target_include_directories ( ${PROJECT_NAME} BEFORE PRIVATE 
+        ${${PROJECT_NAME}_INCLUDES}
         ${CMAKE_CURRENT_LIST_DIR}/src
         ${external_jansson_INCLUDES} )
 
@@ -51,6 +64,10 @@ set ( ${PROJECT_NAME}_TEST_LIBS ${PROJECT_NAME}
         staticlib_utils
         jansson )
 set ( ${PROJECT_NAME}_TEST_OPTS "" )
+if ( STATICLIB_WITH_ICU )
+    set ( ${PROJECT_NAME}_TEST_LIBS ${${PROJECT_NAME}_TEST_LIBS} external_icu external_icu_data )
+    set ( ${PROJECT_NAME}_TEST_OPTS ${${PROJECT_NAME}_TEST_OPTS} ${external_icu_OPTIONS} -DSTATICLIB_WITH_ICU )
+endif ( )
 staticlib_enable_testing ( ${PROJECT_NAME}_TEST_INCLUDES ${PROJECT_NAME}_TEST_LIBS ${PROJECT_NAME}_TEST_OPTS )
 staticlib_enable_docs ( )
 

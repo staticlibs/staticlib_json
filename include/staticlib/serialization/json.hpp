@@ -26,6 +26,12 @@
 
 #include <memory>
 
+#ifdef STATICLIB_WITH_ICU
+#include <unicode/unistr.h>
+#else
+#include <string>
+#endif // STATICLIB_WITH_ICU
+
 #include "staticlib/reflection.hpp"
 
 namespace staticlib {
@@ -47,7 +53,11 @@ namespace serialization {
      * @return JSON string
      * @throws SerializationException
      */
+#ifdef STATICLIB_WITH_ICU
+    icu::UnicodeString dumps_json(const staticlib::reflection::ReflectedValue& value);
+#else
     std::string dumps_json(const staticlib::reflection::ReflectedValue& value);
+#endif // STATICLIB_WITH_ICU
     
     /**
      * Deserializes specified string into 'ReflectedValue'.
@@ -59,7 +69,11 @@ namespace serialization {
      * @return instance of 'ReflectedValue'
      * @throws SerializarionException      
      */
+#ifdef STATICLIB_WITH_ICU
+    staticlib::reflection::ReflectedValue loads_json(const icu::UnicodeString& str);
+#else    
     staticlib::reflection::ReflectedValue loads_json(const std::string& str);
+#endif // STATICLIB_WITH_ICU
 
 }
 } // namespace

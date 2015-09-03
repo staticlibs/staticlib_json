@@ -26,6 +26,12 @@
 #include <vector>
 #include <unordered_set>
 
+#ifdef STATICLIB_WITH_ICU
+#include <unicode/unistr.h>
+#else
+#include <string>
+#endif // STATICLIB_WITH_ICU
+
 #include "staticlib/utils.hpp"
 #include "staticlib/reflection.hpp"
 
@@ -37,7 +43,19 @@ namespace ss = staticlib::utils;
 namespace sr = staticlib::reflection;
 namespace sj = staticlib::serialization;
 
-static const std::string JSON_STR = R"({
+#ifdef STATICLIB_WITH_ICU
+class UStringHasher {
+public:
+    size_t operator()(icu::UnicodeString value) const {
+        return static_cast<size_t> (value.hashCode());
+    }
+};
+
+static const icu::UnicodeString JSON_STR =
+#else
+static const std::string JSON_STR =
+#endif // STATICLIB_WITH_ICU
+R"({
     "f1": 41,
     "f2": "42",
     "f3": true,
@@ -67,7 +85,11 @@ public:
 
 class TestRefl {
     int32_t f1 = 41;
-    std::string f2 = "42";
+#ifdef STATICLIB_WITH_ICU
+    icu::UnicodeString f2{"42"};
+#else
+    std::string f2{"42"};
+#endif // STATICLIB_WITH_ICU
     bool f3 = true;
 
 public:    
@@ -109,32 +131,36 @@ void test_loads() {
     auto rv = sj::loads_json(JSON_STR);
     auto& obj = rv.get_object();
     assert(5 == obj.size());
+#ifdef STATICLIB_WITH_ICU    
+    std::unordered_set<icu::UnicodeString, UStringHasher> set{};
+#else
     std::unordered_set<std::string> set{};
+#endif // STATICLIB_WITH_ICU    
     for (const auto& fi : obj) {
         set.insert(fi.get_name());
-        if ("f1" == fi.get_name()) {
+        if (fi.get_name() == "f1") {
             assert(sr::ReflectedType::INTEGER == fi.get_value().get_type());
             assert(41 == fi.get_value().get_integer());
-        } else if ("f2" == fi.get_name()) {
+        } else if (fi.get_name() == "f2") {
             assert(sr::ReflectedType::STRING == fi.get_value().get_type());
-            assert("42" == fi.get_value().get_string());
-        } else if ("f3" == fi.get_name()) { 
+            assert(fi.get_value().get_string() == "42");
+        } else if (fi.get_name() == "f3") { 
             assert(sr::ReflectedType::BOOLEAN == fi.get_value().get_type());
             assert(fi.get_value().get_boolean());
-        } else if ("f4" == fi.get_name()) {
+        } else if (fi.get_name() == "f4") {
             assert(sr::ReflectedType::ARRAY == fi.get_value().get_type());
             assert(2 == fi.get_value().get_array().size());
             assert(sr::ReflectedType::INTEGER == fi.get_value().get_array()[0].get_type());
             assert(41 == fi.get_value().get_array()[0].get_integer());
             assert(sr::ReflectedType::STRING == fi.get_value().get_array()[1].get_type());
-            assert("43" == fi.get_value().get_array()[1].get_string());
-        } else if ("f5" == fi.get_name()) {
+            assert(fi.get_value().get_array()[1].get_string() == "43");
+        } else if (fi.get_name() == "f5") {
             assert(sr::ReflectedType::OBJECT == fi.get_value().get_type());
             assert(2 == fi.get_value().get_object().size());
-            assert("f42" == fi.get_value().get_object()[0].get_name());
+            assert(fi.get_value().get_object()[0].get_name() == "f42");
             assert(sr::ReflectedType::INTEGER == fi.get_value().get_object()[0].get_value().get_type());
             assert(42 == fi.get_value().get_object()[0].get_value().get_integer());
-            assert("fnullable" == fi.get_value().get_object()[1].get_name());
+            assert(fi.get_value().get_object()[1].get_name() == "fnullable");
             assert(sr::ReflectedType::NULL_T == fi.get_value().get_object()[1].get_value().get_type());
         }
     }
@@ -145,13 +171,13 @@ void test_loads() {
 void test_preserve_order() {
     auto vec = std::vector<sr::ReflectedField>{};
     for(auto i = 0; i < (1<<10); i++) {
-        vec.emplace_back(ss::to_string(i), i);
+        vec.emplace_back(ss::to_string(i).c_str(), i);
     }
     auto rv = sr::ReflectedValue(std::move(vec));
     auto json = sj::dumps_json(rv);
     auto loaded = sj::loads_json(json);
     for (auto i = 0; i < (1<<10); i++) {
-        assert(ss::to_string(i) == loaded.get_object()[i].get_name());
+        assert(loaded.get_object()[i].get_name() == ss::to_string(i).c_str());
         assert(i == loaded.get_object()[i].get_value().get_integer());
     }
 }

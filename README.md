@@ -65,6 +65,18 @@ from the development shell `C:\Program Files (x86)\Microsoft Visual Studio 12.0\
     nmake
     nmake test
 
+Build with ICU support using [Staticlibs ICU build](https://github.com/staticlibs/external_icu):
+
+    cmake .. -DSTATICLIB_WITH_ICU=ON
+
+If ICU is not already added as part of the parent project dependencies, it can be added manually:
+
+    cd deps
+    git clone https://github.com/staticlibs/external_icu.git
+    cd external_icu
+    git checkout 55.1.0
+    git submodule update --init --recursive
+
 License information
 -------------------
 
@@ -72,6 +84,10 @@ This project is released under the [Apache License 2.0](http://www.apache.org/li
 
 Changelog
 ---------
+
+**2015-09-03**
+
+ * version 1.1.0 - ICU support
 
 **2015-07-09**
 
