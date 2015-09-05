@@ -23,6 +23,7 @@
 
 #include <cassert>
 #include <iostream>
+#include <sstream>
 #include <vector>
 #include <unordered_set>
 
@@ -32,16 +33,21 @@
 #include <string>
 #endif // STATICLIB_WITH_ICU
 
-#include "staticlib/utils.hpp"
 #include "staticlib/reflection.hpp"
 
 #include "staticlib/serialization/json.hpp"
 
 namespace { // anonymous
 
-namespace ss = staticlib::utils;
 namespace sr = staticlib::reflection;
 namespace sj = staticlib::serialization;
+
+template<typename T>
+std::string test_to_string(T t) {
+    std::stringstream ss{};
+    ss << t;
+    return ss.str();
+}
 
 #ifdef STATICLIB_WITH_ICU
 class UStringHasher {
@@ -171,13 +177,13 @@ void test_loads() {
 void test_preserve_order() {
     auto vec = std::vector<sr::ReflectedField>{};
     for(auto i = 0; i < (1<<10); i++) {
-        vec.emplace_back(ss::to_string(i).c_str(), i);
+        vec.emplace_back(test_to_string(i).c_str(), i);
     }
     auto rv = sr::ReflectedValue(std::move(vec));
     auto json = sj::dumps_json(rv);
     auto loaded = sj::loads_json(json);
     for (auto i = 0; i < (1<<10); i++) {
-        assert(loaded.get_object()[i].get_name() == ss::to_string(i).c_str());
+        assert(loaded.get_object()[i].get_name() == test_to_string(i).c_str());
         assert(i == loaded.get_object()[i].get_value().get_integer());
     }
 }

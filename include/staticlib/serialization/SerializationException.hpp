@@ -24,7 +24,15 @@
 #ifndef STATICLIB_SERIALIZATIONEXCEPTION_HPP
 #define	STATICLIB_SERIALIZATIONEXCEPTION_HPP
 
-#include "staticlib/utils/BaseException.hpp"
+#include <exception>
+#include <string>
+
+// http://stackoverflow.com/a/18387764/314015
+#ifndef _MSC_VER
+#define SERIALIZATION_NOEXCEPT noexcept
+#else
+#define SERIALIZATION_NOEXCEPT
+#endif // _MSC_VERe
 
 namespace staticlib {
 namespace serialization {
@@ -32,12 +40,12 @@ namespace serialization {
 /**
  * Module specific exception
  */
-class SerializationException : public staticlib::utils::BaseException {
-public:
+class SerializationException : public std::exception {
     /**
-     * Default constructor
+     * Error message
      */
-    SerializationException() = default;
+    std::string message; 
+public:
 
     /**
      * Constructor with message
@@ -45,7 +53,11 @@ public:
      * @param msg error message
      */
     SerializationException(const std::string& msg) :
-    staticlib::utils::BaseException(msg) { }
+    message(msg) { }
+
+    const char* what() const SERIALIZATION_NOEXCEPT {
+        return message.c_str();
+    }
 };
 
 }

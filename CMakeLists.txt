@@ -20,7 +20,7 @@ set ( CMAKE_TOOLCHAIN_FILE ${CMAKE_CURRENT_LIST_DIR}/cmake/toolchains/${STATICLI
 
 # project setup
 project ( staticlib_serialization CXX )
-set ( ${PROJECT_NAME}_STATICLIB_VERSION 1.0.2 )
+set ( ${PROJECT_NAME}_STATICLIB_VERSION 1.1.1 )
 # common include
 include ( ${CMAKE_CURRENT_LIST_DIR}/cmake/staticlibs_common.cmake )
 
@@ -32,7 +32,6 @@ if ( STATICLIB_WITH_ICU )
     staticlib_add_subdirectory ( deps external_icu )
 endif ( )
 staticlib_add_subdirectory ( deps external_jansson )
-staticlib_add_subdirectory ( deps staticlib_utils )
 staticlib_add_subdirectory ( deps staticlib_reflection )
 
 # build steps
@@ -40,7 +39,6 @@ file ( GLOB_RECURSE ${PROJECT_NAME}_SRC ${CMAKE_CURRENT_LIST_DIR}/src/*.cpp )
 add_library ( ${PROJECT_NAME} STATIC ${${PROJECT_NAME}_SRC} )
 set ( ${PROJECT_NAME}_OPTIONS "" )
 set ( ${PROJECT_NAME}_INCLUDES ${CMAKE_CURRENT_LIST_DIR}/include 
-        ${staticlib_utils_INCLUDES} 
         ${staticlib_reflection_INCLUDES} )
 if ( STATICLIB_TOOLCHAIN MATCHES "windows_[^_]+_msvc" )
     set ( ${PROJECT_NAME}_OPTIONS ${${PROJECT_NAME}_OPTIONS} /wd4706 )
@@ -61,7 +59,6 @@ set ( ${PROJECT_NAME}_TEST_INCLUDES ${${PROJECT_NAME}_INCLUDES}
         ${external_jansson_INCLUDES} )
 set ( ${PROJECT_NAME}_TEST_LIBS ${PROJECT_NAME}
         staticlib_reflection
-        staticlib_utils
         jansson )
 set ( ${PROJECT_NAME}_TEST_OPTS "" )
 if ( STATICLIB_WITH_ICU )
