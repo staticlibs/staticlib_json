@@ -7,6 +7,3 @@
 [submodule "deps/external_jansson"]
 	path = deps/external_jansson
 	url = ../external_jansson.git
-[submodule "deps/staticlib_utils"]
-	path = deps/staticlib_utils
-	url = ../staticlib_utils.git
