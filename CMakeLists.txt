@@ -13,60 +13,57 @@
 # limitations under the License.
 
 cmake_minimum_required ( VERSION 2.8.12 )
+include ( ${CMAKE_CURRENT_LIST_DIR}/resources/macros.cmake )
 
-# toolchain setup
-set ( STATICLIB_TOOLCHAIN linux_amd64_gcc CACHE STRING "toolchain triplet" )
-set ( CMAKE_TOOLCHAIN_FILE ${CMAKE_CURRENT_LIST_DIR}/cmake/toolchains/${STATICLIB_TOOLCHAIN}.cmake CACHE INTERNAL "" )
-
-# project setup
+# project
 project ( staticlib_serialization CXX )
-set ( ${PROJECT_NAME}_STATICLIB_VERSION 1.1.1 )
-# common include
-include ( ${CMAKE_CURRENT_LIST_DIR}/cmake/staticlibs_common.cmake )
+set ( ${PROJECT_NAME}_STATICLIB_VERSION 1.2.0 )
+set ( ${PROJECT_NAME}_DESCRIPTION "Staticlibs serialization library" )
+set ( ${PROJECT_NAME}_URL https://github.com/staticlibs/staticlib_serialization )
+
+# docs
+option ( ${PROJECT_NAME}_ENABLE_DOCS "Generate doxyfile and exit build" OFF )
+if ( ${PROJECT_NAME}_ENABLE_DOCS )
+    configure_file ( ${CMAKE_CURRENT_LIST_DIR}/resources/Doxyfile.in ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile )
+    return ( )
+endif ( )
 
 # options, use SET ( OPTNAME ON CACHE BOOL "") in parent to override
 option ( STATICLIB_WITH_ICU "Build with ICU support" OFF )
 
-# dependencies
+# deps
+set ( ${PROJECT_NAME}_OPTIONS "" )
+set ( ${PROJECT_NAME}_DEP_MODULES
+        staticlib_reflection
+        staticlib_utils )
+set ( ${PROJECT_NAME}_DEP_MODULES_PRIVATE jansson )
 if ( STATICLIB_WITH_ICU )
-    staticlib_add_subdirectory ( deps external_icu )
+    set ( ${PROJECT_NAME}_DEP_MODULES ${${PROJECT_NAME}_DEP_MODULES} icu-uc )
+    set ( ${PROJECT_NAME}_OPTIONS -DSTATICLIB_WITH_ICU )
 endif ( )
-staticlib_add_subdirectory ( deps external_jansson )
-staticlib_add_subdirectory ( deps staticlib_reflection )
+staticlib_pkg_check_modules ( ${PROJECT_NAME}_DEP_PC REQUIRED ${PROJECT_NAME}_DEP_MODULES ${${PROJECT_NAME}_DEP_MODULES_PRIVATE} )
 
-# build steps
+# library
 file ( GLOB_RECURSE ${PROJECT_NAME}_SRC ${CMAKE_CURRENT_LIST_DIR}/src/*.cpp )
 add_library ( ${PROJECT_NAME} STATIC ${${PROJECT_NAME}_SRC} )
-set ( ${PROJECT_NAME}_OPTIONS "" )
-set ( ${PROJECT_NAME}_INCLUDES ${CMAKE_CURRENT_LIST_DIR}/include 
-        ${staticlib_reflection_INCLUDES} )
-if ( STATICLIB_TOOLCHAIN MATCHES "windows_[^_]+_msvc" )
-    set ( ${PROJECT_NAME}_OPTIONS ${${PROJECT_NAME}_OPTIONS} /wd4706 )
+target_include_directories ( ${PROJECT_NAME} BEFORE PRIVATE
+        ${CMAKE_CURRENT_LIST_DIR}/include
+        ${${PROJECT_NAME}_DEP_PC_INCLUDE_DIRS} )
+target_compile_options ( ${PROJECT_NAME} PRIVATE 
+        ${${PROJECT_NAME}_DEP_PC_CFLAGS_OTHER}
+        ${${PROJECT_NAME}_OPTIONS} )
+if ( TARGET external_jansson )
+    add_dependencies ( ${PROJECT_NAME} external_jansson )
 endif ( )
-if ( STATICLIB_WITH_ICU )
-    set ( ${PROJECT_NAME}_OPTIONS ${${PROJECT_NAME}_OPTIONS} ${external_icu_OPTIONS} -DSTATICLIB_WITH_ICU )
-    set ( ${PROJECT_NAME}_INCLUDES ${${PROJECT_NAME}_INCLUDES} ${external_icu_INCLUDES} )
-endif ( )
-target_compile_options ( ${PROJECT_NAME} PRIVATE ${${PROJECT_NAME}_OPTIONS} )
-target_include_directories ( ${PROJECT_NAME} BEFORE PRIVATE 
-        ${${PROJECT_NAME}_INCLUDES}
-        ${CMAKE_CURRENT_LIST_DIR}/src
-        ${external_jansson_INCLUDES} )
 
-# tests and docs
-set ( ${PROJECT_NAME}_TEST_INCLUDES ${${PROJECT_NAME}_INCLUDES} 
-        ${CMAKE_CURRENT_LIST_DIR}/src 
-        ${external_jansson_INCLUDES} )
-set ( ${PROJECT_NAME}_TEST_LIBS ${PROJECT_NAME}
-        staticlib_reflection
-        jansson )
-set ( ${PROJECT_NAME}_TEST_OPTS "" )
-if ( STATICLIB_WITH_ICU )
-    set ( ${PROJECT_NAME}_TEST_LIBS ${${PROJECT_NAME}_TEST_LIBS} external_icu external_icu_data )
-    set ( ${PROJECT_NAME}_TEST_OPTS ${${PROJECT_NAME}_TEST_OPTS} ${external_icu_OPTIONS} -DSTATICLIB_WITH_ICU )
+# pkg-config
+if ( NOT DEFINED CMAKE_LIBRARY_OUTPUT_DIRECTORY )
+    set ( CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} )
 endif ( )
-staticlib_enable_testing ( ${PROJECT_NAME}_TEST_INCLUDES ${PROJECT_NAME}_TEST_LIBS ${PROJECT_NAME}_TEST_OPTS )
-staticlib_enable_docs ( )
-
-# export headers
-set ( ${PROJECT_NAME}_INCLUDES ${${PROJECT_NAME}_INCLUDES} CACHE INTERNAL "" )
+staticlib_list_to_string ( ${PROJECT_NAME}_PC_CFLAGS_OPTS "" ${PROJECT_NAME}_OPTIONS )
+set ( ${PROJECT_NAME}_PC_CFLAGS "-I${CMAKE_CURRENT_LIST_DIR}/include ${${PROJECT_NAME}_PC_CFLAGS_OPTS}" )
+set ( ${PROJECT_NAME}_PC_LIBS "-L${CMAKE_LIBRARY_OUTPUT_DIRECTORY} -l${PROJECT_NAME}" )
+staticlib_list_to_string ( ${PROJECT_NAME}_PC_REQUIRES "" ${PROJECT_NAME}_DEP_MODULES )
+staticlib_list_to_string ( ${PROJECT_NAME}_PC_REQUIRES_PRIVATE "" ${PROJECT_NAME}_DEP_MODULES_PRIVATE )
+configure_file ( ${CMAKE_CURRENT_LIST_DIR}/resources/pkg-config.in 
+        ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/pkgconfig/${PROJECT_NAME}.pc )

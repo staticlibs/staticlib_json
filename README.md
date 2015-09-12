@@ -48,34 +48,7 @@ How to build
 
 [CMake](http://cmake.org/) is required for building.
 
-Staticlib toolchain name must be specified as a `STATICLIB_TOOLCHAIN` parameter to `cmake` command
-unless you are using GCC on Linux x86_64 (`linux_amd64_gcc` toolchain) that is a default one.
-
-List of [supported toolchains](https://github.com/staticlibs/cmake/tree/master/toolchains).
-
-Example build for Windows x86_64 with Visual Studio 2013 Express, run the following commands 
-from the development shell `C:\Program Files (x86)\Microsoft Visual Studio 12.0\Common7\Tools\Shortcuts\VS2013 x64 Cross Tools Command Prompt` :
-
-    git clone https://github.com/staticlibs/staticlib_serialization.git
-    cd staticlib_serialization
-    git submodule update --init --recursive
-    mkdir build
-    cd build
-    cmake .. -DSTATICLIB_TOOLCHAIN=windows_amd64_msvc -G "NMake Makefiles"
-    nmake
-    nmake test
-
-Build with ICU support using [Staticlibs ICU build](https://github.com/staticlibs/external_icu):
-
-    cmake .. -DSTATICLIB_WITH_ICU=ON
-
-If ICU is not already added as part of the parent project dependencies, it can be added manually:
-
-    cd deps
-    git clone https://github.com/staticlibs/external_icu.git
-    cd external_icu
-    git checkout 55.1.0
-    git submodule update --init --recursive
+[TODO]
 
 License information
 -------------------
