@@ -1,9 +1,0 @@
-[submodule "deps/staticlib_reflection"]
-	path = deps/staticlib_reflection
-	url = ../staticlib_reflection.git
-[submodule "cmake"]
-	path = cmake
-	url = ../cmake.git
-[submodule "deps/external_jansson"]
-	path = deps/external_jansson
-	url = ../external_jansson.git
