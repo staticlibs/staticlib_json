@@ -41,16 +41,19 @@ if ( STATICLIB_WITH_ICU )
     set ( ${PROJECT_NAME}_DEP_MODULES ${${PROJECT_NAME}_DEP_MODULES} icu-uc )
     set ( ${PROJECT_NAME}_OPTIONS -DSTATICLIB_WITH_ICU )
 endif ( )
-staticlib_pkg_check_modules ( ${PROJECT_NAME}_DEP_PC REQUIRED ${PROJECT_NAME}_DEP_MODULES ${${PROJECT_NAME}_DEP_MODULES_PRIVATE} )
+staticlib_pkg_check_modules ( ${PROJECT_NAME}_DEP_PC REQUIRED ${PROJECT_NAME}_DEP_MODULES )
+staticlib_pkg_check_modules ( ${PROJECT_NAME}_DEP_PC_PRIVATE REQUIRED ${PROJECT_NAME}_DEP_MODULES_PRIVATE )
 
 # library
 file ( GLOB_RECURSE ${PROJECT_NAME}_SRC ${CMAKE_CURRENT_LIST_DIR}/src/*.cpp )
 add_library ( ${PROJECT_NAME} STATIC ${${PROJECT_NAME}_SRC} )
 target_include_directories ( ${PROJECT_NAME} BEFORE PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/include
-        ${${PROJECT_NAME}_DEP_PC_INCLUDE_DIRS} )
+        ${${PROJECT_NAME}_DEP_PC_INCLUDE_DIRS}
+        ${${PROJECT_NAME}_DEP_PC_PRIVATE_INCLUDE_DIRS} )
 target_compile_options ( ${PROJECT_NAME} PRIVATE 
         ${${PROJECT_NAME}_DEP_PC_CFLAGS_OTHER}
+        ${${PROJECT_NAME}_DEP_PC_PRIVATE_CFLAGS_OTHER}
         ${${PROJECT_NAME}_OPTIONS} )
 if ( TARGET external_jansson )
     add_dependencies ( ${PROJECT_NAME} external_jansson )

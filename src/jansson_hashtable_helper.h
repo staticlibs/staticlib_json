@@ -50,7 +50,7 @@ typedef struct hashtable_pair pair_t;
 
 #define list_to_pair(list_)  container_of(list_, pair_t, list)
 
-size_t hashtable_iter_serial(void *iter) {
+static size_t hashtable_iter_serial(void *iter) {
     pair_t *pair = list_to_pair((list_t *) iter);
     return pair->serial;
 }
