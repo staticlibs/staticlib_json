@@ -46,7 +46,10 @@ staticlib_serialization_pkg_check_modules ( ${PROJECT_NAME}_DEPS_PRIVATE_PC REQU
 
 # library
 file ( GLOB_RECURSE ${PROJECT_NAME}_SRC ${CMAKE_CURRENT_LIST_DIR}/src/*.cpp )
-add_library ( ${PROJECT_NAME} STATIC ${${PROJECT_NAME}_SRC} )
+file ( GLOB_RECURSE ${PROJECT_NAME}_HEADERS ${CMAKE_CURRENT_LIST_DIR}/include/*.hpp )
+add_library ( ${PROJECT_NAME} STATIC ${${PROJECT_NAME}_SRC} ${${PROJECT_NAME}_HEADERS} )
+source_group ( "src" FILES ${${PROJECT_NAME}_SRC} )
+source_group ( "include" FILES ${${PROJECT_NAME}_HEADERS} )
 target_include_directories ( ${PROJECT_NAME} BEFORE PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/include
         ${${PROJECT_NAME}_DEPS_PUBLIC_PC_INCLUDE_DIRS}
