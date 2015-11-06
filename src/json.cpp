@@ -27,6 +27,7 @@
 #include <vector>
 #include <utility>
 #include <algorithm>
+#include <cstddef>
 
 #ifdef STATICLIB_WITH_ICU
 #include <unicode/unistr.h>

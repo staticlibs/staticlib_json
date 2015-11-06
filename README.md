@@ -98,6 +98,11 @@ This project is released under the [Apache License 2.0](http://www.apache.org/li
 Changelog
 ---------
 
+**2015-11-06**
+
+ * version 1.2.1
+ * fix build with bundled jansson
+
 **2015-11-01**
 
  * version 1.2.0
