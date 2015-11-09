@@ -321,11 +321,11 @@ public:
     Loader& operator=(const Loader&) = delete;
 
     int read(char* buffer, size_t size) {
-        auto res = 0;
+        std::streamsize res = 0;
         while (0 == res) {
             res = src.read(buffer, size);
         }
-        return std::char_traits<char>::eof() != res ? res : 0;
+        return std::char_traits<char>::eof() != res ? static_cast<int>(res) : 0;
     }
 
     void set_error(const std::string& err) {
