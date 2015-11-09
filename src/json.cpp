@@ -27,6 +27,7 @@
 #include <vector>
 #include <utility>
 #include <algorithm>
+#include <array>
 #include <cstddef>
 
 #ifdef STATICLIB_WITH_ICU
@@ -45,6 +46,7 @@
 #endif // json_array_foreach
 
 #include "staticlib/utils.hpp"
+#include "staticlib/io.hpp"
 
 #include "staticlib/serialization/SerializationException.hpp"
 #include "staticlib/serialization/json.hpp"
@@ -55,6 +57,7 @@ namespace staticlib {
 namespace serialization {
 
 namespace ss = staticlib::utils;
+namespace io = staticlib::io;
 namespace sr = staticlib::reflection;
 
 namespace { // anonymous, dump part
@@ -78,8 +81,8 @@ std::unique_ptr<json_t, JanssonDeleter> dump_object(const std::vector<sr::Reflec
         std::string bytes;
         va.get_name().toUTF8String(bytes);
         auto err = json_object_set(obj.get(), bytes.c_str(), jval.get());
-        if (err) throw SerializationException(TRACEMSG(std::string(
-                "Error setting field to JSON object, field name:[").append(bytes).append("]")));
+        if (err) throw SerializationException(TRACEMSG(std::string{} + 
+                "Error setting field to JSON object, field name:[" + bytes + "]"));
     }
     return obj;
 }
@@ -91,8 +94,8 @@ std::unique_ptr<json_t, JanssonDeleter> dump_object(const std::vector<sr::Reflec
     for (const auto& va : objectValue) {
         auto jval = dump_internal(va.get_value());
         auto err = json_object_set(obj.get(), va.get_name().c_str(), jval.get());
-        if (err) throw SerializationException(TRACEMSG(std::string(
-                "Error setting field to JSON object, field name:[").append(va.get_name()).append("]")));
+        if (err) throw SerializationException(TRACEMSG(std::string{} +
+                "Error setting field to JSON object, field name:[" + va.get_name() + "]"));
     }
     return obj;
 }
@@ -106,8 +109,7 @@ std::unique_ptr<json_t, JanssonDeleter> dump_array(const std::vector<sr::Reflect
         auto jval = dump_internal(va);
         auto err = json_array_append(arr.get(), jval.get());
         if (err) throw SerializationException(TRACEMSG(
-                "Error appending to JSON array, input size:[")
-                .append(ss::to_string(arrayValue.size()).append("]")));
+                "Error appending to JSON array, input size:[" + ss::to_string(arrayValue.size()) + "]"));
     }
     return arr;
 }
@@ -118,14 +120,14 @@ std::unique_ptr<json_t, JanssonDeleter> dump_string(const icu::UnicodeString& st
     stringValue.toUTF8String(bytes);
     auto json_p = json_string(bytes.c_str());
     if (!json_p) throw SerializationException(TRACEMSG(
-            "Error initializing JSON with value:[").append(bytes).append("]"));
+            "Error initializing JSON with value:[" + bytes + "]"));
     return std::unique_ptr<json_t, JanssonDeleter>{json_p, JanssonDeleter()};
 }
 #else
 std::unique_ptr<json_t, JanssonDeleter> dump_string(const std::string& stringValue) {
     auto json_p = json_string(stringValue.c_str());
     if (!json_p) throw SerializationException(TRACEMSG(
-            "Error initializing JSON with value:[").append(stringValue).append("]"));
+            "Error initializing JSON with value:[" + stringValue + "]"));
     return std::unique_ptr<json_t, JanssonDeleter>{json_p, JanssonDeleter()};
 }
 #endif // STATICLIB_WITH_ICU
@@ -133,21 +135,21 @@ std::unique_ptr<json_t, JanssonDeleter> dump_string(const std::string& stringVal
 std::unique_ptr<json_t, JanssonDeleter> dump_integer(int64_t integerValue) {
     auto json_p = json_integer(integerValue);
     if (!json_p) throw SerializationException(TRACEMSG(
-            "Error initializing JSON with value:[").append(ss::to_string(integerValue)).append("]"));
+            "Error initializing JSON with value:[" + ss::to_string(integerValue) + "]"));
     return std::unique_ptr<json_t, JanssonDeleter>{json_p, JanssonDeleter()};
 }
 
 std::unique_ptr<json_t, JanssonDeleter> dump_real(double realValue) {
     auto json_p = json_real(realValue);
     if (!json_p) throw SerializationException(TRACEMSG(
-            "Error initializing JSON with value:[").append(ss::to_string(realValue)).append("]"));
+            "Error initializing JSON with value:[" + ss::to_string(realValue) + "]"));
     return std::unique_ptr<json_t, JanssonDeleter>{json_p, JanssonDeleter()};
 }
 
 std::unique_ptr<json_t, JanssonDeleter> dump_boolean(bool booleanValue) {
     auto json_p = booleanValue? json_true() : json_false();
     if (!json_p) throw SerializationException(TRACEMSG(
-            "Error initializing JSON with value:[").append(ss::to_string(booleanValue)).append("]"));
+            "Error initializing JSON with value:[" + ss::to_string(booleanValue) + "]"));
     return std::unique_ptr<json_t, JanssonDeleter>{json_p, JanssonDeleter()};
 }
 
@@ -160,34 +162,65 @@ std::unique_ptr<json_t, JanssonDeleter> dump_internal(const sr::ReflectedValue& 
     case (sr::ReflectedType::INTEGER): return dump_integer(value.get_integer());
     case (sr::ReflectedType::REAL): return dump_real(value.get_real());
     case (sr::ReflectedType::BOOLEAN): return dump_boolean(value.get_boolean());
-    default: throw SerializationException(TRACEMSG(std::string(
-                "Unsupported JSON type:[").append(ss::to_string(static_cast<char> (value.get_type()))).append("]")));
+    default: throw SerializationException(TRACEMSG(std::string{} +
+                "Unsupported JSON type:[" + ss::to_string(static_cast<char> (value.get_type())) + "]"));
     }
 }
 
-#ifdef STATICLIB_WITH_ICU
-icu::UnicodeString json_to_string(const std::unique_ptr<json_t, JanssonDeleter>& json) {
-    auto json_bytes_p = json_dumps(json.get(), JSON_INDENT(4) | JSON_PRESERVE_ORDER);
-    if (!json_bytes_p) throw SerializationException(TRACEMSG(std::string(
-            "Error dumping JSON type: [").append(ss::to_string(json_typeof(json.get()))).append("]")));
-    std::unique_ptr<char, ss::free_deleter<char>> json_bytes
-    {
-        json_bytes_p, ss::free_deleter<char>()
-    };
-    return icu::UnicodeString(json_bytes.get());
+class Dumper {
+    io::streambuf_sink dest;
+    std::string error;
+
+public:
+    Dumper(std::streambuf& dest) :
+    dest(std::addressof(dest)) { }
+
+    Dumper(const Dumper&) = delete;
+
+    Dumper& operator=(const Dumper&) = delete;
+
+    int write(const char* buffer, size_t size) {
+        size_t result = 0;
+        while (result < size) {
+            auto amt = dest.write(buffer + result, size - result);
+            result += static_cast<size_t> (amt);
+        }
+        return 0;
+    }
+
+    void set_error(const std::string& err) {
+        this->error = err;
+    }
+
+    const std::string& get_error() {
+        return error;
+    }
+};
+
+int dump_callback(const char* buffer, size_t size, void* data) {
+    Dumper* dumper = static_cast<Dumper*>(data);
+    try {
+        return dumper->write(buffer, size);
+    } catch(const std::exception& e) {
+        dumper->set_error(e.what());
+        return -1;
+    }
 }
-#else
-std::string json_to_string(const std::unique_ptr<json_t, JanssonDeleter>& json) {
-    auto json_bytes_p = json_dumps(json.get(), JSON_INDENT(4) | JSON_PRESERVE_ORDER);
-    if (!json_bytes_p) throw SerializationException(TRACEMSG(std::string(
-            "Error dumping JSON type: [").append(ss::to_string(json_typeof(json.get()))).append("]")));
-    std::unique_ptr<char, ss::free_deleter<char>> json_bytes
-    {
-        json_bytes_p, ss::free_deleter<char>()
-    };
-    return std::string(json_bytes.get());
+
+void json_to_streambuf(json_t* json, std::streambuf& dest) {
+    Dumper dumper{dest};
+    void* dumper_ptr = static_cast<void*>(std::addressof(dumper));
+    int res = json_dump_callback(json, dump_callback, dumper_ptr, size_t JSON_INDENT(4) | JSON_PRESERVE_ORDER);
+    if (0 != res) throw SerializationException(TRACEMSG(std::string{} +
+            "Error dumping JSON type: [" + ss::to_string(json_typeof(json)) + "],"
+            " error: [" + dumper.get_error() + "]"));
 }
-#endif // STATICLIB_WITH_ICU
+
+std::string json_to_string(json_t* json) {
+    auto streambuf = io::make_unbuffered_ostreambuf(io::string_sink{});
+    json_to_streambuf(json, streambuf);
+    return std::move(streambuf.get_sink().get_string());
+}
 
 } // namespace
 
@@ -254,9 +287,8 @@ sr::ReflectedValue load_array(json_t* value) {
 
 sr::ReflectedValue load_string(json_t* value) {
     auto st = json_string_value(value);
-    if (!st) throw SerializationException(TRACEMSG(std::string(
-            "Error getting string value from JSON, type:[")
-            .append(ss::to_string(json_typeof(value))).append("]")));
+    if (!st) throw SerializationException(TRACEMSG(std::string{} +
+            "Error getting string value from JSON, type:[" + ss::to_string(json_typeof(value)) + "]"));
     return sr::ReflectedValue(st);
 }
 
@@ -272,39 +304,86 @@ sr::ReflectedValue load_internal(json_t* value) {
     case (JSON_TRUE): return sr::ReflectedValue(true);
     case (JSON_FALSE): return sr::ReflectedValue(false);
     default: throw SerializationException(TRACEMSG(
-                "Unsupported JSON type:[").append(ss::to_string(type).append("]")));
+                "Unsupported JSON type:[" + ss::to_string(type) + "]"));
     }
 }
 
-#ifdef STATICLIB_WITH_ICU
-std::unique_ptr<json_t, JanssonDeleter> json_from_string(const icu::UnicodeString& str) {
+class Loader {
+    io::streambuf_source src;
+    std::string error;
+
+public:
+    Loader(std::streambuf& src) :
+    src(std::addressof(src)) { }
+
+    Loader(const Loader&) = delete;
+
+    Loader& operator=(const Loader&) = delete;
+
+    int read(char* buffer, size_t size) {
+        auto res = 0;
+        while (0 == res) {
+            res = src.read(buffer, size);
+        }
+        return std::char_traits<char>::eof() != res ? res : 0;
+    }
+
+    void set_error(const std::string& err) {
+        this->error = err;
+    }
+
+    const std::string& get_error() {
+        return error;
+    }
+};
+
+size_t load_callback(void* buffer, size_t buflen, void *data) {
+    Loader* loader = static_cast<Loader*> (data);
+    try {
+        return loader->read(static_cast<char*>(buffer), buflen);
+    } catch (const std::exception& e) {
+        loader->set_error(e.what());
+        return static_cast<size_t>(-1);
+    }
+}
+
+std::unique_ptr<json_t, JanssonDeleter> json_from_streambuf(std::streambuf& src) {
+#if JANSSON_VERSION_HEX >= 0x020400
+    Loader loader{src};
+    void* ldr_ptr = static_cast<void*>(std::addressof(loader));
     json_error_t error;
     auto flags = JSON_REJECT_DUPLICATES | JSON_DECODE_ANY | JSON_DISABLE_EOF_CHECK;
-    std::string bytes{};
-    str.toUTF8String(bytes);
-    auto json_p = json_loads(bytes.c_str(), flags, &error);
-    if (!json_p) throw SerializationException(TRACEMSG(std::string(
-            "Error parsing JSON: [").append(bytes).append("]")
-            .append(" text: [").append(error.text).append("]")
-            .append(" line: [").append(ss::to_string(error.line)).append("]")
-            .append(" column: [").append(ss::to_string(error.column)).append("]")
-            .append(" position: [").append(ss::to_string(error.position)).append("]")));
+    auto json_p = json_load_callback(load_callback, ldr_ptr, flags, std::addressof(error));
+    if (!json_p) throw SerializationException(TRACEMSG(std::string{} +
+    "Error parsing JSON:" +
+            " text: [" + error.text + "]" +
+            " line: [" + ss::to_string(error.line) + "]" +
+            " column: [" + ss::to_string(error.column) + "]" +
+            " position: [" + ss::to_string(error.position) + "],"
+            " callback error: [" + loader.get_error() + "]"));
     return std::unique_ptr<json_t, JanssonDeleter>{json_p, JanssonDeleter()};
-}
 #else
-std::unique_ptr<json_t, JanssonDeleter> json_from_string(const std::string& str) {
+    io::streambuf_source bufsrc{std::addressof(src)};
+    io::string_sink sink{};
+    std::array<char, 8192> buf;    
+    io::copy_all(bufsrc, sink, buf.data(), buf.size());
     json_error_t error;
     auto flags = JSON_REJECT_DUPLICATES | JSON_DECODE_ANY | JSON_DISABLE_EOF_CHECK;
-    auto json_p = json_loads(str.c_str(), flags, &error);
-    if (!json_p) throw SerializationException(TRACEMSG(std::string(
-            "Error parsing JSON: [").append(str).append("]")
-            .append(" text: [").append(error.text).append("]")
-            .append(" line: [").append(ss::to_string(error.line)).append("]")
-            .append(" column: [").append(ss::to_string(error.column)).append("]")
-            .append(" position: [").append(ss::to_string(error.position)).append("]")));
+    auto json_p = json_loads(sink.get_string().c_str(), flags, std::addressof(error));
+    if (!json_p) throw SerializationException(TRACEMSG(std::string{} +
+            "Error parsing JSON: [" + sink.get_string() + "]" +
+            " text: [" + error.text + "]" +
+            " line: [" + ss::to_string(error.line) + "]" +
+            " column: [" + ss::to_string(error.column) + "]"+
+            " position: [" + ss::to_string(error.position) + "]"));
     return std::unique_ptr<json_t, JanssonDeleter>{json_p, JanssonDeleter()};
+#endif    
 }
-#endif // STATICLIB_WITH_ICU
+
+std::unique_ptr<json_t, JanssonDeleter> json_from_string(const std::string& str) {
+    auto streambuf = io::make_unbuffered_istreambuf(io::array_source{str.data(), str.size()});    
+    return json_from_streambuf(streambuf);
+}
 
 } // namespace
 
@@ -314,26 +393,39 @@ void init() {
 #endif    
 }
 
-#ifdef STATICLIB_WITH_ICU
-icu::UnicodeString dumps_json(const sr::ReflectedValue& value) {
+void dump_json(const sr::ReflectedValue& value, std::streambuf& dest) {
     auto json = dump_internal(value);
-    return json_to_string(json);
+    json_to_streambuf(json.get(), dest);
 }
-#else
-std::string dumps_json(const sr::ReflectedValue& value) {
+
+std::string dump_json_to_string(const sr::ReflectedValue& value) {
     auto json = dump_internal(value);
-    return json_to_string(json);
+    return json_to_string(json.get());
+}
+
+#ifdef STATICLIB_WITH_ICU
+icu::UnicodeString dump_json_to_ustring(const sr::ReflectedValue& value) {
+    auto json = dump_internal(value);
+    std::string st = json_to_string(json.get());
+    return icu::UnicodeString::fromUTF8(st);
 }
 #endif // STATICLIB_WITH_ICU
 
-#ifdef STATICLIB_WITH_ICU
-sr::ReflectedValue loads_json(const icu::UnicodeString& str) {
+sr::ReflectedValue load_json(std::streambuf& src) {
+    auto json = json_from_streambuf(src);
+    return load_internal(json.get());
+}
+
+sr::ReflectedValue load_json_from_string(const std::string& str) {
     auto json = json_from_string(str);
     return load_internal(json.get());
 }
-#else
-sr::ReflectedValue loads_json(const std::string& str) {
-    auto json = json_from_string(str);
+
+#ifdef STATICLIB_WITH_ICU
+sr::ReflectedValue load_json_from_ustring(const icu::UnicodeString& str) {
+    std::string bytes{};
+    str.toUTF8String(bytes);
+    auto json = json_from_string(bytes);
     return load_internal(json.get());
 }
 #endif // STATICLIB_WITH_ICU

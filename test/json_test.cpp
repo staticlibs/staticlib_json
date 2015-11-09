@@ -26,18 +26,15 @@
 #include <sstream>
 #include <vector>
 #include <unordered_set>
+#include <string>
 
 #ifdef STATICLIB_WITH_ICU
 #include <unicode/unistr.h>
-#else
-#include <string>
 #endif // STATICLIB_WITH_ICU
 
 #include "staticlib/reflection.hpp"
 
 #include "staticlib/serialization/json.hpp"
-
-namespace { // anonymous
 
 namespace sr = staticlib::reflection;
 namespace sj = staticlib::serialization;
@@ -49,19 +46,8 @@ std::string test_to_string(T t) {
     return ss.str();
 }
 
-#ifdef STATICLIB_WITH_ICU
-class UStringHasher {
-public:
-    size_t operator()(icu::UnicodeString value) const {
-        return static_cast<size_t> (value.hashCode());
-    }
-};
-
-static const icu::UnicodeString JSON_STR =
-#else
 static const std::string JSON_STR =
-#endif // STATICLIB_WITH_ICU
-R"({
+        R"({
     "f1": 41,
     "f2": "42",
     "f3": true,
@@ -74,6 +60,17 @@ R"({
         "fnullable": null
     }
 })";
+
+#ifdef STATICLIB_WITH_ICU
+class UStringHasher {
+public:
+    size_t operator()(icu::UnicodeString value) const {
+        return static_cast<size_t> (value.hashCode());
+    }
+};
+
+static const icu::UnicodeString JSON_USTR = icu::UnicodeString::fromUTF8(JSON_STR);
+#endif // STATICLIB_WITH_ICU
 
 void test_init() {
     sj::init();
@@ -115,29 +112,37 @@ public:
 
 void test_dumps() {
     TestRefl tr{};
-    auto st = sj::dumps_json(tr.get_reflected_value());
+    std::string st = sj::dump_json_to_string(tr.get_reflected_value());
     assert(JSON_STR == st);
 }
 
+#ifdef STATICLIB_WITH_ICU
+void test_dumpu() {
+    TestRefl tr{};
+    icu::UnicodeString st = sj::dump_json_to_ustring(tr.get_reflected_value());
+    assert(JSON_USTR == st);
+}
+#endif // STATICLIB_WITH_ICU
+
 void test_loads() {
     {
-        auto rv = sj::loads_json("null");
+        auto rv = sj::load_json_from_string("null");
         assert(sr::ReflectedType::NULL_T == rv.get_type());
     }
     {
-        auto rv = sj::loads_json("42");
+        auto rv = sj::load_json_from_string("42");
         assert(sr::ReflectedType::INTEGER == rv.get_type());
     }
     {
-        auto rv = sj::loads_json("[1,2,3]i am a foobar");
+        auto rv = sj::load_json_from_string("[1,2,3]i am a foobar");
         assert(sr::ReflectedType::ARRAY == rv.get_type());
         assert(3 == rv.get_array().size());
     }
     
-    auto rv = sj::loads_json(JSON_STR);
+    auto rv = sj::load_json_from_string(JSON_STR);
     auto& obj = rv.get_object();
     assert(5 == obj.size());
-#ifdef STATICLIB_WITH_ICU    
+#ifdef STATICLIB_WITH_ICU
     std::unordered_set<icu::UnicodeString, UStringHasher> set{};
 #else
     std::unordered_set<std::string> set{};
@@ -180,20 +185,20 @@ void test_preserve_order() {
         vec.emplace_back(test_to_string(i).c_str(), i);
     }
     auto rv = sr::ReflectedValue(std::move(vec));
-    auto json = sj::dumps_json(rv);
-    auto loaded = sj::loads_json(json);
+    auto json = sj::dump_json_to_string(rv);
+    auto loaded = sj::load_json_from_string(json);
     for (auto i = 0; i < (1<<10); i++) {
         assert(loaded.get_object()[i].get_name() == test_to_string(i).c_str());
         assert(i == loaded.get_object()[i].get_value().get_integer());
     }
 }
 
-} // namespace
-
 int main() {
-    
     test_init();
     test_dumps();
+#ifdef STATICLIB_WITH_ICU    
+    test_dumpu();
+#endif // STATICLIB_WITH_ICU        
     test_loads();
     test_preserve_order();
     
