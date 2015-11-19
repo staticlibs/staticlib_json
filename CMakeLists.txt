@@ -16,7 +16,7 @@ cmake_minimum_required ( VERSION 2.8.12 )
 
 # project
 project ( staticlib_serialization CXX )
-set ( ${PROJECT_NAME}_STATICLIB_VERSION 1.3.1 )
+set ( ${PROJECT_NAME}_STATICLIB_VERSION 1.3.2 )
 set ( ${PROJECT_NAME}_DESCRIPTION "Staticlibs serialization library" )
 set ( ${PROJECT_NAME}_URL https://github.com/staticlibs/staticlib_serialization )
 include ( ${CMAKE_CURRENT_LIST_DIR}/resources/macros.cmake )
@@ -45,11 +45,12 @@ option ( STATICLIB_WITH_ICU "Build with ICU support" OFF )
 # deps
 set ( ${PROJECT_NAME}_OPTIONS "" )
 set ( ${PROJECT_NAME}_DEPS_PUBLIC
-        staticlib_reflection
+        staticlib_reflection        
         staticlib_utils )
 set ( ${PROJECT_NAME}_DEPS_PRIVATE 
         jansson
-        staticlib_io )
+        staticlib_io
+        staticlib_icu )
 if ( STATICLIB_WITH_ICU )
     set ( ${PROJECT_NAME}_DEPS_PUBLIC ${${PROJECT_NAME}_DEPS_PUBLIC} icu-uc )
     set ( ${PROJECT_NAME}_OPTIONS -DSTATICLIB_WITH_ICU )

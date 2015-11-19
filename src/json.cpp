@@ -46,6 +46,7 @@
 #endif // json_array_foreach
 
 #include "staticlib/utils.hpp"
+#include "staticlib/icu_utils.hpp"
 #include "staticlib/io.hpp"
 
 #include "staticlib/serialization/SerializationException.hpp"
@@ -57,6 +58,7 @@ namespace staticlib {
 namespace serialization {
 
 namespace ss = staticlib::utils;
+namespace iu = staticlib::icu_utils;
 namespace io = staticlib::io;
 namespace sr = staticlib::reflection;
 
@@ -214,12 +216,6 @@ void json_to_streambuf(json_t* json, std::streambuf& dest) {
     if (0 != res) throw SerializationException(TRACEMSG(std::string{} +
             "Error dumping JSON type: [" + ss::to_string(json_typeof(json)) + "],"
             " error: [" + dumper.get_error() + "]"));
-}
-
-std::string json_to_string(json_t* json) {
-    auto streambuf = io::make_unbuffered_ostreambuf(io::string_sink{});
-    json_to_streambuf(json, streambuf);
-    return std::move(streambuf.get_sink().get_string());
 }
 
 } // namespace
@@ -380,11 +376,6 @@ std::unique_ptr<json_t, JanssonDeleter> json_from_streambuf(std::streambuf& src)
 #endif    
 }
 
-std::unique_ptr<json_t, JanssonDeleter> json_from_string(const std::string& str) {
-    auto streambuf = io::make_unbuffered_istreambuf(io::array_source{str.data(), str.size()});    
-    return json_from_streambuf(streambuf);
-}
-
 } // namespace
 
 void init() {
@@ -400,14 +391,17 @@ void dump_json(const sr::ReflectedValue& value, std::streambuf& dest) {
 
 std::string dump_json_to_string(const sr::ReflectedValue& value) {
     auto json = dump_internal(value);
-    return json_to_string(json.get());
+    auto streambuf = io::make_unbuffered_ostreambuf(io::string_sink{});
+    json_to_streambuf(json.get(), streambuf);
+    return std::move(streambuf.get_sink().get_string());
 }
 
 #ifdef STATICLIB_WITH_ICU
 icu::UnicodeString dump_json_to_ustring(const sr::ReflectedValue& value) {
     auto json = dump_internal(value);
-    std::string st = json_to_string(json.get());
-    return icu::UnicodeString::fromUTF8(st);
+    auto streambuf = io::make_unbuffered_ostreambuf(iu::ustring_sink{});
+    json_to_streambuf(json.get(), streambuf);
+    return std::move(streambuf.get_sink().get_string());
 }
 #endif // STATICLIB_WITH_ICU
 
@@ -417,15 +411,15 @@ sr::ReflectedValue load_json(std::streambuf& src) {
 }
 
 sr::ReflectedValue load_json_from_string(const std::string& str) {
-    auto json = json_from_string(str);
+    auto streambuf = io::make_unbuffered_istreambuf(io::array_source{str.data(), str.size()});
+    auto json = json_from_streambuf(streambuf);
     return load_internal(json.get());
 }
 
 #ifdef STATICLIB_WITH_ICU
 sr::ReflectedValue load_json_from_ustring(const icu::UnicodeString& str) {
-    std::string bytes{};
-    str.toUTF8String(bytes);
-    auto json = json_from_string(bytes);
+    auto streambuf = io::make_unbuffered_istreambuf(iu::uarray_source{str});
+    auto json = json_from_streambuf(streambuf);
     return load_internal(json.get());
 }
 #endif // STATICLIB_WITH_ICU

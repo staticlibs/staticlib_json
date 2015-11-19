@@ -3,8 +3,8 @@ Staticlibs serialization library
 
 This project is a part of [Staticlibs](http://staticlibs.net/).
 
-This project contains high level `dumps_*` and `loads_*` functions to convert 
-objects to/from strings. Currently only JSON serialization (based on [Jansson library](https://github.com/akheron/jansson))
+This project contains high level `dump_*` and `load_*` functions to convert 
+objects to/from raw data. Currently only JSON serialization (based on [Jansson library](https://github.com/akheron/jansson))
 is supported. More formats may be added in future.
 
 Link to [API documentation](http://staticlibs.github.io/staticlib_serialization/docs/html/namespacestaticlib_1_1serialization.html).
@@ -97,6 +97,11 @@ This project is released under the [Apache License 2.0](http://www.apache.org/li
 
 Changelog
 ---------
+
+**2015-11-19**
+
+ * version 1.3.2
+ * streaming support for `icu::UnicodeString`
 
 **2015-11-17**
 
