@@ -25,8 +25,8 @@
 #define	STATICLIB_SERIALIZATION_HPP
 
 #include "staticlib/serialization/SerializationException.hpp"
+#include "staticlib/serialization/binary.hpp"
 #include "staticlib/serialization/json.hpp"
-//#include "staticlib/serialization/bson.hpp"
 
 #endif	/* STATICLIB_SERIALIZATION_HPP */
 

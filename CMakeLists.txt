@@ -45,14 +45,15 @@ option ( STATICLIB_WITH_ICU "Build with ICU support" OFF )
 # deps
 set ( ${PROJECT_NAME}_OPTIONS "" )
 set ( ${PROJECT_NAME}_DEPS_PUBLIC
-        staticlib_reflection        
-        staticlib_utils )
-set ( ${PROJECT_NAME}_DEPS_PRIVATE 
-        jansson
+        staticlib_config
         staticlib_io
-        staticlib_icu )
+        staticlib_ranges 
+        staticlib_reflection )
+set ( ${PROJECT_NAME}_DEPS_PRIVATE 
+        jansson )
 if ( STATICLIB_WITH_ICU )
     set ( ${PROJECT_NAME}_DEPS_PUBLIC ${${PROJECT_NAME}_DEPS_PUBLIC} icu-uc )
+    set ( ${PROJECT_NAME}_DEPS_PRIVATE ${${PROJECT_NAME}_DEPS_PRIVATE} staticlib_icu )
     set ( ${PROJECT_NAME}_OPTIONS -DSTATICLIB_WITH_ICU )
 endif ( )
 staticlib_serialization_pkg_check_modules ( ${PROJECT_NAME}_DEPS_PUBLIC_PC REQUIRED ${PROJECT_NAME}_DEPS_PUBLIC )

@@ -21,16 +21,18 @@
  * Created on January 1, 2015, 6:11 PM
  */
 
-#ifndef STATICLIB_JSON_HPP
-#define	STATICLIB_JSON_HPP
+#ifndef STATICLIB_SERIALIZATION_JSON_HPP
+#define	STATICLIB_SERIALIZATION_JSON_HPP
 
-#include <string>
 #include <streambuf>
+#include <string>
+#include <functional>
 
 #ifdef STATICLIB_WITH_ICU
 #include <unicode/unistr.h>
 #endif // STATICLIB_WITH_ICU
 
+#include "staticlib/io.hpp"
 #include "staticlib/reflection.hpp"
 
 namespace staticlib {
@@ -45,6 +47,21 @@ namespace serialization {
     void init();
 
     /**
+     * Serializes specified reference to JSON. 
+     * JSON is written to the specified sink. Preserves order of object fields.
+     * 
+     * @param value reference to reflected value instance
+     * @param dest sink to write JSON into
+     * @return JSON string
+     * @throws SerializationException
+     */
+    template <typename Sink>
+    void dump_json(const staticlib::reflection::ReflectedValue& value, Sink& dest) {
+        auto sbuf = staticlib::io::make_unbuffered_ostreambuf(std::ref(dest));
+        dump_json_to_streambuf(sbuf);
+    }
+    
+    /**
      * Serializes specified reference (usually obtained from 'Reflected' instance)
      * to JSON. JSON is written to the specified streambuf. Preserves order of object fields.
      * 
@@ -53,8 +70,8 @@ namespace serialization {
      * @return JSON string
      * @throws SerializationException
      */
-    void dump_json(const staticlib::reflection::ReflectedValue& value, std::streambuf& dest);
-    
+    void dump_json_to_streambuf(const staticlib::reflection::ReflectedValue& value, std::streambuf& dest);
+        
     /**
      * Serializes specified reference (usually obtained from 'Reflected' instance)
      * to JSON string. Preserves order of object fields.
@@ -76,6 +93,22 @@ namespace serialization {
      */
     icu::UnicodeString dump_json_to_ustring(const staticlib::reflection::ReflectedValue& value);
 #endif // STATICLIB_WITH_ICU
+
+    /**
+     * Deserializes data from specified source into 'ReflectedValue'.
+     * Supports 'bare' (non-object, non-array) JSON input.
+     * Supports partial input: will read only first valid JSON element 
+     * from input source.
+     * 
+     * @param src source with JSON
+     * @return instance of 'ReflectedValue'
+     * @throws SerializarionException      
+     */
+    template <typename Source>
+    staticlib::reflection::ReflectedValue load_json(Source& src) {
+        auto sbuf = staticlib::io::make_unbuffered_istreambuf(std::ref(src));
+        return load_json_from_streambu(sbuf);
+    }
     
     /**
      * Deserializes data from specified streambuf into 'ReflectedValue'.
@@ -87,7 +120,7 @@ namespace serialization {
      * @return instance of 'ReflectedValue'
      * @throws SerializarionException      
      */
-    staticlib::reflection::ReflectedValue load_json(std::streambuf& src);
+    staticlib::reflection::ReflectedValue load_json_from_streambu(std::streambuf& src);
     
     /**
      * Deserializes specified string into 'ReflectedValue'.
@@ -115,8 +148,8 @@ namespace serialization {
     staticlib::reflection::ReflectedValue load_json_from_ustring(const icu::UnicodeString& str);
 #endif // STATICLIB_WITH_ICU
 
-}
 } // namespace
+} 
 
-#endif	/* STATICLIB_JSON_HPP */
+#endif	/* STATICLIB_SERIALIZATION_JSON_HPP */
 

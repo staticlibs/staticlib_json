@@ -21,10 +21,10 @@
  * Created on January 2, 2015, 2:22 PM
  */
 
-#ifndef STATICLIB_SERIALIZATIONEXCEPTION_HPP
-#define	STATICLIB_SERIALIZATIONEXCEPTION_HPP
+#ifndef STATICLIB_SERIALIZATION_SERIALIZATIONEXCEPTION_HPP
+#define	STATICLIB_SERIALIZATION_SERIALIZATIONEXCEPTION_HPP
 
-#include "staticlib/utils/BaseException.hpp"
+#include "staticlib/config/BaseException.hpp"
 
 namespace staticlib {
 namespace serialization {
@@ -32,7 +32,7 @@ namespace serialization {
 /**
  * Module specific exception
  */
-class SerializationException : public staticlib::utils::BaseException {
+class SerializationException : public staticlib::config::BaseException {
 public:
     /**
      * Default constructor
@@ -45,10 +45,10 @@ public:
      * @param msg error message
      */
     SerializationException(const std::string& msg) :
-    staticlib::utils::BaseException(msg) { }
+    staticlib::config::BaseException(msg) { }
 };
 
 }
 } // namespace
 
-#endif	/* STATICLIB_SERIALIZATIONEXCEPTION_HPP */
+#endif	/* STATICLIB_SERIALIZATION_SERIALIZATIONEXCEPTION_HPP */

@@ -21,14 +21,16 @@
  * Created on January 1, 2015, 6:18 PM
  */
 
-#include <memory>
-#include <string>
-#include <cstdint>
-#include <vector>
-#include <utility>
+#include "staticlib/serialization/json.hpp"
+
 #include <algorithm>
 #include <array>
+#include <memory>
+#include <string>
+#include <vector>
+#include <utility>
 #include <cstddef>
+#include <cstdint>
 
 #ifdef STATICLIB_WITH_ICU
 #include <unicode/unistr.h>
@@ -45,24 +47,33 @@
 		index++)
 #endif // json_array_foreach
 
-#include "staticlib/utils.hpp"
+#include "staticlib/config.hpp"
+#ifdef STATICLIB_WITH_ICU
 #include "staticlib/icu_utils.hpp"
+#endif // STATICLIB_WITH_ICU
 #include "staticlib/io.hpp"
 
 #include "staticlib/serialization/SerializationException.hpp"
-#include "staticlib/serialization/json.hpp"
 
-#include "JanssonDeleter.hpp"
 
 namespace staticlib {
 namespace serialization {
 
-namespace ss = staticlib::utils;
+namespace sc = staticlib::config;
+#ifdef STATICLIB_WITH_ICU
 namespace iu = staticlib::icu_utils;
+#endif // STATICLIB_WITH_ICU
 namespace io = staticlib::io;
 namespace sr = staticlib::reflection;
 
 namespace { // anonymous, dump part
+
+class JanssonDeleter {
+public:
+    void operator()(json_t* json) {
+        json_decref(json);
+    }
+};
 
 // forward declaration
 std::unique_ptr<json_t, JanssonDeleter> dump_internal(const sr::ReflectedValue& value);
@@ -111,7 +122,7 @@ std::unique_ptr<json_t, JanssonDeleter> dump_array(const std::vector<sr::Reflect
         auto jval = dump_internal(va);
         auto err = json_array_append(arr.get(), jval.get());
         if (err) throw SerializationException(TRACEMSG(
-                "Error appending to JSON array, input size:[" + ss::to_string(arrayValue.size()) + "]"));
+                "Error appending to JSON array, input size:[" + sc::to_string(arrayValue.size()) + "]"));
     }
     return arr;
 }
@@ -137,21 +148,21 @@ std::unique_ptr<json_t, JanssonDeleter> dump_string(const std::string& stringVal
 std::unique_ptr<json_t, JanssonDeleter> dump_integer(int64_t integerValue) {
     auto json_p = json_integer(integerValue);
     if (!json_p) throw SerializationException(TRACEMSG(
-            "Error initializing JSON with value:[" + ss::to_string(integerValue) + "]"));
+            "Error initializing JSON with value:[" + sc::to_string(integerValue) + "]"));
     return std::unique_ptr<json_t, JanssonDeleter>{json_p, JanssonDeleter()};
 }
 
 std::unique_ptr<json_t, JanssonDeleter> dump_real(double realValue) {
     auto json_p = json_real(realValue);
     if (!json_p) throw SerializationException(TRACEMSG(
-            "Error initializing JSON with value:[" + ss::to_string(realValue) + "]"));
+            "Error initializing JSON with value:[" + sc::to_string(realValue) + "]"));
     return std::unique_ptr<json_t, JanssonDeleter>{json_p, JanssonDeleter()};
 }
 
 std::unique_ptr<json_t, JanssonDeleter> dump_boolean(bool booleanValue) {
     auto json_p = booleanValue? json_true() : json_false();
     if (!json_p) throw SerializationException(TRACEMSG(
-            "Error initializing JSON with value:[" + ss::to_string(booleanValue) + "]"));
+            "Error initializing JSON with value:[" + sc::to_string(booleanValue) + "]"));
     return std::unique_ptr<json_t, JanssonDeleter>{json_p, JanssonDeleter()};
 }
 
@@ -165,7 +176,7 @@ std::unique_ptr<json_t, JanssonDeleter> dump_internal(const sr::ReflectedValue& 
     case (sr::ReflectedType::REAL): return dump_real(value.get_real());
     case (sr::ReflectedType::BOOLEAN): return dump_boolean(value.get_boolean());
     default: throw SerializationException(TRACEMSG(std::string{} +
-                "Unsupported JSON type:[" + ss::to_string(static_cast<char> (value.get_type())) + "]"));
+                "Unsupported JSON type:[" + sc::to_string(static_cast<char> (value.get_type())) + "]"));
     }
 }
 
@@ -214,7 +225,7 @@ void json_to_streambuf(json_t* json, std::streambuf& dest) {
     void* dumper_ptr = static_cast<void*>(std::addressof(dumper));
     int res = json_dump_callback(json, dump_callback, dumper_ptr, size_t JSON_INDENT(4) | JSON_PRESERVE_ORDER);
     if (0 != res) throw SerializationException(TRACEMSG(std::string{} +
-            "Error dumping JSON type: [" + ss::to_string(json_typeof(json)) + "],"
+            "Error dumping JSON type: [" + sc::to_string(json_typeof(json)) + "],"
             " error: [" + dumper.get_error() + "]"));
 }
 
@@ -284,7 +295,7 @@ sr::ReflectedValue load_array(json_t* value) {
 sr::ReflectedValue load_string(json_t* value) {
     auto st = json_string_value(value);
     if (!st) throw SerializationException(TRACEMSG(std::string{} +
-            "Error getting string value from JSON, type:[" + ss::to_string(json_typeof(value)) + "]"));
+            "Error getting string value from JSON, type:[" + sc::to_string(json_typeof(value)) + "]"));
     return sr::ReflectedValue(st);
 }
 
@@ -300,7 +311,7 @@ sr::ReflectedValue load_internal(json_t* value) {
     case (JSON_TRUE): return sr::ReflectedValue(true);
     case (JSON_FALSE): return sr::ReflectedValue(false);
     default: throw SerializationException(TRACEMSG(
-                "Unsupported JSON type:[" + ss::to_string(type) + "]"));
+                "Unsupported JSON type:[" + sc::to_string(type) + "]"));
     }
 }
 
@@ -369,9 +380,9 @@ std::unique_ptr<json_t, JanssonDeleter> json_from_streambuf(std::streambuf& src)
     if (!json_p) throw SerializationException(TRACEMSG(std::string{} +
             "Error parsing JSON: [" + sink.get_string() + "]" +
             " text: [" + error.text + "]" +
-            " line: [" + ss::to_string(error.line) + "]" +
-            " column: [" + ss::to_string(error.column) + "]"+
-            " position: [" + ss::to_string(error.position) + "]"));
+            " line: [" + sc::to_string(error.line) + "]" +
+            " column: [" + sc::to_string(error.column) + "]"+
+            " position: [" + sc::to_string(error.position) + "]"));
     return std::unique_ptr<json_t, JanssonDeleter>{json_p, JanssonDeleter()};
 #endif    
 }
@@ -384,7 +395,7 @@ void init() {
 #endif    
 }
 
-void dump_json(const sr::ReflectedValue& value, std::streambuf& dest) {
+void dump_json_to_streambuf(const sr::ReflectedValue& value, std::streambuf& dest) {
     auto json = dump_internal(value);
     json_to_streambuf(json.get(), dest);
 }
@@ -405,7 +416,7 @@ icu::UnicodeString dump_json_to_ustring(const sr::ReflectedValue& value) {
 }
 #endif // STATICLIB_WITH_ICU
 
-sr::ReflectedValue load_json(std::streambuf& src) {
+sr::ReflectedValue load_json_from_streambu(std::streambuf& src) {
     auto json = json_from_streambuf(src);
     return load_internal(json.get());
 }
