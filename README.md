@@ -4,20 +4,20 @@ Staticlibs serialization library
 This project is a part of [Staticlibs](http://staticlibs.net/).
 
 This project contains high level `dump_*` and `load_*` functions to convert 
-objects to/from raw data. Currently only JSON serialization (based on [Jansson library](https://github.com/akheron/jansson))
-is supported. More formats may be added in future.
+objects to/from raw data. JSON format is supported for serialization/deserialization of the
+arbitrary object trees (it is based on [Jansson library](https://github.com/akheron/jansson)).
+Binary serialization uses raw memory from POD objects with a support for lazy deserialization.
 
-Link to [API documentation](http://staticlibs.github.io/staticlib_serialization/docs/html/namespacestaticlib_1_1serialization.html).
+Link to the [API documentation](http://staticlibs.github.io/staticlib_serialization/docs/html/namespacestaticlib_1_1serialization.html).
 
-Serialization implementation
--------------------------
+JSON serialization
+------------------
 
-Serialization is implemented through [Staticlibs reflection library](https://github.com/staticlibs/staticlib_serialization).
-To support serialization objects should implement converting to/from "reflected representation".
+To support serialization objects should implement converting to/from "JSON representation".
 
-Example of implementing `to_reflected` logic using C++11 literals:
+Example of implementing `to_json` logic using C++11 literals:
 
-    sr::ReflectedValue get_reflected_value() const {
+    JsonValue get_json_value() const {
         return {
             {"field1", field1},
             {"field2", field3},
@@ -26,9 +26,9 @@ Example of implementing `to_reflected` logic using C++11 literals:
         };
     }
 
-Example implementing `from_reflected` constructor using a loop over `name`->`value` pairs:
+Example implementing `from_json` constructor using a loop over `name`->`value` pairs:
 
-    MyClass(const ReflectedValue& val) {
+    MyClass(const JsonValue& val) {
         for(const auto& fi : val.get_object()) {
             auto name = fi.get_name();                
             if("f1" == name) {
@@ -40,8 +40,20 @@ Example implementing `from_reflected` constructor using a loop over `name`->`val
         }
     }
 
-For most modern compilers this loop can be optimized using `switch` and `constexpr`
+For most of the modern compilers this loop can be optimized using `switch` and `constexpr`
 expressions, but this won't work for MS Visual Studio 2013.
+
+Binary serialization
+--------------------
+
+Binary serialization is implemented over `Range`s of [POD](http://en.cppreference.com/w/cpp/concept/PODType) 
+objects using [std::aligned_storage](http://en.cppreference.com/w/cpp/types/aligned_storage). It doesn't
+guarantee portable binary representation: even packed POD objects can have incompatible representation
+(for example: for `float` fields) and native endianness is used. If portable binary representation is
+required it may be better to look at full-fledged binary serialization tools like 
+[Apache Thrift](https://thrift.apache.org/) or [Cap’n Proto](https://capnproto.org/).
+
+Deserialization is a lazy operation - it opens a `Range` of POD objects over a specified binary `Source`.
 
 How to build
 ------------
@@ -57,7 +69,7 @@ This project depends on a [jansson](https://github.com/akheron/jansson) and on a
 See [StaticlibsDependencies](https://github.com/staticlibs/wiki/wiki/StaticlibsDependencies) for more 
 details about dependency management with Staticlibs.
 
-To build this project manually:
+To build this project manually (without Staticlib toolchains):
 
  * checkout all the dependent projects
  * configure these projects using the same output directory:
@@ -93,10 +105,17 @@ more information about the toolchain setup and cross-compilation.
 License information
 -------------------
 
-This project is released under the [Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0)
+This project is released under the [Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0).
 
 Changelog
 ---------
+
+**2015-11-29**
+
+ * version 1.4.0
+ * binary format support
+ * arbitrary `Sink`s/`Source`s support for a JSON format
+ * `JsonValue` and `JsonField` added to source tree
 
 **2015-11-19**
 
