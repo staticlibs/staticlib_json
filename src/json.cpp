@@ -366,9 +366,9 @@ std::unique_ptr<json_t, JanssonDeleter> json_from_streambuf(std::streambuf& src)
     if (!json_p) throw SerializationException(TRACEMSG(std::string{} +
     "Error parsing JSON:" +
             " text: [" + error.text + "]" +
-            " line: [" + ss::to_string(error.line) + "]" +
-            " column: [" + ss::to_string(error.column) + "]" +
-            " position: [" + ss::to_string(error.position) + "],"
+            " line: [" + sc::to_string(error.line) + "]" +
+            " column: [" + sc::to_string(error.column) + "]" +
+            " position: [" + sc::to_string(error.position) + "],"
             " callback error: [" + loader.get_error() + "]"));
     return std::unique_ptr<json_t, JanssonDeleter>{json_p, JanssonDeleter()};
 #else
