@@ -47,8 +47,7 @@ set ( ${PROJECT_NAME}_OPTIONS "" )
 set ( ${PROJECT_NAME}_DEPS_PUBLIC
         staticlib_config
         staticlib_io
-        staticlib_ranges 
-        staticlib_reflection )
+        staticlib_ranges )
 set ( ${PROJECT_NAME}_DEPS_PRIVATE 
         jansson )
 if ( STATICLIB_WITH_ICU )

@@ -15,21 +15,29 @@
  */
 
 /* 
- * File:   serialization.hpp
+ * File:   JsonType.cpp
  * Author: alex
- *
- * Created on February 15, 2015, 8:19 PM
+ * 
+ * Created on January 23, 2015, 9:52 PM
  */
 
-#ifndef STATICLIB_SERIALIZATION_HPP
-#define	STATICLIB_SERIALIZATION_HPP
-
-#include "staticlib/serialization/JsonField.hpp"
 #include "staticlib/serialization/JsonType.hpp"
-#include "staticlib/serialization/JsonValue.hpp"
-#include "staticlib/serialization/SerializationException.hpp"
-#include "staticlib/serialization/binary.hpp"
-#include "staticlib/serialization/json.hpp"
 
-#endif	/* STATICLIB_SERIALIZATION_HPP */
+namespace staticlib {
+namespace serialization {
 
+std::string stringify_json_type(JsonType jt) { 
+    switch(jt) {
+    case JsonType::NULL_T: return "NULL_T";
+    case JsonType::OBJECT: return "OBJECT";
+    case JsonType::ARRAY: return "ARRAY";
+    case JsonType::STRING: return "STRING";
+    case JsonType::INTEGER: return "INTEGER";
+    case JsonType::REAL: return "REAL";
+    case JsonType::BOOLEAN: return "BOOLEAN";
+    default: return "UNKNOWN";
+    }
+}
+
+} // namespace
+} 

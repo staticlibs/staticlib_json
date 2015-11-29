@@ -36,12 +36,10 @@
 #include "staticlib/config/assert.hpp"
 
 #include "staticlib/config.hpp"
-#include "staticlib/reflection.hpp"
 
 
 namespace sc = staticlib::config;
-namespace sr = staticlib::reflection;
-namespace sj = staticlib::serialization;
+namespace ss = staticlib::serialization;
 
 static const std::string JSON_STR =
         R"({
@@ -70,12 +68,12 @@ static const icu::UnicodeString JSON_USTR = icu::UnicodeString::fromUTF8(JSON_ST
 #endif // STATICLIB_WITH_ICU
 
 void test_init() {
-    sj::init();
+    ss::init();
 }
 
 class TestReflInner {
 public:    
-    sr::ReflectedValue get_reflected_value() const {
+    ss::JsonValue get_reflected_value() const {
         return {
             { "f42", 42 },
             { "fnullable", nullptr }
@@ -93,8 +91,8 @@ class TestRefl {
     bool f3 = true;
 
 public:    
-    sr::ReflectedValue get_reflected_value() const {
-        std::vector<sr::ReflectedValue> vec{};
+    ss::JsonValue get_reflected_value() const {
+        std::vector<ss::JsonValue> vec{};
         vec.emplace_back(41);
         vec.emplace_back("43");
         return {
@@ -109,34 +107,34 @@ public:
 
 void test_dumps() {
     TestRefl tr{};
-    std::string st = sj::dump_json_to_string(tr.get_reflected_value());
+    std::string st = ss::dump_json_to_string(tr.get_reflected_value());
     slassert(JSON_STR == st);
 }
 
 #ifdef STATICLIB_WITH_ICU
 void test_dumpu() {
     TestRefl tr{};
-    icu::UnicodeString st = sj::dump_json_to_ustring(tr.get_reflected_value());
+    icu::UnicodeString st = ss::dump_json_to_ustring(tr.get_reflected_value());
     slassert(JSON_USTR == st);
 }
 #endif // STATICLIB_WITH_ICU
 
 void test_loads() {
     {
-        auto rv = sj::load_json_from_string("null");
-        slassert(sr::ReflectedType::NULL_T == rv.get_type());
+        auto rv = ss::load_json_from_string("null");
+        slassert(ss::JsonType::NULL_T == rv.get_type());
     }
     {
-        auto rv = sj::load_json_from_string("42");
-        slassert(sr::ReflectedType::INTEGER == rv.get_type());
+        auto rv = ss::load_json_from_string("42");
+        slassert(ss::JsonType::INTEGER == rv.get_type());
     }
     {
-        auto rv = sj::load_json_from_string("[1,2,3]i am a foobar");
-        slassert(sr::ReflectedType::ARRAY == rv.get_type());
+        auto rv = ss::load_json_from_string("[1,2,3]i am a foobar");
+        slassert(ss::JsonType::ARRAY == rv.get_type());
         slassert(3 == rv.get_array().size());
     }
     
-    auto rv = sj::load_json_from_string(JSON_STR);
+    auto rv = ss::load_json_from_string(JSON_STR);
     auto& obj = rv.get_object();
     slassert(5 == obj.size());
 #ifdef STATICLIB_WITH_ICU
@@ -147,29 +145,29 @@ void test_loads() {
     for (const auto& fi : obj) {
         set.insert(fi.get_name());
         if (fi.get_name() == "f1") {
-            slassert(sr::ReflectedType::INTEGER == fi.get_value().get_type());
+            slassert(ss::JsonType::INTEGER == fi.get_value().get_type());
             slassert(41 == fi.get_value().get_integer());
         } else if (fi.get_name() == "f2") {
-            slassert(sr::ReflectedType::STRING == fi.get_value().get_type());
+            slassert(ss::JsonType::STRING == fi.get_value().get_type());
             slassert(fi.get_value().get_string() == "42");
         } else if (fi.get_name() == "f3") { 
-            slassert(sr::ReflectedType::BOOLEAN == fi.get_value().get_type());
+            slassert(ss::JsonType::BOOLEAN == fi.get_value().get_type());
             slassert(fi.get_value().get_boolean());
         } else if (fi.get_name() == "f4") {
-            slassert(sr::ReflectedType::ARRAY == fi.get_value().get_type());
+            slassert(ss::JsonType::ARRAY == fi.get_value().get_type());
             slassert(2 == fi.get_value().get_array().size());
-            slassert(sr::ReflectedType::INTEGER == fi.get_value().get_array()[0].get_type());
+            slassert(ss::JsonType::INTEGER == fi.get_value().get_array()[0].get_type());
             slassert(41 == fi.get_value().get_array()[0].get_integer());
-            slassert(sr::ReflectedType::STRING == fi.get_value().get_array()[1].get_type());
+            slassert(ss::JsonType::STRING == fi.get_value().get_array()[1].get_type());
             slassert(fi.get_value().get_array()[1].get_string() == "43");
         } else if (fi.get_name() == "f5") {
-            slassert(sr::ReflectedType::OBJECT == fi.get_value().get_type());
+            slassert(ss::JsonType::OBJECT == fi.get_value().get_type());
             slassert(2 == fi.get_value().get_object().size());
             slassert(fi.get_value().get_object()[0].get_name() == "f42");
-            slassert(sr::ReflectedType::INTEGER == fi.get_value().get_object()[0].get_value().get_type());
+            slassert(ss::JsonType::INTEGER == fi.get_value().get_object()[0].get_value().get_type());
             slassert(42 == fi.get_value().get_object()[0].get_value().get_integer());
             slassert(fi.get_value().get_object()[1].get_name() == "fnullable");
-            slassert(sr::ReflectedType::NULL_T == fi.get_value().get_object()[1].get_value().get_type());
+            slassert(ss::JsonType::NULL_T == fi.get_value().get_object()[1].get_value().get_type());
         }
     }
     slassert(5 == set.size());
@@ -177,13 +175,13 @@ void test_loads() {
 }
 
 void test_preserve_order() {
-    auto vec = std::vector<sr::ReflectedField>{};
+    auto vec = std::vector<ss::JsonField>{};
     for(auto i = 0; i < (1<<10); i++) {
         vec.emplace_back(sc::to_string(i).c_str(), i);
     }
-    auto rv = sr::ReflectedValue(std::move(vec));
-    auto json = sj::dump_json_to_string(rv);
-    auto loaded = sj::load_json_from_string(json);
+    auto rv = ss::JsonValue(std::move(vec));
+    auto json = ss::dump_json_to_string(rv);
+    auto loaded = ss::load_json_from_string(json);
     for (auto i = 0; i < (1<<10); i++) {
         slassert(loaded.get_object()[i].get_name() == sc::to_string(i).c_str());
         slassert(i == loaded.get_object()[i].get_value().get_integer());
