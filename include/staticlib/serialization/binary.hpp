@@ -43,8 +43,7 @@ namespace detail_binary {
  */
 template <typename Source, typename Pod>
 class pod_range : public staticlib::ranges::range_adapter<pod_range<Source, Pod>, Pod> {
-    Source source;
-    typename std::aligned_storage<sizeof (Pod), std::alignment_of<Pod>::value>::type pod_space;
+    Source source;    
 
 public:
     /**
@@ -55,6 +54,10 @@ public:
     pod_range(Source source) :
     source(std::move(source)) { }
 
+    pod_range(pod_range&& other) :
+    staticlib::ranges::range_adapter<pod_range<Source, Pod>, Pod>(std::move(other)),
+    source(std::move(other.source)) { }
+    
     /**
      * Read the data chunk from the source and set it as
      * "current POD object"
@@ -62,6 +65,7 @@ public:
      * @return true id object set, false if source exhausted
      */
     bool compute_next() {
+        typename std::aligned_storage<sizeof(Pod), std::alignment_of<Pod>::value>::type pod_space;
         std::streamsize read = staticlib::io::read_all(source, reinterpret_cast<char*>(std::addressof(pod_space)), sizeof(Pod));
         switch (read) {
         case sizeof(Pod):
