@@ -38,15 +38,29 @@ namespace serialization {
 
 namespace detail_binary {
 
+/**
+ * Range implementation that wraps a `Source` and reads POD values from it one-by one
+ */
 template <typename Source, typename Pod>
 class pod_range : public staticlib::ranges::range_adapter<pod_range<Source, Pod>, Pod> {
     Source source;
     typename std::aligned_storage<sizeof (Pod), std::alignment_of<Pod>::value>::type pod_space;
 
 public:
+    /**
+     * Constrcutor
+     * 
+     * @param source data source
+     */
     pod_range(Source source) :
     source(std::move(source)) { }
 
+    /**
+     * Read the data chunk from the source and set it as
+     * "current POD object"
+     * 
+     * @return true id object set, false if source exhausted
+     */
     bool compute_next() {
         std::streamsize read = staticlib::io::read_all(source, reinterpret_cast<char*>(std::addressof(pod_space)), sizeof(Pod));
         switch (read) {
@@ -64,6 +78,12 @@ public:
 
 } // namespace
 
+/**
+ * Dumps a specified range of POD objects into specified sink
+ * 
+ * @param range range of POD objects to serialize
+ * @param sink destination sink
+ */
 template <typename Range, typename Sink>
 void dump_binary(Range& range, Sink& sink) {
     static_assert(std::is_pod<typename Range::value_type>::value, "Range element type must be a POD type");
@@ -72,6 +92,12 @@ void dump_binary(Range& range, Sink& sink) {
     }
 }
 
+/**
+ * Returns a lazy range that reads POD objects from the specified source
+ * 
+ * @param src data source
+ * @return lazy range of POD objects
+ */
 template <typename Pod, typename Source>
 detail_binary::pod_range<Source, Pod> load_binary(Source&& src) {
     static_assert(std::is_pod<Pod>::value, "Range element type must be a POD type");
