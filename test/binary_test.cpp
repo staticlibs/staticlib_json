@@ -40,18 +40,26 @@ struct TestStruct {
     uint16_t first;
     uint32_t second;
     
-    TestStruct() = default;
+//    won't be a POD in MSVC2013
+//    TestStruct() = default;
     
-    TestStruct(uint16_t first, uint32_t second):
-    first(first),
-    second(second) { }
+//    TestStruct(uint16_t first, uint32_t second):
+//    first(first),
+//    second(second) { }
 };
 #pragma pack(pop)
 
+TestStruct create_test_struct(uint16_t first, uint32_t second) {
+    TestStruct res;
+    res.first = first;
+    res.second = second;
+    return res;
+}
+
 void test_dump() {
     std::vector<TestStruct> vec{};
-    vec.emplace_back(42, 43);
-    vec.emplace_back(44, 45);
+    vec.emplace_back(create_test_struct(42, 43));
+    vec.emplace_back(create_test_struct(44, 45));
     io::string_sink sink{};
     ss::dump_binary(vec, sink);
     slassert(12 == sink.get_string().size());
