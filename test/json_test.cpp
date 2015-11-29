@@ -84,9 +84,9 @@ public:
 class TestRefl {
     int32_t f1 = 41;
 #ifdef STATICLIB_WITH_ICU
-    icu::UnicodeString f2{"42"};
+    icu::UnicodeString f2 = "42";
 #else
-    std::string f2{"42"};
+    std::string f2 = "42";
 #endif // STATICLIB_WITH_ICU
     bool f3 = true;
 
