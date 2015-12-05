@@ -208,7 +208,7 @@ std::pair<std::vector<JsonField>*, bool> JsonValue::get_object_ptr() {
 }
 
 #ifdef STATICLIB_WITH_ICU
-const JsonValue& JsonValue::get_field_value_by_name(const icu::UnicodeString& name) const {
+const JsonValue& JsonValue::get(const icu::UnicodeString& name) const {
     for (auto& el : this->get_object()) {
         if (name == el.get_name()) {
             return el.get_value();
@@ -217,7 +217,7 @@ const JsonValue& JsonValue::get_field_value_by_name(const icu::UnicodeString& na
     return NULL_VALUE;
 }
 #else
-const JsonValue& JsonValue::get_field_value_by_name(const std::string& name) const {
+const JsonValue& JsonValue::get(const std::string& name) const {
     for (auto& el : this->get_object()) {
         if (name == el.get_name()) {
             return el.get_value();

@@ -260,9 +260,9 @@ public:
      * @return value of specified field
      */
 #ifdef STATICLIB_WITH_ICU    
-    const JsonValue& get_field_value_by_name(const icu::UnicodeString& name) const;
+    const JsonValue& get(const icu::UnicodeString& name) const;
 #else
-    const JsonValue& get_field_value_by_name(const std::string& name) const;
+    const JsonValue& get(const std::string& name) const;
 #endif // STATICLIB_WITH_ICU
     
     /**

@@ -281,13 +281,13 @@ void test_field_by_name() {
     TestRefl tr{};
     auto rv = tr.get_reflected_value();
     
-    auto& rvf = rv.get_field_value_by_name("transient_f4");
+    auto& rvf = rv.get("transient_f4");
     slassert(ss::JsonType::ARRAY == rvf.get_type());
     slassert(2 == rvf.get_array().size());
     slassert(42 == rvf.get_array()[0].get_integer());
     slassert(TEST_STR("foo") == rvf.get_array()[1].get_string());
     
-    auto& rv_null = rv.get_field_value_by_name("aaa");
+    auto& rv_null = rv.get("aaa");
     slassert(ss::JsonType::NULL_T == rv_null.get_type());
 }
 
