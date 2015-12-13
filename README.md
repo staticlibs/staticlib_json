@@ -110,6 +110,11 @@ This project is released under the [Apache License 2.0](http://www.apache.org/li
 Changelog
 ---------
 
+**2015-12-13**
+
+ * version 1.4.2
+ * fix for templated `Sink`/`Source` operations
+
 **2015-12-04**
 
  * version 1.4.1
