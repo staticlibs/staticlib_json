@@ -49,6 +49,17 @@ namespace serialization {
 void init();
 
 /**
+ * Serializes specified reference (usually obtained from 'Json' instance)
+ * to JSON. JSON is written to the specified streambuf. Preserves order of object fields.
+ * 
+ * @param value reference to reflected value instance
+ * @param dest streambuf to write JSON into
+ * @return JSON string
+ * @throws SerializationException
+ */
+void dump_json_to_streambuf(const JsonValue& value, std::streambuf& dest);
+
+/**
  * Serializes specified reference to JSON. 
  * JSON is written to the specified sink. Preserves order of object fields.
  * 
@@ -63,17 +74,7 @@ void dump_json(const JsonValue& value, Sink& dest) {
     dump_json_to_streambuf(value, sbuf);
 }
 
-/**
- * Serializes specified reference (usually obtained from 'Json' instance)
- * to JSON. JSON is written to the specified streambuf. Preserves order of object fields.
- * 
- * @param value reference to reflected value instance
- * @param dest streambuf to write JSON into
- * @return JSON string
- * @throws SerializationException
- */
-void dump_json_to_streambuf(const JsonValue& value, std::streambuf& dest);
-    
+
 /**
  * Serializes specified reference (usually obtained from 'Json' instance)
  * to JSON string. Preserves order of object fields.
@@ -97,6 +98,18 @@ icu::UnicodeString dump_json_to_ustring(const JsonValue& value);
 #endif // STATICLIB_WITH_ICU
 
 /**
+ * Deserializes data from specified streambuf into 'JsonValue'.
+ * Supports 'bare' (non-object, non-array) JSON input.
+ * Supports partial input: will read only first valid JSON element 
+ * from input string.
+ * 
+ * @param src streambuf with JSON
+ * @return instance of 'JsonValue'
+ * @throws SerializarionException      
+ */
+JsonValue load_json_from_streambuf(std::streambuf& src);
+
+/**
  * Deserializes data from specified source into 'JsonValue'.
  * Supports 'bare' (non-object, non-array) JSON input.
  * Supports partial input: will read only first valid JSON element 
@@ -111,18 +124,6 @@ JsonValue load_json(Source& src) {
     auto sbuf = staticlib::io::make_unbuffered_istreambuf(std::ref(src));
     return load_json_from_streambuf(sbuf);
 }
-
-/**
- * Deserializes data from specified streambuf into 'JsonValue'.
- * Supports 'bare' (non-object, non-array) JSON input.
- * Supports partial input: will read only first valid JSON element 
- * from input string.
- * 
- * @param src streambuf with JSON
- * @return instance of 'JsonValue'
- * @throws SerializarionException      
- */
-JsonValue load_json_from_streambuf(std::streambuf& src);
 
 /**
  * Deserializes specified string into 'JsonValue'.
