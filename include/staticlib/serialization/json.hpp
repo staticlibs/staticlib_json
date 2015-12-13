@@ -26,7 +26,6 @@
 
 #include <streambuf>
 #include <string>
-#include <functional>
 
 #ifdef STATICLIB_WITH_ICU
 #include <unicode/unistr.h>
@@ -70,7 +69,7 @@ void dump_json_to_streambuf(const JsonValue& value, std::streambuf& dest);
  */
 template <typename Sink>
 void dump_json(const JsonValue& value, Sink& dest) {
-    auto sbuf = staticlib::io::make_unbuffered_ostreambuf(std::ref(dest));
+    auto sbuf = staticlib::io::make_unbuffered_ostreambuf(io::make_reference_sink(dest));
     dump_json_to_streambuf(value, sbuf);
 }
 
@@ -121,7 +120,7 @@ JsonValue load_json_from_streambuf(std::streambuf& src);
  */
 template <typename Source>
 JsonValue load_json(Source& src) {
-    auto sbuf = staticlib::io::make_unbuffered_istreambuf(std::ref(src));
+    auto sbuf = staticlib::io::make_unbuffered_istreambuf(io::make_reference_source(src));
     return load_json_from_streambuf(sbuf);
 }
 
