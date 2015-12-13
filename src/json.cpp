@@ -418,7 +418,7 @@ icu::UnicodeString dump_json_to_ustring(const JsonValue& value) {
 }
 #endif // STATICLIB_WITH_ICU
 
-JsonValue load_json_from_streambu(std::streambuf& src) {
+JsonValue load_json_from_streambuf(std::streambuf& src) {
     auto json = json_from_streambuf(src);
     return load_internal(json.get());
 }

@@ -109,7 +109,7 @@ icu::UnicodeString dump_json_to_ustring(const JsonValue& value);
 template <typename Source>
 JsonValue load_json(Source& src) {
     auto sbuf = staticlib::io::make_unbuffered_istreambuf(std::ref(src));
-    return load_json_from_streambu(sbuf);
+    return load_json_from_streambuf(sbuf);
 }
 
 /**
@@ -122,7 +122,7 @@ JsonValue load_json(Source& src) {
  * @return instance of 'JsonValue'
  * @throws SerializarionException      
  */
-JsonValue load_json_from_streambu(std::streambuf& src);
+JsonValue load_json_from_streambuf(std::streambuf& src);
 
 /**
  * Deserializes specified string into 'JsonValue'.
