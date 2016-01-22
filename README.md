@@ -6,7 +6,7 @@ This project is a part of [Staticlibs](http://staticlibs.net/).
 This project contains high level `dump_*` and `load_*` functions to convert 
 objects to/from raw data. JSON format is supported for serialization/deserialization of the
 arbitrary object trees (it is based on [Jansson library](https://github.com/akheron/jansson)).
-Binary serialization uses raw memory from POD objects with a support for lazy deserialization.
+Binary serialization uses raw memory from POD objects with a support for a lazy deserialization.
 
 Link to the [API documentation](http://staticlibs.github.io/staticlib_serialization/docs/html/namespacestaticlib_1_1serialization.html).
 
@@ -51,7 +51,7 @@ objects using [std::aligned_storage](http://en.cppreference.com/w/cpp/types/alig
 guarantee portable binary representation: even packed POD objects can have incompatible representation
 (for example: for `float` fields) and native endianness is used. If portable binary representation is
 required it may be better to look at full-fledged binary serialization tools like 
-[Apache Thrift](https://thrift.apache.org/) or [Cap’n Proto](https://capnproto.org/).
+[Apache Thrift](https://thrift.apache.org/) or [Cap'n Proto](https://capnproto.org/).
 
 Deserialization is a lazy operation - it opens a `Range` of POD objects over a specified binary `Source`.
 
@@ -64,35 +64,23 @@ How to build
 For Windows users ready-to-use binary version of `pkg-config` can be obtained from [tools_windows_pkgconfig](https://github.com/staticlibs/tools_windows_pkgconfig) repository.
 See [PkgConfig](https://github.com/staticlibs/wiki/wiki/PkgConfig) for Staticlibs-specific details about `pkg-config` usage.
 
-This project depends on a [jansson](https://github.com/akheron/jansson) and on a number of Staticlib libraries.
-
-See [StaticlibsDependencies](https://github.com/staticlibs/wiki/wiki/StaticlibsDependencies) for more 
-details about dependency management with Staticlibs.
-
-To build this project manually (without Staticlib toolchains):
-
- * checkout all the dependent projects
- * configure these projects using the same output directory:
-
-Run:
-
-    mkdir build
-    cd build
-    cmake .. -DCMAKE_LIBRARY_OUTPUT_DIRECTORY=<my_lib_dir>
-
- * build all the dependent projects
- * configure this projects using the same output directory and build it:
-
 To build the library on Windows using Visual Studio 2013 Express run the following commands using
 Visual Studio development command prompt 
 (`C:\Program Files (x86)\Microsoft Visual Studio 12.0\Common7\Tools\Shortcuts\VS2013 x86 Native Tools Command Prompt`):
 
+    git clone --recursive https://github.com/staticlibs/external_jansson.git
+    git clone https://github.com/staticlibs/staticlib_config.git
+    git clone https://github.com/staticlibs/staticlib_io.git
+    git clone https://github.com/staticlibs/staticlib_ranges.git
     git clone https://github.com/staticlibs/staticlib_serialization.git
     cd staticlib_serialization
     mkdir build
     cd build
-    cmake .. -DCMAKE_LIBRARY_OUTPUT_DIRECTORY=<my_lib_dir>
+    cmake .. 
     msbuild staticlib_serialization.sln
+
+Cloning of [external_jansson](https://github.com/staticlibs/external_jansson.git) is not required on Linux - 
+system Jansson library will be used instead.
 
 To build on other platforms using GCC or Clang with GNU Make:
 
@@ -100,7 +88,7 @@ To build on other platforms using GCC or Clang with GNU Make:
     make
 
 See [StaticlibsToolchains](https://github.com/staticlibs/wiki/wiki/StaticlibsToolchains) for 
-more information about the toolchain setup and cross-compilation.
+more information about the CMake toolchains setup and cross-compilation.
 
 License information
 -------------------
@@ -109,6 +97,11 @@ This project is released under the [Apache License 2.0](http://www.apache.org/li
 
 Changelog
 ---------
+
+**2016-01-22**
+
+ * version 1.4.3
+ * minor CMake changes
 
 **2015-12-13**
 

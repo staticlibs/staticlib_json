@@ -16,7 +16,7 @@ cmake_minimum_required ( VERSION 2.8.12 )
 
 # project
 project ( staticlib_serialization CXX )
-set ( ${PROJECT_NAME}_STATICLIB_VERSION 1.4.2 )
+set ( ${PROJECT_NAME}_STATICLIB_VERSION 1.4.3 )
 set ( ${PROJECT_NAME}_DESCRIPTION "Staticlibs serialization library" )
 set ( ${PROJECT_NAME}_URL https://github.com/staticlibs/staticlib_serialization )
 include ( ${CMAKE_CURRENT_LIST_DIR}/resources/macros.cmake )
@@ -41,6 +41,25 @@ endif ( )
 
 # options, use SET ( OPTNAME ON CACHE BOOL "") in parent to override
 option ( STATICLIB_WITH_ICU "Build with ICU support" OFF )
+
+# standalone build
+if ( NOT DEFINED CMAKE_LIBRARY_OUTPUT_DIRECTORY )
+    set ( CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR} )
+endif ( )
+if ( NOT DEFINED STATICLIB_TOOLCHAIN )
+    if ( NOT ${CMAKE_SYSTEM_NAME} STREQUAL "Linux" ) 
+        staticlib_serialization_add_subdirectory ( ${CMAKE_CURRENT_LIST_DIR}/../external_jansson )
+        if ( STATICLIB_WITH_ICU )
+            staticlib_serialization_add_subdirectory ( ${CMAKE_CURRENT_LIST_DIR}/../external_icu )
+        endif ( )
+    endif (  )
+    staticlib_serialization_add_subdirectory ( ${CMAKE_CURRENT_LIST_DIR}/../staticlib_config )
+    staticlib_serialization_add_subdirectory ( ${CMAKE_CURRENT_LIST_DIR}/../staticlib_io )
+    staticlib_serialization_add_subdirectory ( ${CMAKE_CURRENT_LIST_DIR}/../staticlib_ranges )
+    if ( STATICLIB_WITH_ICU )
+        staticlib_serialization_add_subdirectory ( ${CMAKE_CURRENT_LIST_DIR}/../staticlib_icu )
+    endif ( )
+endif ( )
 
 # deps
 set ( ${PROJECT_NAME}_OPTIONS "" )
@@ -77,10 +96,7 @@ if ( TARGET external_jansson )
 endif ( )
 
 # pkg-config
-if ( NOT DEFINED CMAKE_LIBRARY_OUTPUT_DIRECTORY )
-    set ( CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} )
-endif ( )
-staticlib_list_to_string ( ${PROJECT_NAME}_PC_CFLAGS_OPTS "" ${PROJECT_NAME}_OPTIONS )
+staticlib_serialization_list_to_string ( ${PROJECT_NAME}_PC_CFLAGS_OPTS "" ${PROJECT_NAME}_OPTIONS )
 set ( ${PROJECT_NAME}_PC_CFLAGS "-I${CMAKE_CURRENT_LIST_DIR}/include ${${PROJECT_NAME}_PC_CFLAGS_OPTS}" )
 set ( ${PROJECT_NAME}_PC_LIBS "-L${CMAKE_LIBRARY_OUTPUT_DIRECTORY} -l${PROJECT_NAME}" )
 staticlib_serialization_list_to_string ( ${PROJECT_NAME}_PC_REQUIRES "" ${PROJECT_NAME}_DEPS_PUBLIC )
