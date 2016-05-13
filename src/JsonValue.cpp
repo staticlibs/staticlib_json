@@ -156,6 +156,12 @@ type(JsonType::INTEGER), integerVal(integerValue) { }
 JsonValue::JsonValue(uint32_t integerValue) :
 JsonValue(static_cast<int64_t> (integerValue)) { }
 
+JsonValue::JsonValue(int16_t integerValue) :
+JsonValue(static_cast<int64_t> (integerValue)) { }
+
+JsonValue::JsonValue(uint16_t integerValue) :
+JsonValue(static_cast<int64_t> (integerValue)) { }
+
 JsonValue::JsonValue(double realValue) :
 type(JsonType::REAL), realVal(realValue) { }
 

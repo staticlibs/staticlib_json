@@ -205,7 +205,21 @@ public:
      * 
      * @param integerValue int value
      */
-    JsonValue(uint32_t integerValue);    
+    JsonValue(uint32_t integerValue);
+
+    /**
+     * Constructs `INTEGER` reflected value
+     * 
+     * @param integerValue int value
+     */
+    JsonValue(int16_t integerValue);
+
+    /**
+     * Constructs `INTEGER` reflected value
+     * 
+     * @param integerValue int value
+     */
+    JsonValue(uint16_t integerValue);
     
     /**
      * Constructs `REAL` reflected value
