@@ -223,7 +223,7 @@ int dump_callback(const char* buffer, size_t size, void* data) {
 void json_to_streambuf(json_t* json, std::streambuf& dest) {
     Dumper dumper{dest};
     void* dumper_ptr = static_cast<void*>(std::addressof(dumper));
-    int res = json_dump_callback(json, dump_callback, dumper_ptr, size_t JSON_INDENT(4) | JSON_PRESERVE_ORDER);
+    int res = json_dump_callback(json, dump_callback, dumper_ptr, JSON_ENCODE_ANY | JSON_INDENT(4) | JSON_PRESERVE_ORDER);
     if (0 != res) throw SerializationException(TRACEMSG(std::string{} +
             "Error dumping JSON type: [" + sc::to_string(json_typeof(json)) + "],"
             " error: [" + dumper.get_error() + "]"));

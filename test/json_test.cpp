@@ -188,6 +188,13 @@ void test_preserve_order() {
     }
 }
 
+void test_dump_string() {
+    ss::JsonValue val{"Not Found"};
+    slassert(ss::JsonType::STRING == val.get_type());
+    auto dumped = ss::dump_json_to_string(val);
+    slassert("\"Not Found\"" == dumped);    
+}
+
 int main() {
     try {
         test_init();
@@ -197,6 +204,7 @@ int main() {
 #endif // STATICLIB_WITH_ICU        
         test_loads();
         test_preserve_order();
+        test_dump_string();
     } catch (const std::exception& e) {
         std::cout << e.what() << std::endl;
         return 1;
