@@ -293,19 +293,19 @@ void test_field_by_name() {
 
 int main() {
     try {
-//        test_null();
-//        test_object();
-//        test_array();
-//        test_string();
-//        test_string_default();
-//        test_int();
-//        test_int_default();
-//        test_real();
-//        test_real_default();
-//        test_boolean();
-//        test_boolean_default();
+        test_null();
+        test_object();
+        test_array();
+        test_string();
+        test_string_default();
+        test_int();
+        test_int_default();
+        test_real();
+        test_real_default();
+        test_boolean();
+        test_boolean_default();
         test_from_range();
-//        test_field_by_name();
+        test_field_by_name();
     } catch (const std::exception& e) {
         std::cout << e.what() << std::endl;
         return 1;
