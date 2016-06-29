@@ -29,21 +29,11 @@
 
 #include "staticlib/serialization/JsonField.hpp"
 
-#ifdef STATICLIB_WITH_ICU
-#define TEST_STR(CHARS) icu::UnicodeString{CHARS}
-#else
-#define TEST_STR(CHARS) std::string{CHARS}
-#endif // STATICLIB_WITH_ICU
-
 namespace ss = staticlib::serialization;
 
 class TestRefl {
     int32_t f1 = 41;
-#ifdef STATICLIB_WITH_ICU
-    icu::UnicodeString f2 = "42";
-#else    
     std::string f2 = "42";
-#endif    
     bool f3 = true;
 
 public:
@@ -88,10 +78,10 @@ void test_object() {
     ss::JsonValue rv = TestRefl{}.get_reflected_value().clone();
     slassert(ss::JsonType::OBJECT == rv.get_type());
     slassert(6 == rv.get_object().size());
-    slassert(TEST_STR("f1") == rv.get_object()[0].get_name());
+    slassert("f1" == rv.get_object()[0].get_name());
     slassert(41 == rv.get_object()[0].get_value().get_integer());
-    slassert(TEST_STR("f2") == rv.get_object()[1].get_name());
-    slassert(TEST_STR("42") == rv.get_object()[1].get_string());
+    slassert("f2" == rv.get_object()[1].get_name());
+    slassert("42" == rv.get_object()[1].get_string());
     slassert(ss::JsonType::INTEGER == rv.get_object()[0].get_value().get_type());
     slassert(ss::JsonType::STRING == rv.get_object()[1].get_value().get_type());
     slassert(ss::JsonType::BOOLEAN == rv.get_object()[2].get_value().get_type());
@@ -113,7 +103,7 @@ void test_object() {
     slassert(6 == rv.get_object_ptr().first->size());
     rv.get_object_ptr().first->emplace_back("added", "aaa");
     slassert(7 == rv.get_object().size());
-    slassert(TEST_STR("aaa") == rv.get_object()[6].get_string());
+    slassert("aaa" == rv.get_object()[6].get_string());
     slassert(!rv.get_array_ptr().second);
 }
 
@@ -142,7 +132,7 @@ void test_array() {
     slassert(2 == rv.get_array_ptr().first->size());
     rv.get_array_ptr().first->emplace_back("aaa");
     slassert(3 == rv.get_array().size());
-    slassert(TEST_STR("aaa") == rv.get_array()[2].get_string());
+    slassert("aaa" == rv.get_array()[2].get_string());
 }
 
 void test_string() {
@@ -151,7 +141,7 @@ void test_string() {
     slassert(0 == rv.get_object().size());
     slassert(0 == rv.get_array().size());
     slassert(2 == rv.get_string().length());
-    slassert(TEST_STR("42") == rv.get_string());
+    slassert("42" == rv.get_string());
     slassert(0 == rv.get_integer());
     slassert(-1 < rv.get_real() && rv.get_real() < 1);
     slassert(!rv.get_boolean());
@@ -160,7 +150,7 @@ void test_string() {
     slassert(!rv.set_integer(42));
     slassert(!rv.set_real(42.0));
     slassert(rv.set_string("foo"));
-    slassert(TEST_STR("foo") == rv.get_string());
+    slassert("foo" == rv.get_string());
     // mutators
     slassert(!rv.get_object_ptr().second);
     slassert(!rv.get_array_ptr().second);
@@ -169,7 +159,7 @@ void test_string() {
 void test_string_default() {
     ss::JsonValue rv{};
     (void) rv;
-    slassert(TEST_STR("42") == rv.get_string("42"));
+    slassert("42" == rv.get_string("42"));
 }
 
 void test_int() {
@@ -267,11 +257,7 @@ void test_boolean_default() {
 }
 
 void test_from_range() {
-#ifdef STATICLIB_WITH_ICU
-    std::vector<icu::UnicodeString> vec{"foo", "bar"};
-#else    
     std::vector<std::string> vec{"foo", "bar"};
-#endif // STATICLIB_WITH_ICU    
     
     auto rv = ss::JsonValue(vec);
     slassert(ss::JsonType::ARRAY == rv.get_type());
@@ -285,11 +271,21 @@ void test_field_by_name() {
     slassert(ss::JsonType::ARRAY == rvf.get_type());
     slassert(2 == rvf.get_array().size());
     slassert(42 == rvf.get_array()[0].get_integer());
-    slassert(TEST_STR("foo") == rvf.get_array()[1].get_string());
+    slassert("foo" == rvf.get_array()[1].get_string());
     
     auto& rv_null = rv.get("aaa");
     slassert(ss::JsonType::NULL_T == rv_null.get_type());
 }
+
+#ifdef STATICLIB_WITH_ICU
+void test_icu() {
+    icu::UnicodeString st{"foo"};
+    ss::JsonValue val{st};
+    slassert(icu::UnicodeString{"foo"} == val.get_ustring());
+    val.set_ustring("bar");
+    slassert(icu::UnicodeString{"bar"} == val.get_ustring());
+}
+#endif // STATICLIB_WITH_ICU
 
 int main() {
     try {
@@ -306,6 +302,9 @@ int main() {
         test_boolean_default();
         test_from_range();
         test_field_by_name();
+#ifdef STATICLIB_WITH_ICU
+        test_icu();
+#endif // STATICLIB_WITH_ICU
     } catch (const std::exception& e) {
         std::cout << e.what() << std::endl;
         return 1;

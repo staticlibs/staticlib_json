@@ -84,22 +84,6 @@ std::unique_ptr<json_t, JanssonDeleter> dump_null() {
     return std::unique_ptr<json_t, JanssonDeleter>{json_p, JanssonDeleter()};
 }
 
-#ifdef STATICLIB_WITH_ICU
-std::unique_ptr<json_t, JanssonDeleter> dump_object(const std::vector<JsonField>& objectValue) {
-    auto json_p = json_object();
-    if (!json_p) throw SerializationException(TRACEMSG("Error initializing JSON object"));
-    std::unique_ptr<json_t, JanssonDeleter> obj{json_p, JanssonDeleter()};
-    for (const auto& va : objectValue) {
-        auto jval = dump_internal(va.get_value());
-        std::string bytes;
-        va.get_name().toUTF8String(bytes);
-        auto err = json_object_set(obj.get(), bytes.c_str(), jval.get());
-        if (err) throw SerializationException(TRACEMSG(std::string{} + 
-                "Error setting field to JSON object, field name:[" + bytes + "]"));
-    }
-    return obj;
-}
-#else
 std::unique_ptr<json_t, JanssonDeleter> dump_object(const std::vector<JsonField>& objectValue) {
     auto json_p = json_object();
     if (!json_p) throw SerializationException(TRACEMSG("Error initializing JSON object"));
@@ -112,7 +96,6 @@ std::unique_ptr<json_t, JanssonDeleter> dump_object(const std::vector<JsonField>
     }
     return obj;
 }
-#endif // STATICLIB_WITH_ICU
 
 std::unique_ptr<json_t, JanssonDeleter> dump_array(const std::vector<JsonValue>& arrayValue) {
     auto json_p = json_array();
@@ -127,23 +110,12 @@ std::unique_ptr<json_t, JanssonDeleter> dump_array(const std::vector<JsonValue>&
     return arr;
 }
 
-#ifdef STATICLIB_WITH_ICU
-std::unique_ptr<json_t, JanssonDeleter> dump_string(const icu::UnicodeString& stringValue) {
-    std::string bytes{};
-    stringValue.toUTF8String(bytes);
-    auto json_p = json_string(bytes.c_str());
-    if (!json_p) throw SerializationException(TRACEMSG(
-            "Error initializing JSON with value:[" + bytes + "]"));
-    return std::unique_ptr<json_t, JanssonDeleter>{json_p, JanssonDeleter()};
-}
-#else
 std::unique_ptr<json_t, JanssonDeleter> dump_string(const std::string& stringValue) {
     auto json_p = json_string(stringValue.c_str());
     if (!json_p) throw SerializationException(TRACEMSG(
             "Error initializing JSON with value:[" + stringValue + "]"));
     return std::unique_ptr<json_t, JanssonDeleter>{json_p, JanssonDeleter()};
 }
-#endif // STATICLIB_WITH_ICU
 
 std::unique_ptr<json_t, JanssonDeleter> dump_integer(int64_t integerValue) {
     auto json_p = json_integer(integerValue);
@@ -242,11 +214,7 @@ JsonValue load_object(json_t* value) {
     obj.reserve(size);
 
 // https://github.com/akheron/jansson/blob/23b1b7ba9a6bfce36d6e42623146c815e6b4e234/src/dump.c#L302
-#ifdef STATICLIB_WITH_ICU
-    std::vector<std::pair < icu::UnicodeString, size_t >> keys{};
-#else
     std::vector<std::pair < std::string, size_t >> keys{};
-#endif // STATICLIB_WITH_ICU
     keys.reserve(size);
 
     auto iter = json_object_iter(value);
@@ -256,18 +224,6 @@ JsonValue load_object(json_t* value) {
         keys.emplace_back(key, serial);
         iter = json_object_iter_next(value, iter);
     }
-#ifdef STATICLIB_WITH_ICU
-    std::sort(keys.begin(), keys.end(), [](const std::pair<icu::UnicodeString, size_t>& left,
-            const std::pair<icu::UnicodeString, size_t>& right) {
-        return left.second < right.second;
-    });
-    for (auto&& pair : keys) {
-        std::string bytes;
-        pair.first.toUTF8String(bytes);
-        auto va = json_object_get(value, bytes.c_str());
-        obj.emplace_back(std::move(pair.first), load_internal(va));
-    }
-#else    
     std::sort(keys.begin(), keys.end(), [](const std::pair<std::string, size_t>& left,
             const std::pair<std::string, size_t>& right) {
         return left.second < right.second;
@@ -276,7 +232,6 @@ JsonValue load_object(json_t* value) {
         auto va = json_object_get(value, pair.first.c_str());
         obj.emplace_back(std::move(pair.first), load_internal(va));
     }
-#endif // STATICLIB_WITH_ICU
     return JsonValue(std::move(obj));
 }
 

@@ -57,13 +57,6 @@ static const std::string JSON_STR =
 })";
 
 #ifdef STATICLIB_WITH_ICU
-class UStringHasher {
-public:
-    size_t operator()(icu::UnicodeString value) const {
-        return static_cast<size_t> (value.hashCode());
-    }
-};
-
 static const icu::UnicodeString JSON_USTR = icu::UnicodeString::fromUTF8(JSON_STR);
 #endif // STATICLIB_WITH_ICU
 
@@ -83,11 +76,7 @@ public:
 
 class TestRefl {
     int32_t f1 = 41;
-#ifdef STATICLIB_WITH_ICU
-    icu::UnicodeString f2 = "42";
-#else
     std::string f2 = "42";
-#endif // STATICLIB_WITH_ICU
     bool f3 = true;
 
 public:    
@@ -137,11 +126,7 @@ void test_loads() {
     auto rv = ss::load_json_from_string(JSON_STR);
     auto& obj = rv.get_object();
     slassert(5 == obj.size());
-#ifdef STATICLIB_WITH_ICU
-    std::unordered_set<icu::UnicodeString, UStringHasher> set{};
-#else
     std::unordered_set<std::string> set{};
-#endif // STATICLIB_WITH_ICU    
     for (const auto& fi : obj) {
         set.insert(fi.get_name());
         if (fi.get_name() == "f1") {

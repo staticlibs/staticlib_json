@@ -23,6 +23,10 @@
 
 #include "staticlib/serialization/JsonValue.hpp"
 
+#ifdef STATICLIB_WITH_ICU
+#include "staticlib/icu_utils.hpp"
+#endif // STATICLIB_WITH_ICU
+
 #include "staticlib/serialization/JsonField.hpp"
 
 namespace staticlib {
@@ -30,14 +34,18 @@ namespace serialization {
 
 namespace { // anonymous
 
+#ifdef STATICLIB_WITH_ICU
+namespace su = staticlib::icu_utils;
+#endif // STATICLIB_WITH_ICU
+
 const std::vector<JsonField> EMPTY_OBJECT{};
 const std::vector<JsonValue> EMPTY_ARRAY{};
-#ifdef STATICLIB_WITH_ICU
-const icu::UnicodeString EMPTY_STRING{};
-#else
 const std::string EMPTY_STRING{};
-#endif // STATICLIB_WITH_ICU
 const JsonValue NULL_VALUE{};
+
+#ifdef STATICLIB_WITH_ICU
+const icu::UnicodeString EMPTY_USTRING{};
+#endif // STATICLIB_WITH_ICU
 
 } // namespace
 
@@ -123,28 +131,21 @@ type(JsonType::ARRAY) {
     *(this->arrayVal) = std::move(arrayValue);
 }
 
-#ifdef STATICLIB_WITH_ICU
-JsonValue::JsonValue(icu::UnicodeString stringValue) :
-type(JsonType::STRING) {
-    this->stringVal = new icu::UnicodeString();
-    *(this->stringVal) = std::move(stringValue);
-}
-#else
 JsonValue::JsonValue(std::string stringValue) :
-type(JsonType::STRING) { 
+type(JsonType::STRING) {
     this->stringVal = new std::string();
     *(this->stringVal) = std::move(stringValue);
 }
+
+#ifdef STATICLIB_WITH_ICU
+JsonValue::JsonValue(icu::UnicodeString ustringValue) :
+JsonValue(su::to_utf8(ustringValue)) { }
 #endif // STATICLIB_WITH_ICU
 
 
 JsonValue::JsonValue(const char* stringValue) :
 type(JsonType::STRING) {
-#ifdef STATICLIB_WITH_ICU
-    this->stringVal = new icu::UnicodeString(stringValue);
-#else    
     this->stringVal = new std::string(stringValue);
-#endif // STATICLIB_WITH_ICU    
 }
 
 JsonValue::JsonValue(int32_t integerValue) :
@@ -213,8 +214,7 @@ std::pair<std::vector<JsonField>*, bool> JsonValue::get_object_ptr() {
     return {nullptr, false};
 }
 
-#ifdef STATICLIB_WITH_ICU
-const JsonValue& JsonValue::get(const icu::UnicodeString& name) const {
+const JsonValue& JsonValue::get(const std::string& name) const {
     for (auto& el : this->get_object()) {
         if (name == el.get_name()) {
             return el.get_value();
@@ -222,10 +222,11 @@ const JsonValue& JsonValue::get(const icu::UnicodeString& name) const {
     }
     return NULL_VALUE;
 }
-#else
-const JsonValue& JsonValue::get(const std::string& name) const {
+
+#ifdef STATICLIB_WITH_ICU
+const JsonValue& JsonValue::getu(const icu::UnicodeString& uname) const {
     for (auto& el : this->get_object()) {
-        if (name == el.get_name()) {
+        if (uname == el.get_uname()) {
             return el.get_value();
         }
     }
@@ -247,29 +248,6 @@ std::pair<std::vector<JsonValue>*, bool> JsonValue::get_array_ptr() {
     return {nullptr, false};
 }
 
-#ifdef STATICLIB_WITH_ICU
-const icu::UnicodeString& JsonValue::get_string() const {
-    if (JsonType::STRING == type) {
-        return *(this->stringVal);
-    }
-    return EMPTY_STRING;
-}
-
-const icu::UnicodeString& JsonValue::get_string(const icu::UnicodeString& default_val) const {
-    if (JsonType::STRING == type) {
-        return *(this->stringVal);
-    }
-    return default_val;
-}
-
-bool JsonValue::set_string(icu::UnicodeString value) {
-    if (JsonType::STRING == type) {
-        *(this->stringVal) = std::move(value);
-        return true;
-    }
-    return false;
-}
-#else
 const std::string& JsonValue::get_string() const {
     if (JsonType::STRING == type) {
         return *(this->stringVal);
@@ -287,6 +265,36 @@ const std::string& JsonValue::get_string(const std::string& default_val) const {
 bool JsonValue::set_string(std::string value) {
     if (JsonType::STRING == type) {
         *(this->stringVal) = std::move(value);
+        return true;
+    }
+    return false;
+}
+
+#ifdef STATICLIB_WITH_ICU
+const icu::UnicodeString& JsonValue::get_ustring() const {
+    if (JsonType::STRING == type) {
+        if (nullptr == ustringValCached.get()) {
+            this->ustringValCached = std::unique_ptr<icu::UnicodeString>{new icu::UnicodeString{}};
+            *(this->ustringValCached) = icu::UnicodeString::fromUTF8(*(this->stringVal));
+        }
+        return *(this->ustringValCached);
+    }
+    return EMPTY_USTRING;
+}
+
+const icu::UnicodeString& JsonValue::get_ustring(const icu::UnicodeString& default_val) const {
+    if (JsonType::STRING == type) {
+        return get_ustring();
+    }
+    return default_val;
+}
+
+bool JsonValue::set_ustring(icu::UnicodeString value) {
+    if (JsonType::STRING == type) {
+        *(this->stringVal) = su::to_utf8(value);
+        if (nullptr != ustringValCached.get()) {
+            *ustringValCached = icu::UnicodeString::fromUTF8(*(this->stringVal));
+        }
         return true;
     }
     return false;

@@ -23,8 +23,20 @@
 
 #include "staticlib/serialization/JsonField.hpp"
 
+#ifdef STATICLIB_WITH_ICU
+#include "staticlib/icu_utils.hpp"
+#endif // STATICLIB_WITH_ICU
+
 namespace staticlib {
 namespace serialization {
+
+namespace { // anonymous
+
+#ifdef STATICLIB_WITH_ICU
+namespace su = staticlib::icu_utils;
+#endif // STATICLIB_WITH_ICU
+
+} // namespace
 
 JsonField::JsonField(JsonField&& other) :
 name(std::move(other.name)), value(std::move(other.value)) { }
@@ -37,21 +49,28 @@ JsonField& JsonField::operator=(JsonField&& other) {
 
 JsonField::JsonField() { }
 
-#ifdef STATICLIB_WITH_ICU
-JsonField::JsonField(icu::UnicodeString name, JsonValue value) :
-name(std::move(name)), value(std::move(value)) { }
-#else
 JsonField::JsonField(std::string name, JsonValue value) :
 name(std::move(name)), value(std::move(value)) { }
-#endif // STATICLIB_WITH_ICU
+
+JsonField::JsonField(const char* name, JsonValue value) :
+name(name), value(std::move(value)) { }
 
 #ifdef STATICLIB_WITH_ICU
-const icu::UnicodeString& JsonField::get_name() const {
-    return name;
-}
-#else
+JsonField::JsonField(icu::UnicodeString uname, JsonValue value) :
+name(su::to_utf8(uname)), value(std::move(value)) { }
+#endif // STATICLIB_WITH_ICU
+
 const std::string& JsonField::get_name() const {
     return name;
+}
+
+#ifdef STATICLIB_WITH_ICU
+const icu::UnicodeString& JsonField::get_uname() const {
+    if (nullptr == uname.get()) {
+        uname = std::unique_ptr<icu::UnicodeString>{new icu::UnicodeString{}};
+        *uname = icu::UnicodeString::fromUTF8(name);
+    }
+    return *uname;
 }
 #endif // STATICLIB_WITH_ICU
 
@@ -80,21 +99,21 @@ const std::vector<JsonValue>& JsonField::get_array() const {
     return get_value().get_array();
 }
 
-#ifdef STATICLIB_WITH_ICU
-const icu::UnicodeString& JsonField::get_string() const {
-    return get_value().get_string();
-}
-
-const icu::UnicodeString& JsonField::get_string(const icu::UnicodeString& default_val) const {
-    return get_value().get_string(default_val);
-}
-#else
 const std::string& JsonField::get_string() const {
     return get_value().get_string();
 }
 
 const std::string& JsonField::get_string(const std::string& default_val) const {
     return get_value().get_string(default_val);
+}
+
+#ifdef STATICLIB_WITH_ICU
+const icu::UnicodeString& JsonField::get_ustring() const {
+    return get_value().get_ustring();
+}
+
+const icu::UnicodeString& JsonField::get_ustring(const icu::UnicodeString& default_val) const {
+    return get_value().get_ustring(default_val);
 }
 #endif // STATICLIB_WITH_ICU
 

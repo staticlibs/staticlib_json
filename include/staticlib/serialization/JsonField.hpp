@@ -21,13 +21,13 @@
  * Created on January 23, 2015, 10:33 AM
  */
 
+#include <memory>
+#include <string>
 #include <vector>
 #include <cstdint>
 
 #ifdef STATICLIB_WITH_ICU
 #include <unicode/unistr.h>
-#else
-#include <string>
 #endif // STATICLIB_WITH_ICU
 
 #include "staticlib/serialization/JsonValue.hpp"
@@ -44,10 +44,9 @@ namespace serialization {
  * from this object without intermediate `get_value()` call.
  */
 class JsonField {
-#ifdef STATICLIB_WITH_ICU
-    icu::UnicodeString name;
-#else    
     std::string name;
+#ifdef STATICLIB_WITH_ICU
+    mutable std::unique_ptr<icu::UnicodeString> uname;
 #endif // STATICLIB_WITH_ICU
     JsonValue value;
     
@@ -91,10 +90,24 @@ public:
      * @param name field name
      * @param value field value
      */
-#ifdef STATICLIB_WITH_ICU
-    JsonField(icu::UnicodeString name, JsonValue value);
-#else
     JsonField(std::string name, JsonValue value);
+
+    /**
+     * Constructor
+     * 
+     * @param name field name
+     * @param value field value
+     */
+    JsonField(const char* name, JsonValue value);
+
+#ifdef STATICLIB_WITH_ICU
+    /**
+     * Constructor
+     * 
+     * @param name field name
+     * @param value field value
+     */
+    JsonField(icu::UnicodeString uname, JsonValue value);
 #endif // STATICLIB_WITH_ICU
     
     /**
@@ -102,10 +115,15 @@ public:
      * 
      * @return field name
      */
-#ifdef STATICLIB_WITH_ICU
-    const icu::UnicodeString& get_name() const;
-#else
     const std::string& get_name() const;
+
+#ifdef STATICLIB_WITH_ICU
+    /**
+     * Field name accessor
+     * 
+     * @return field name
+     */
+    const icu::UnicodeString& get_uname() const;
 #endif // STATICLIB_WITH_ICU
 
     /**
@@ -150,23 +168,6 @@ public:
      */
     const std::vector<JsonValue>& get_array() const;
 
-#ifdef STATICLIB_WITH_ICU        
-    /**
-     * Access reflected value as an `STRING`
-     * 
-     * @return string value
-     */
-    const icu::UnicodeString& get_string() const;
-
-    /**
-     * Access reflected value as a `STRING`,
-     * returns specified default string if this value is not a `STRING`
-     * 
-     * @param default_val default value
-     * @return string value
-     */
-    const icu::UnicodeString& get_string(const icu::UnicodeString& default_val) const;
-#else  
     /**
      * Access reflected value as an `STRING`
      * 
@@ -182,7 +183,24 @@ public:
      * @return string value
      */
     const std::string& get_string(const std::string& default_val) const;
-#endif // STATICLIB_WITH_ICU    
+
+#ifdef STATICLIB_WITH_ICU 
+    /**
+     * Access reflected value as an `STRING`
+     * 
+     * @return string value
+     */
+    const icu::UnicodeString& get_ustring() const;
+
+    /**
+     * Access reflected value as a `STRING`,
+     * returns specified default string if this value is not a `STRING`
+     * 
+     * @param default_val default value
+     * @return string value
+     */
+    const icu::UnicodeString& get_ustring(const icu::UnicodeString& default_val) const;
+#endif // STATICLIB_WITH_ICU
 
     /**
      * Access reflected value as an `INTEGER`

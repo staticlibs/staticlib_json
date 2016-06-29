@@ -24,15 +24,15 @@
 #ifndef STATICLIB_SERIALIZATION_JSONVALUE_HPP
 #define	STATICLIB_SERIALIZATION_JSONVALUE_HPP
 
-#include <vector>
-#include <utility>
 #include <functional>
+#include <memory>
+#include <string>
+#include <utility>
+#include <vector>
 #include <cstdint>
 
 #ifdef STATICLIB_WITH_ICU
 #include <unicode/unistr.h>
-#else
-#include <string>
 #endif // STATICLIB_WITH_ICU
 
 #include "staticlib/config.hpp"
@@ -86,15 +86,14 @@ private:
         // http://stackoverflow.com/q/8329826/314015
         std::vector<JsonField>* objectVal;
         std::vector<JsonValue>* arrayVal;
-#ifdef STATICLIB_WITH_ICU
-        icu::UnicodeString* stringVal;
-#else
         std::string* stringVal;
-#endif // STATICLIB_WITH_ICU
         int64_t integerVal;
         double realVal;
         bool booleanVal;
     };
+#ifdef STATICLIB_WITH_ICU
+    mutable std::unique_ptr<icu::UnicodeString> ustringValCached;
+#endif // STATICLIB_WITH_ICU
 public:
     ~JsonValue() STATICLIB_NOEXCEPT;
     /**
@@ -167,13 +166,20 @@ public:
     template <typename T>
     JsonValue(T& arrayValueRange) :
     JsonValue(emplace_values_to_vector(arrayValueRange)) { }
+   
+    /**
+     * Constructs `STRING` reflected value
+     * 
+     * @param stringValue string value
+     */
+    JsonValue(std::string stringValue);
 
     /**
      * Constructs `STRING` reflected value
      * 
      * @param stringValue string value
      */
-    JsonValue(const char* stringValue);
+    JsonValue(const char* stringValue);    
     
     /**
      * Constructs `STRING` reflected value
@@ -181,9 +187,7 @@ public:
      * @param stringValue string value
      */
 #ifdef STATICLIB_WITH_ICU
-    JsonValue(icu::UnicodeString stringValue);
-#else    
-    JsonValue(std::string stringValue);
+    JsonValue(icu::UnicodeString ustringValue);
 #endif // STATICLIB_WITH_ICU    
     
     /**
@@ -273,10 +277,18 @@ public:
      * 
      * @return value of specified field
      */
-#ifdef STATICLIB_WITH_ICU    
-    const JsonValue& get(const icu::UnicodeString& name) const;
-#else
     const JsonValue& get(const std::string& name) const;
+    
+#ifdef STATICLIB_WITH_ICU
+    /**
+     * Returns value of the field with specified name if this
+     * value is an `OBJECT` and contains specified field.
+     * Otherwise returns `NULL_T` value.
+     * Note: this is O(number_of_fields) operation, consider using explicit loop instead.
+     * 
+     * @return value of specified field
+     */
+    const JsonValue& getu(const icu::UnicodeString& uname) const;
 #endif // STATICLIB_WITH_ICU
     
     /**
@@ -295,32 +307,6 @@ public:
      */
     std::pair<std::vector<JsonValue>*, bool> get_array_ptr();
     
-#ifdef STATICLIB_WITH_ICU        
-    /**
-     * Access reflected value as an `STRING`
-     * 
-     * @return string value
-     */
-    const icu::UnicodeString& get_string() const;
-    
-    /**
-     * Access reflected value as a `STRING`,
-     * returns specified default string if this value is not a `STRING`
-     * 
-     * @param default_val default value
-     * @return string value
-     */
-    const icu::UnicodeString& get_string(const icu::UnicodeString& default_val) const;
-    
-    /**
-     * Setter for the `STRING` value
-     * 
-     * @param value new value
-     * @return `true` if value was set, `false` if current
-     *         instance is not a `STRING`
-     */
-    bool set_string(icu::UnicodeString value);
-#else  
     /**
      * Access reflected value as an `STRING`
      * 
@@ -345,7 +331,33 @@ public:
      *         instance is not a `STRING`
      */
     bool set_string(std::string value);
-#endif // STATICLIB_WITH_ICU    
+    
+#ifdef STATICLIB_WITH_ICU        
+    /**
+     * Access reflected value as an `STRING`
+     * 
+     * @return string value
+     */
+    const icu::UnicodeString& get_ustring() const;
+
+    /**
+     * Access reflected value as a `STRING`,
+     * returns specified default string if this value is not a `STRING`
+     * 
+     * @param default_val default value
+     * @return string value
+     */
+    const icu::UnicodeString& get_ustring(const icu::UnicodeString& default_val) const;
+
+    /**
+     * Setter for the `STRING` value
+     * 
+     * @param value new value
+     * @return `true` if value was set, `false` if current
+     *         instance is not a `STRING`
+     */
+    bool set_ustring(icu::UnicodeString value);
+#endif // STATICLIB_WITH_ICU
     
     /**
      * Access reflected value as an `INTEGER`
