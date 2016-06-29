@@ -91,7 +91,7 @@ std::unique_ptr<json_t, JanssonDeleter> dump_object(const std::vector<JsonField>
     for (const auto& va : objectValue) {
         auto jval = dump_internal(va.get_value());
         auto err = json_object_set(obj.get(), va.get_name().c_str(), jval.get());
-        if (err) throw SerializationException(TRACEMSG(std::string{} +
+        if (err) throw SerializationException(TRACEMSG(
                 "Error setting field to JSON object, field name:[" + va.get_name() + "]"));
     }
     return obj;
@@ -147,7 +147,7 @@ std::unique_ptr<json_t, JanssonDeleter> dump_internal(const JsonValue& value) {
     case (JsonType::INTEGER): return dump_integer(value.get_integer());
     case (JsonType::REAL): return dump_real(value.get_real());
     case (JsonType::BOOLEAN): return dump_boolean(value.get_boolean());
-    default: throw SerializationException(TRACEMSG(std::string{} +
+    default: throw SerializationException(TRACEMSG(
                 "Unsupported JSON type:[" + sc::to_string(static_cast<char> (value.get_type())) + "]"));
     }
 }
@@ -196,7 +196,7 @@ void json_to_streambuf(json_t* json, std::streambuf& dest) {
     Dumper dumper{dest};
     void* dumper_ptr = static_cast<void*>(std::addressof(dumper));
     int res = json_dump_callback(json, dump_callback, dumper_ptr, JSON_ENCODE_ANY | JSON_INDENT(4) | JSON_PRESERVE_ORDER);
-    if (0 != res) throw SerializationException(TRACEMSG(std::string{} +
+    if (0 != res) throw SerializationException(TRACEMSG(
             "Error dumping JSON type: [" + sc::to_string(json_typeof(json)) + "],"
             " error: [" + dumper.get_error() + "]"));
 }
@@ -249,7 +249,7 @@ JsonValue load_array(json_t* value) {
 
 JsonValue load_string(json_t* value) {
     auto st = json_string_value(value);
-    if (!st) throw SerializationException(TRACEMSG(std::string{} +
+    if (!st) throw SerializationException(TRACEMSG(
             "Error getting string value from JSON, type:[" + sc::to_string(json_typeof(value)) + "]"));
     return JsonValue(st);
 }
@@ -318,8 +318,7 @@ std::unique_ptr<json_t, JanssonDeleter> json_from_streambuf(std::streambuf& src)
     json_error_t error;
     auto flags = JSON_REJECT_DUPLICATES | JSON_DECODE_ANY | JSON_DISABLE_EOF_CHECK;
     auto json_p = json_load_callback(load_callback, ldr_ptr, flags, std::addressof(error));
-    if (!json_p) throw SerializationException(TRACEMSG(std::string{} +
-    "Error parsing JSON:" +
+    if (!json_p) throw SerializationException(TRACEMSG("Error parsing JSON:" +
             " text: [" + error.text + "]" +
             " line: [" + sc::to_string(error.line) + "]" +
             " column: [" + sc::to_string(error.column) + "]" +
@@ -334,8 +333,7 @@ std::unique_ptr<json_t, JanssonDeleter> json_from_streambuf(std::streambuf& src)
     json_error_t error;
     auto flags = JSON_REJECT_DUPLICATES | JSON_DECODE_ANY | JSON_DISABLE_EOF_CHECK;
     auto json_p = json_loads(sink.get_string().c_str(), flags, std::addressof(error));
-    if (!json_p) throw SerializationException(TRACEMSG(std::string{} +
-            "Error parsing JSON: [" + sink.get_string() + "]" +
+    if (!json_p) throw SerializationException(TRACEMSG("Error parsing JSON: [" + sink.get_string() + "]" +
             " text: [" + error.text + "]" +
             " line: [" + sc::to_string(error.line) + "]" +
             " column: [" + sc::to_string(error.column) + "]"+

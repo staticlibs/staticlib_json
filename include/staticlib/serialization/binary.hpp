@@ -73,7 +73,7 @@ public:
         case 0:
             return false;
         default:
-            throw SerializationException(TRACEMSG(std::string() +
+            throw SerializationException(TRACEMSG(
                     "Invalid read of size: [" + staticlib::config::to_string(read) + "],"
                     " expected size: [" + staticlib::config::to_string(sizeof(Pod)) + "]"));
         }
