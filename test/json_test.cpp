@@ -111,48 +111,48 @@ void test_dumpu() {
 void test_loads() {
     {
         auto rv = ss::load_json_from_string("null");
-        slassert(ss::JsonType::NULL_T == rv.get_type());
+        slassert(ss::JsonType::NULL_T == rv.type());
     }
     {
         auto rv = ss::load_json_from_string("42");
-        slassert(ss::JsonType::INTEGER == rv.get_type());
+        slassert(ss::JsonType::INTEGER == rv.type());
     }
     {
         auto rv = ss::load_json_from_string("[1,2,3]i am a foobar");
-        slassert(ss::JsonType::ARRAY == rv.get_type());
-        slassert(3 == rv.get_array().size());
+        slassert(ss::JsonType::ARRAY == rv.type());
+        slassert(3 == rv.as_array().size());
     }
     
     auto rv = ss::load_json_from_string(JSON_STR);
-    auto& obj = rv.get_object();
+    auto& obj = rv.as_object();
     slassert(5 == obj.size());
     std::unordered_set<std::string> set{};
     for (const auto& fi : obj) {
-        set.insert(fi.get_name());
-        if (fi.get_name() == "f1") {
-            slassert(ss::JsonType::INTEGER == fi.get_value().get_type());
-            slassert(41 == fi.get_value().get_integer());
-        } else if (fi.get_name() == "f2") {
-            slassert(ss::JsonType::STRING == fi.get_value().get_type());
-            slassert(fi.get_value().get_string() == "42");
-        } else if (fi.get_name() == "f3") { 
-            slassert(ss::JsonType::BOOLEAN == fi.get_value().get_type());
-            slassert(fi.get_value().get_boolean());
-        } else if (fi.get_name() == "f4") {
-            slassert(ss::JsonType::ARRAY == fi.get_value().get_type());
-            slassert(2 == fi.get_value().get_array().size());
-            slassert(ss::JsonType::INTEGER == fi.get_value().get_array()[0].get_type());
-            slassert(41 == fi.get_value().get_array()[0].get_integer());
-            slassert(ss::JsonType::STRING == fi.get_value().get_array()[1].get_type());
-            slassert(fi.get_value().get_array()[1].get_string() == "43");
-        } else if (fi.get_name() == "f5") {
-            slassert(ss::JsonType::OBJECT == fi.get_value().get_type());
-            slassert(2 == fi.get_value().get_object().size());
-            slassert(fi.get_value().get_object()[0].get_name() == "f42");
-            slassert(ss::JsonType::INTEGER == fi.get_value().get_object()[0].get_value().get_type());
-            slassert(42 == fi.get_value().get_object()[0].get_value().get_integer());
-            slassert(fi.get_value().get_object()[1].get_name() == "fnullable");
-            slassert(ss::JsonType::NULL_T == fi.get_value().get_object()[1].get_value().get_type());
+        set.insert(fi.name());
+        if (fi.name() == "f1") {
+            slassert(ss::JsonType::INTEGER == fi.value().type());
+            slassert(41 == fi.value().as_int64());
+        } else if (fi.name() == "f2") {
+            slassert(ss::JsonType::STRING == fi.value().type());
+            slassert(fi.value().as_string() == "42");
+        } else if (fi.name() == "f3") { 
+            slassert(ss::JsonType::BOOLEAN == fi.value().type());
+            slassert(fi.value().as_bool());
+        } else if (fi.name() == "f4") {
+            slassert(ss::JsonType::ARRAY == fi.value().type());
+            slassert(2 == fi.value().as_array().size());
+            slassert(ss::JsonType::INTEGER == fi.value().as_array()[0].type());
+            slassert(41 == fi.value().as_array()[0].as_int64());
+            slassert(ss::JsonType::STRING == fi.value().as_array()[1].type());
+            slassert(fi.value().as_array()[1].as_string() == "43");
+        } else if (fi.name() == "f5") {
+            slassert(ss::JsonType::OBJECT == fi.value().type());
+            slassert(2 == fi.value().as_object().size());
+            slassert(fi.value().as_object()[0].name() == "f42");
+            slassert(ss::JsonType::INTEGER == fi.value().as_object()[0].value().type());
+            slassert(42 == fi.value().as_object()[0].value().as_int64());
+            slassert(fi.value().as_object()[1].name() == "fnullable");
+            slassert(ss::JsonType::NULL_T == fi.value().as_object()[1].value().type());
         }
     }
     slassert(5 == set.size());
@@ -168,14 +168,14 @@ void test_preserve_order() {
     auto json = ss::dump_json_to_string(rv);
     auto loaded = ss::load_json_from_string(json);
     for (auto i = 0; i < (1<<10); i++) {
-        slassert(loaded.get_object()[i].get_name() == sc::to_string(i).c_str());
-        slassert(i == loaded.get_object()[i].get_value().get_integer());
+        slassert(loaded.as_object()[i].name() == sc::to_string(i).c_str());
+        slassert(i == loaded.as_object()[i].value().as_int64());
     }
 }
 
 void test_dump_string() {
     ss::JsonValue val{"Not Found"};
-    slassert(ss::JsonType::STRING == val.get_type());
+    slassert(ss::JsonType::STRING == val.type());
     auto dumped = ss::dump_json_to_string(val);
     slassert("\"Not Found\"" == dumped);    
 }

@@ -50,7 +50,7 @@ const icu::UnicodeString EMPTY_USTRING{};
 } // namespace
 
 JsonValue::~JsonValue() STATICLIB_NOEXCEPT {
-    switch (this->type) {
+    switch (this->jsonType) {
     case JsonType::NULL_T: break;
     case JsonType::OBJECT: delete this->objectVal; break;
     case JsonType::ARRAY: delete this->arrayVal; break;
@@ -62,7 +62,7 @@ JsonValue::~JsonValue() STATICLIB_NOEXCEPT {
 }
 
 JsonValue::JsonValue(JsonValue&& other) STATICLIB_NOEXCEPT {
-    switch (other.type) {
+    switch (other.jsonType) {
     case JsonType::NULL_T: break;
     case JsonType::OBJECT: this->objectVal = other.objectVal; break;
     case JsonType::ARRAY: this->arrayVal = other.arrayVal; break;
@@ -71,14 +71,14 @@ JsonValue::JsonValue(JsonValue&& other) STATICLIB_NOEXCEPT {
     case JsonType::REAL: this->realVal = other.realVal; break;
     case JsonType::BOOLEAN: this->booleanVal = other.booleanVal; break;
     }
-    this->type = other.type;
+    this->jsonType = other.jsonType;
     // moved from object is empty now
-    other.type = JsonType::NULL_T;
+    other.jsonType = JsonType::NULL_T;
 }
 
 JsonValue& JsonValue::operator=(JsonValue&& other) STATICLIB_NOEXCEPT {
     // destroy existing value
-    switch (this->type) {
+    switch (this->jsonType) {
     case JsonType::NULL_T: break;
     case JsonType::OBJECT: delete this->objectVal; break;
     case JsonType::ARRAY: delete this->arrayVal; break;
@@ -88,7 +88,7 @@ JsonValue& JsonValue::operator=(JsonValue&& other) STATICLIB_NOEXCEPT {
     case JsonType::BOOLEAN: break;
     }
     // assign new value
-    switch (other.type) {
+    switch (other.jsonType) {
     case JsonType::NULL_T: this->nullVal = other.nullVal; break;
     case JsonType::OBJECT: this->objectVal = other.objectVal; break;
     case JsonType::ARRAY: this->arrayVal = other.arrayVal; break;
@@ -97,42 +97,42 @@ JsonValue& JsonValue::operator=(JsonValue&& other) STATICLIB_NOEXCEPT {
     case JsonType::REAL: this->realVal = other.realVal; break;
     case JsonType::BOOLEAN: this->booleanVal = other.booleanVal; break;
     }
-    this->type = other.type;
+    this->jsonType = other.jsonType;
     // moved from object is empty now
-    other.type = JsonType::NULL_T;
+    other.jsonType = JsonType::NULL_T;
     return *this;
 }
 
 JsonValue::JsonValue() :
-type(JsonType::NULL_T) { }
+jsonType(JsonType::NULL_T) { }
 
 JsonValue::JsonValue(std::nullptr_t nullValue) :
-type(JsonType::NULL_T) { (void) nullValue; }
+jsonType(JsonType::NULL_T) { (void) nullValue; }
 
 JsonValue::JsonValue(std::vector<JsonField> objectValue) :
-type(JsonType::OBJECT) { 
+jsonType(JsonType::OBJECT) { 
     // allocate empty vector and move data into it
     this->objectVal = new std::vector<JsonField>{};
     *(this->objectVal) = std::move(objectValue);
 }
 
 JsonValue::JsonValue(const std::initializer_list<JsonField>& objectValue) :
-type(JsonType::OBJECT) {
+jsonType(JsonType::OBJECT) {
     this->objectVal = new std::vector<JsonField>{};
     for (auto& a : objectValue) {
-        this->objectVal->emplace_back(a.get_name(), a.get_value().clone());
+        this->objectVal->emplace_back(a.name(), a.value().clone());
     }
 }
 
 JsonValue::JsonValue(std::vector<JsonValue> arrayValue) :
-type(JsonType::ARRAY) { 
+jsonType(JsonType::ARRAY) { 
     // allocate empty vector and move data into it
     this->arrayVal = new std::vector<JsonValue>{};
     *(this->arrayVal) = std::move(arrayValue);
 }
 
 JsonValue::JsonValue(std::string stringValue) :
-type(JsonType::STRING) {
+jsonType(JsonType::STRING) {
     this->stringVal = new std::string();
     *(this->stringVal) = std::move(stringValue);
 }
@@ -144,7 +144,7 @@ JsonValue(su::to_utf8(ustringValue)) { }
 
 
 JsonValue::JsonValue(const char* stringValue) :
-type(JsonType::STRING) {
+jsonType(JsonType::STRING) {
     this->stringVal = new std::string(stringValue);
 }
 
@@ -152,7 +152,7 @@ JsonValue::JsonValue(int32_t integerValue) :
 JsonValue(static_cast<int64_t>(integerValue)) { }
 
 JsonValue::JsonValue(int64_t integerValue) :
-type(JsonType::INTEGER), integerVal(integerValue) { }
+jsonType(JsonType::INTEGER), integerVal(integerValue) { }
 
 JsonValue::JsonValue(uint32_t integerValue) :
 JsonValue(static_cast<int64_t> (integerValue)) { }
@@ -164,19 +164,19 @@ JsonValue::JsonValue(uint16_t integerValue) :
 JsonValue(static_cast<int64_t> (integerValue)) { }
 
 JsonValue::JsonValue(double realValue) :
-type(JsonType::REAL), realVal(realValue) { }
+jsonType(JsonType::REAL), realVal(realValue) { }
 
 JsonValue::JsonValue(bool booleanValue) :
-type(JsonType::BOOLEAN), booleanVal(booleanValue) { }
+jsonType(JsonType::BOOLEAN), booleanVal(booleanValue) { }
 
 JsonValue JsonValue::clone() const {
-    switch (type) {
+    switch (jsonType) {
     case JsonType::NULL_T: return JsonValue();
     case JsonType::OBJECT: {
         auto vec = std::vector<JsonField>{};
         vec.reserve(objectVal->size());
         for (const JsonField& fi : *objectVal) {
-            vec.emplace_back(fi.get_name(), fi.get_value().clone());
+            vec.emplace_back(fi.name(), fi.value().clone());
         }
         return JsonValue(std::move(vec));
     }
@@ -196,74 +196,84 @@ JsonValue JsonValue::clone() const {
     }
 }
 
-JsonType JsonValue::get_type() const {
-    return this->type;
+JsonType JsonValue::type() const {
+    return this->jsonType;
 }
 
-const std::vector<JsonField>& JsonValue::get_object() const {
-    if (JsonType::OBJECT == type) {
-        return *(this->objectVal);
-    } 
-    return EMPTY_OBJECT;
-}
-
-std::pair<std::vector<JsonField>*, bool> JsonValue::get_object_ptr() {
-    if (JsonType::OBJECT == type) {
-        return {this->objectVal, true};
-    }
-    return {nullptr, false};
-}
-
-const JsonValue& JsonValue::get(const std::string& name) const {
-    for (auto& el : this->get_object()) {
-        if (name == el.get_name()) {
-            return el.get_value();
+const JsonValue& JsonValue::getattr(const std::string& name) const {
+    for (auto& el : this->as_object()) {
+        if (name == el.name()) {
+            return el.value();
         }
     }
     return NULL_VALUE;
 }
 
+const JsonValue& JsonValue::operator[](const std::string& name) const {
+    return this->getattr(name);
+}
+
 #ifdef STATICLIB_WITH_ICU
 const JsonValue& JsonValue::getu(const icu::UnicodeString& uname) const {
-    for (auto& el : this->get_object()) {
+    for (auto& el : this->as_object()) {
         if (uname == el.get_uname()) {
-            return el.get_value();
+            return el.value();
         }
     }
     return NULL_VALUE;
 }
 #endif // STATICLIB_WITH_ICU
 
-const std::vector<JsonValue>& JsonValue::get_array() const {
-    if (JsonType::ARRAY == type) {
+JsonValue& JsonValue::getattr_mutable(const std::string& name) {
+    // todo
+    (void) name;
+    return *this;
+}
+
+const std::vector<JsonField>& JsonValue::as_object() const {
+    if (JsonType::OBJECT == jsonType) {
+        return *(this->objectVal);
+    }
+    return EMPTY_OBJECT;
+}
+
+std::pair<std::vector<JsonField>*, bool> JsonValue::as_object_mutable() {
+    if (JsonType::OBJECT == jsonType) {
+        return { this->objectVal, true };
+    }
+    return { nullptr, false };
+}
+
+const std::vector<JsonValue>& JsonValue::as_array() const {
+    if (JsonType::ARRAY == jsonType) {
         return *(this->arrayVal);
     }
     return EMPTY_ARRAY;
 }
 
-std::pair<std::vector<JsonValue>*, bool> JsonValue::get_array_ptr() {
-    if (JsonType::ARRAY == type) {
+std::pair<std::vector<JsonValue>*, bool> JsonValue::as_array_mutable() {
+    if (JsonType::ARRAY == jsonType) {
         return {this->arrayVal, true};
     }
     return {nullptr, false};
 }
 
-const std::string& JsonValue::get_string() const {
-    if (JsonType::STRING == type) {
+const std::string& JsonValue::as_string() const {
+    if (JsonType::STRING == jsonType) {
         return *(this->stringVal);
     }
     return EMPTY_STRING;
 }
 
-const std::string& JsonValue::get_string(const std::string& default_val) const {
-    if (JsonType::STRING == type) {
+const std::string& JsonValue::as_string(const std::string& default_val) const {
+    if (JsonType::STRING == jsonType) {
         return *(this->stringVal);
     }
     return default_val;
 }
 
 bool JsonValue::set_string(std::string value) {
-    if (JsonType::STRING == type) {
+    if (JsonType::STRING == jsonType) {
         *(this->stringVal) = std::move(value);
         return true;
     }
@@ -272,7 +282,7 @@ bool JsonValue::set_string(std::string value) {
 
 #ifdef STATICLIB_WITH_ICU
 const icu::UnicodeString& JsonValue::get_ustring() const {
-    if (JsonType::STRING == type) {
+    if (JsonType::STRING == jsonType) {
         if (nullptr == ustringValCached.get()) {
             this->ustringValCached = std::unique_ptr<icu::UnicodeString>{new icu::UnicodeString{}};
             *(this->ustringValCached) = icu::UnicodeString::fromUTF8(*(this->stringVal));
@@ -283,14 +293,14 @@ const icu::UnicodeString& JsonValue::get_ustring() const {
 }
 
 const icu::UnicodeString& JsonValue::get_ustring(const icu::UnicodeString& default_val) const {
-    if (JsonType::STRING == type) {
+    if (JsonType::STRING == jsonType) {
         return get_ustring();
     }
     return default_val;
 }
 
 bool JsonValue::set_ustring(icu::UnicodeString value) {
-    if (JsonType::STRING == type) {
+    if (JsonType::STRING == jsonType) {
         *(this->stringVal) = su::to_utf8(value);
         if (nullptr != ustringValCached.get()) {
             *ustringValCached = icu::UnicodeString::fromUTF8(*(this->stringVal));
@@ -301,154 +311,176 @@ bool JsonValue::set_ustring(icu::UnicodeString value) {
 }
 #endif // STATICLIB_WITH_ICU
 
-int64_t JsonValue::get_integer() const {
-    if (JsonType::INTEGER == type) {
+int64_t JsonValue::as_int64() const {
+    if (JsonType::INTEGER == jsonType) {
         return this->integerVal;
     }
     return 0;
 }
 
-int64_t JsonValue::get_integer(int64_t default_val) const {
-    if (JsonType::INTEGER == type) {
+int64_t JsonValue::as_int64(int64_t default_val) const {
+    if (JsonType::INTEGER == jsonType) {
         return this->integerVal;
     }
     return default_val;
 }
 
-bool JsonValue::set_integer(int64_t value) {
-    if (JsonType::INTEGER == type) {
+bool JsonValue::set_int64(int64_t value) {
+    if (JsonType::INTEGER == jsonType) {
         this->integerVal = value;
         return true;
     }
     return false;
 }
 
-int32_t JsonValue::get_int32() const {
-    if (JsonType::INTEGER == type) {
+int32_t JsonValue::as_int32() const {
+    if (JsonType::INTEGER == jsonType) {
         return static_cast<int32_t> (this->integerVal);
     }
     return 0;
 }
 
-int32_t JsonValue::get_int32(int32_t default_val) const {
-    if (JsonType::INTEGER == type) {
+int32_t JsonValue::as_int32(int32_t default_val) const {
+    if (JsonType::INTEGER == jsonType) {
         return static_cast<int32_t> (this->integerVal);
     }
     return default_val;
 }
 
 bool JsonValue::set_int32(int32_t value) {
-    if (JsonType::INTEGER == type) {
+    if (JsonType::INTEGER == jsonType) {
         this->integerVal = value;
         return true;
     }
     return false;
 }
 
-uint32_t JsonValue::get_uint32() const {
-    if (JsonType::INTEGER == type) {
+uint32_t JsonValue::as_uint32() const {
+    if (JsonType::INTEGER == jsonType) {
         return static_cast<uint32_t> (this->integerVal);
     }
     return 0;
 }
 
-uint32_t JsonValue::get_uint32(uint32_t default_val) const {
-    if (JsonType::INTEGER == type) {
+uint32_t JsonValue::as_uint32(uint32_t default_val) const {
+    if (JsonType::INTEGER == jsonType) {
         return static_cast<uint32_t> (this->integerVal);
     }
     return default_val;
 }
 
 bool JsonValue::set_uint32(uint32_t value) {
-    if (JsonType::INTEGER == type) {
+    if (JsonType::INTEGER == jsonType) {
         this->integerVal = value;
         return true;
     }
     return false;
 }
 
-int16_t JsonValue::get_int16() const {
-    if (JsonType::INTEGER == type) {
+int16_t JsonValue::as_int16() const {
+    if (JsonType::INTEGER == jsonType) {
         return static_cast<int16_t> (this->integerVal);
     }
     return 0;
 }
 
-int16_t JsonValue::get_int16(int16_t default_val) const {
-    if (JsonType::INTEGER == type) {
+int16_t JsonValue::as_int16(int16_t default_val) const {
+    if (JsonType::INTEGER == jsonType) {
         return static_cast<int16_t> (this->integerVal);
     }
     return default_val;
 }
 
 bool JsonValue::set_int16(int16_t value) {
-    if (JsonType::INTEGER == type) {
+    if (JsonType::INTEGER == jsonType) {
         this->integerVal = value;
         return true;
     }
     return false;
 }
 
-uint16_t JsonValue::get_uint16() const {
-    if (JsonType::INTEGER == type) {
+uint16_t JsonValue::as_uint16() const {
+    if (JsonType::INTEGER == jsonType) {
         return static_cast<uint16_t> (this->integerVal);
     }
     return 0;
 }
 
-uint16_t JsonValue::get_uint16(uint16_t default_val) const {
-    if (JsonType::INTEGER == type) {
+uint16_t JsonValue::as_uint16(uint16_t default_val) const {
+    if (JsonType::INTEGER == jsonType) {
         return static_cast<uint16_t> (this->integerVal);
     }
     return default_val;
 }
 
 bool JsonValue::set_uint16(uint16_t value) {
-    if (JsonType::INTEGER == type) {
+    if (JsonType::INTEGER == jsonType) {
         this->integerVal = value;
         return true;
     }
     return false;
 }
 
-double JsonValue::get_real() const {
-    if (JsonType::REAL == type) {
+double JsonValue::as_double() const {
+    if (JsonType::REAL == jsonType) {
         return this->realVal;
     }
     return 0;
 }
 
-double JsonValue::get_real(double default_val) const {
-    if (JsonType::REAL == type) {
+double JsonValue::as_double(double default_val) const {
+    if (JsonType::REAL == jsonType) {
         return this->realVal;
     }
     return default_val;
 }
 
-bool JsonValue::set_real(double value) {
-    if (JsonType::REAL == type) {
+bool JsonValue::set_double(double value) {
+    if (JsonType::REAL == jsonType) {
         this->realVal = value;
         return true;
     }
     return false;    
 }
 
-bool JsonValue::get_boolean() const {
-    if (JsonType::BOOLEAN == type) {
+float JsonValue::as_float() const {
+    if (JsonType::REAL == jsonType) {
+        return static_cast<float>(this->realVal);
+    }
+    return 0;
+}
+
+float JsonValue::as_float(float default_val) const {
+    if (JsonType::REAL == jsonType) {
+        return static_cast<float> (this->realVal);
+    }
+    return default_val;
+}
+
+bool JsonValue::set_float(float value) {
+    if (JsonType::REAL == jsonType) {
+        this->realVal = value;
+        return true;
+    }
+    return false;
+}
+
+bool JsonValue::as_bool() const {
+    if (JsonType::BOOLEAN == jsonType) {
         return this->booleanVal;
     }
     return false;
 }
 
-bool JsonValue::get_boolean(bool default_val) const {
-    if (JsonType::BOOLEAN == type) {
+bool JsonValue::as_bool(bool default_val) const {
+    if (JsonType::BOOLEAN == jsonType) {
         return this->booleanVal;
     }
     return default_val;
 }
 
-bool JsonValue::set_boolean(bool value) {
-    if (JsonType::BOOLEAN == type) {
+bool JsonValue::set_bool(bool value) {
+    if (JsonType::BOOLEAN == jsonType) {
         this->booleanVal = value;
         return true;
     }

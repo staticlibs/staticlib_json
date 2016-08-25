@@ -39,138 +39,150 @@ namespace su = staticlib::icu_utils;
 } // namespace
 
 JsonField::JsonField(JsonField&& other) :
-name(std::move(other.name)), value(std::move(other.value)) { }
+jsonName(std::move(other.jsonName)), jsonValue(std::move(other.jsonValue)) { }
 
 JsonField& JsonField::operator=(JsonField&& other) {
-    this->name = std::move(other.name);
-    this->value = std::move(other.value);
+    this->jsonName = std::move(other.jsonName);
+    this->jsonValue = std::move(other.jsonValue);
     return *this;
 }
 
 JsonField::JsonField() { }
 
 JsonField::JsonField(std::string name, JsonValue value) :
-name(std::move(name)), value(std::move(value)) { }
+jsonName(std::move(name)), jsonValue(std::move(value)) { }
 
 JsonField::JsonField(const char* name, JsonValue value) :
-name(name), value(std::move(value)) { }
+jsonName(name), jsonValue(std::move(value)) { }
 
 #ifdef STATICLIB_WITH_ICU
 JsonField::JsonField(icu::UnicodeString uname, JsonValue value) :
-name(su::to_utf8(uname)), value(std::move(value)) { }
+jsonName(su::to_utf8(uname)), jsonValue(std::move(value)) { }
 #endif // STATICLIB_WITH_ICU
 
-const std::string& JsonField::get_name() const {
-    return name;
+const std::string& JsonField::name() const {
+    return jsonName;
 }
 
 #ifdef STATICLIB_WITH_ICU
 const icu::UnicodeString& JsonField::get_uname() const {
     if (nullptr == uname.get()) {
         uname = std::unique_ptr<icu::UnicodeString>{new icu::UnicodeString{}};
-        *uname = icu::UnicodeString::fromUTF8(name);
+        *uname = icu::UnicodeString::fromUTF8(jsonName);
     }
     return *uname;
 }
 #endif // STATICLIB_WITH_ICU
 
-JsonType JsonField::get_type() const {
-    return get_value().get_type();
+JsonType JsonField::type() const {
+    return value().type();
 }
 
-const JsonValue& JsonField::get_value() const {
-    return value;
+const JsonValue& JsonField::value() const {
+    return jsonValue;
+}
+
+JsonValue& JsonField::value() {
+    return jsonValue;
 }
 
 void JsonField::set_value(JsonValue&& value) {
-    JsonValue previous = std::move(this->value);
-    this->value = std::move(value);
+    JsonValue previous = std::move(this->jsonValue);
+    this->jsonValue = std::move(value);
 }
 
 JsonField JsonField::clone() const {
-    return JsonField(name, value.clone());
+    return JsonField(jsonName, jsonValue.clone());
 }
 
-const std::vector<JsonField>& JsonField::get_object() const {
-    return get_value().get_object();
+const std::vector<JsonField>& JsonField::as_object() const {
+    return value().as_object();
 }
 
-const std::vector<JsonValue>& JsonField::get_array() const {
-    return get_value().get_array();
+const std::vector<JsonValue>& JsonField::as_array() const {
+    return value().as_array();
 }
 
-const std::string& JsonField::get_string() const {
-    return get_value().get_string();
+const std::string& JsonField::as_string() const {
+    return value().as_string();
 }
 
-const std::string& JsonField::get_string(const std::string& default_val) const {
-    return get_value().get_string(default_val);
+const std::string& JsonField::as_string(const std::string& default_val) const {
+    return value().as_string(default_val);
 }
 
 #ifdef STATICLIB_WITH_ICU
 const icu::UnicodeString& JsonField::get_ustring() const {
-    return get_value().get_ustring();
+    return value().get_ustring();
 }
 
 const icu::UnicodeString& JsonField::get_ustring(const icu::UnicodeString& default_val) const {
-    return get_value().get_ustring(default_val);
+    return value().get_ustring(default_val);
 }
 #endif // STATICLIB_WITH_ICU
 
-int64_t JsonField::get_integer() const {
-    return get_value().get_integer();
+int64_t JsonField::as_int64() const {
+    return value().as_int64();
 }
 
-int64_t JsonField::get_integer(int64_t default_val) const {
-    return get_value().get_integer(default_val);
+int64_t JsonField::as_int64(int64_t default_val) const {
+    return value().as_int64(default_val);
 }
 
-int32_t JsonField::get_int32() const {
-    return get_value().get_int32();
+int32_t JsonField::as_int32() const {
+    return value().as_int32();
 }
 
-int32_t JsonField::get_int32(int32_t default_val) const {
-    return get_value().get_int32(default_val);
+int32_t JsonField::as_int32(int32_t default_val) const {
+    return value().as_int32(default_val);
 }
 
-uint32_t JsonField::get_uint32() const {
-    return get_value().get_uint32();
+uint32_t JsonField::as_uint32() const {
+    return value().as_uint32();
 }
 
-uint32_t JsonField::get_uint32(uint32_t default_val) const {
-    return get_value().get_uint32(default_val);
+uint32_t JsonField::as_uint32(uint32_t default_val) const {
+    return value().as_uint32(default_val);
 }
 
-int16_t JsonField::get_int16() const {
-    return get_value().get_int16();
+int16_t JsonField::as_int16() const {
+    return value().as_int16();
 }
 
-int16_t JsonField::get_int16(int16_t default_val) const {
-    return get_value().get_int16(default_val);
+int16_t JsonField::as_int16(int16_t default_val) const {
+    return value().as_int16(default_val);
 }
 
-uint16_t JsonField::get_uint16() const {
-    return get_value().get_uint16();
+uint16_t JsonField::as_uint16() const {
+    return value().as_uint16();
 }
 
-uint16_t JsonField::get_uint16(uint16_t default_val) const {
-    return get_value().get_uint16(default_val);
+uint16_t JsonField::as_uint16(uint16_t default_val) const {
+    return value().as_uint16(default_val);
 }
 
-double JsonField::get_real() const {
-    return get_value().get_real();
+double JsonField::as_double() const {
+    return value().as_double();
 }
 
-double JsonField::get_real(double default_val) const {
-    return get_value().get_real(default_val);
+double JsonField::as_double(double default_val) const {
+    return value().as_double(default_val);
 }
 
-bool JsonField::get_boolean() const {
-    return get_value().get_boolean();
+float JsonField::as_float() const {
+    return value().as_float();
 }
 
-bool JsonField::get_boolean(bool default_val) const {
-    return get_value().get_boolean(default_val);
+float JsonField::as_float(float default_val) const {
+    return value().as_float(default_val);
+}
+
+bool JsonField::as_bool() const {
+    return value().as_bool();
+}
+
+bool JsonField::as_bool(bool default_val) const {
+    return value().as_bool(default_val);
 }
 
 } // namespace

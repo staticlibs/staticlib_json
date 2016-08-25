@@ -57,54 +57,54 @@ public:
 
 void test_null() { 
     ss::JsonValue rv{};
-    slassert(ss::JsonType::NULL_T == rv.get_type());
-    slassert(0 == rv.get_object().size());
-    slassert(0 == rv.get_array().size());
-    slassert(0 == rv.get_string().length());
-    slassert(0 == rv.get_integer());
-    slassert(-1 < rv.get_real() && rv.get_real() < 1);
-    slassert(!rv.get_boolean());
+    slassert(ss::JsonType::NULL_T == rv.type());
+    slassert(0 == rv.as_object().size());
+    slassert(0 == rv.as_array().size());
+    slassert(0 == rv.as_string().length());
+    slassert(0 == rv.as_int64());
+    slassert(-1 < rv.as_double() && rv.as_double() < 1);
+    slassert(!rv.as_bool());
     // setters
-    slassert(!rv.set_boolean(true));
-    slassert(!rv.set_integer(42));
-    slassert(!rv.set_real(42.0));
+    slassert(!rv.set_bool(true));
+    slassert(!rv.set_int64(42));
+    slassert(!rv.set_double(42.0));
     slassert(!rv.set_string("foo"));
     // mutators
-    slassert(!rv.get_object_ptr().second);
-    slassert(!rv.get_array_ptr().second);
+    slassert(!rv.as_object_mutable().second);
+    slassert(!rv.as_array_mutable().second);
 }
 
 void test_object() {
     ss::JsonValue rv = TestRefl{}.get_reflected_value().clone();
-    slassert(ss::JsonType::OBJECT == rv.get_type());
-    slassert(6 == rv.get_object().size());
-    slassert("f1" == rv.get_object()[0].get_name());
-    slassert(41 == rv.get_object()[0].get_value().get_integer());
-    slassert("f2" == rv.get_object()[1].get_name());
-    slassert("42" == rv.get_object()[1].get_string());
-    slassert(ss::JsonType::INTEGER == rv.get_object()[0].get_value().get_type());
-    slassert(ss::JsonType::STRING == rv.get_object()[1].get_value().get_type());
-    slassert(ss::JsonType::BOOLEAN == rv.get_object()[2].get_value().get_type());
-    slassert(ss::JsonType::ARRAY == rv.get_object()[3].get_value().get_type());
-    slassert(ss::JsonType::OBJECT == rv.get_object()[4].get_value().get_type());    
-    slassert(ss::JsonType::NULL_T == rv.get_object()[5].get_value().get_type());
-    slassert(0 == rv.get_array().size());
-    slassert(0 == rv.get_string().length());
-    slassert(0 == rv.get_integer());
-    slassert(-1 < rv.get_real() && rv.get_real() < 1);
-    slassert(!rv.get_boolean());
+    slassert(ss::JsonType::OBJECT == rv.type());
+    slassert(6 == rv.as_object().size());
+    slassert("f1" == rv.as_object()[0].name());
+    slassert(41 == rv.as_object()[0].value().as_int64());
+    slassert("f2" == rv.as_object()[1].name());
+    slassert("42" == rv.as_object()[1].as_string());
+    slassert(ss::JsonType::INTEGER == rv.as_object()[0].value().type());
+    slassert(ss::JsonType::STRING == rv.as_object()[1].value().type());
+    slassert(ss::JsonType::BOOLEAN == rv.as_object()[2].value().type());
+    slassert(ss::JsonType::ARRAY == rv.as_object()[3].value().type());
+    slassert(ss::JsonType::OBJECT == rv.as_object()[4].value().type());    
+    slassert(ss::JsonType::NULL_T == rv.as_object()[5].value().type());
+    slassert(0 == rv.as_array().size());
+    slassert(0 == rv.as_string().length());
+    slassert(0 == rv.as_int64());
+    slassert(-1 < rv.as_double() && rv.as_double() < 1);
+    slassert(!rv.as_bool());
     // setters
-    slassert(!rv.set_boolean(true));
-    slassert(!rv.set_integer(42));
-    slassert(!rv.set_real(42.0));
+    slassert(!rv.set_bool(true));
+    slassert(!rv.set_int64(42));
+    slassert(!rv.set_double(42.0));
     slassert(!rv.set_string("foo"));
     // mutators
-    slassert(rv.get_object_ptr().second);
-    slassert(6 == rv.get_object_ptr().first->size());
-    rv.get_object_ptr().first->emplace_back("added", "aaa");
-    slassert(7 == rv.get_object().size());
-    slassert("aaa" == rv.get_object()[6].get_string());
-    slassert(!rv.get_array_ptr().second);
+    slassert(rv.as_object_mutable().second);
+    slassert(6 == rv.as_object_mutable().first->size());
+    rv.as_object_mutable().first->emplace_back("added", "aaa");
+    slassert(7 == rv.as_object().size());
+    slassert("aaa" == rv.as_object()[6].as_string());
+    slassert(!rv.as_array_mutable().second);
 }
 
 void test_array() {
@@ -112,169 +112,172 @@ void test_array() {
     vec.emplace_back(42);
     vec.emplace_back(true);
     ss::JsonValue rv{std::move(vec)};
-    slassert(ss::JsonType::ARRAY == rv.get_type());
-    slassert(0 == rv.get_object().size());
-    slassert(2 == rv.get_array().size());
-    slassert(42 == rv.get_array()[0].get_integer());
-    slassert(rv.get_array()[1].get_boolean());
-    slassert(0 == rv.get_string().length());
-    slassert(0 == rv.get_integer());
-    slassert(-1 < rv.get_real() && rv.get_real() < 1);
-    slassert(!rv.get_boolean());
+    slassert(ss::JsonType::ARRAY == rv.type());
+    slassert(0 == rv.as_object().size());
+    slassert(2 == rv.as_array().size());
+    slassert(42 == rv.as_array()[0].as_int64());
+    slassert(rv.as_array()[1].as_bool());
+    slassert(0 == rv.as_string().length());
+    slassert(0 == rv.as_int64());
+    slassert(-1 < rv.as_double() && rv.as_double() < 1);
+    slassert(!rv.as_bool());
     // setters
-    slassert(!rv.set_boolean(true));
-    slassert(!rv.set_integer(42));
-    slassert(!rv.set_real(42.0));
+    slassert(!rv.set_bool(true));
+    slassert(!rv.set_int64(42));
+    slassert(!rv.set_double(42.0));
     slassert(!rv.set_string("foo"));
     // mutators
-    slassert(!rv.get_object_ptr().second);
-    slassert(rv.get_array_ptr().second);
-    slassert(2 == rv.get_array_ptr().first->size());
-    rv.get_array_ptr().first->emplace_back("aaa");
-    slassert(3 == rv.get_array().size());
-    slassert("aaa" == rv.get_array()[2].get_string());
+    slassert(!rv.as_object_mutable().second);
+    slassert(rv.as_array_mutable().second);
+    slassert(2 == rv.as_array_mutable().first->size());
+    rv.as_array_mutable().first->emplace_back("aaa");
+    slassert(3 == rv.as_array().size());
+    slassert("aaa" == rv.as_array()[2].as_string());
 }
 
 void test_string() {
     ss::JsonValue rv{"42"};
-    slassert(ss::JsonType::STRING == rv.get_type());
-    slassert(0 == rv.get_object().size());
-    slassert(0 == rv.get_array().size());
-    slassert(2 == rv.get_string().length());
-    slassert("42" == rv.get_string());
-    slassert(0 == rv.get_integer());
-    slassert(-1 < rv.get_real() && rv.get_real() < 1);
-    slassert(!rv.get_boolean());
+    slassert(ss::JsonType::STRING == rv.type());
+    slassert(0 == rv.as_object().size());
+    slassert(0 == rv.as_array().size());
+    slassert(2 == rv.as_string().length());
+    slassert("42" == rv.as_string());
+    slassert(0 == rv.as_int64());
+    slassert(-1 < rv.as_double() && rv.as_double() < 1);
+    slassert(!rv.as_bool());
     // setters
-    slassert(!rv.set_boolean(true));
-    slassert(!rv.set_integer(42));
-    slassert(!rv.set_real(42.0));
+    slassert(!rv.set_bool(true));
+    slassert(!rv.set_int64(42));
+    slassert(!rv.set_double(42.0));
     slassert(rv.set_string("foo"));
-    slassert("foo" == rv.get_string());
+    slassert("foo" == rv.as_string());
     // mutators
-    slassert(!rv.get_object_ptr().second);
-    slassert(!rv.get_array_ptr().second);
+    slassert(!rv.as_object_mutable().second);
+    slassert(!rv.as_array_mutable().second);
 }
 
 void test_string_default() {
     ss::JsonValue rv{};
     (void) rv;
-    slassert("42" == rv.get_string("42"));
+    slassert("42" == rv.as_string("42"));
 }
 
 void test_int() {
     ss::JsonValue rv{42};
-    slassert(ss::JsonType::INTEGER == rv.get_type());
-    slassert(0 == rv.get_object().size());
-    slassert(0 == rv.get_array().size());
-    slassert(0 == rv.get_string().length());
-    slassert(42 == rv.get_integer());
-    slassert(-1 < rv.get_real() && rv.get_real() < 1);
-    slassert(!rv.get_boolean());
+    slassert(ss::JsonType::INTEGER == rv.type());
+    slassert(0 == rv.as_object().size());
+    slassert(0 == rv.as_array().size());
+    slassert(0 == rv.as_string().length());
+    slassert(42 == rv.as_int64());
+    slassert(-1 < rv.as_double() && rv.as_double() < 1);
+    slassert(!rv.as_bool());
     // setters
-    slassert(!rv.set_boolean(true));
-    slassert(rv.set_integer(43));
-    slassert(43 == rv.get_integer());
-    slassert(!rv.set_real(42.0));
+    slassert(!rv.set_bool(true));
+    slassert(rv.set_int64(43));
+    slassert(43 == rv.as_int64());
+    slassert(!rv.set_double(42.0));
     slassert(!rv.set_string("foo"));
     // mutators
-    slassert(!rv.get_object_ptr().second);
-    slassert(!rv.get_array_ptr().second);
+    slassert(!rv.as_object_mutable().second);
+    slassert(!rv.as_array_mutable().second);
 }
 
 void test_int_default() {
     ss::JsonValue rv{};
-    slassert(42 == rv.get_integer(42));
+    slassert(42 == rv.as_int64(42));
 }
 
 void test_real() {
     ss::JsonValue rv{42.0};
-    slassert(ss::JsonType::REAL == rv.get_type());
-    slassert(0 == rv.get_object().size());
-    slassert(0 == rv.get_array().size());
-    slassert(0 == rv.get_string().length());
-    slassert(0 == rv.get_integer());
-    slassert(41 < rv.get_real() && rv.get_real() < 43);
-    slassert(!rv.get_boolean());
+    slassert(ss::JsonType::REAL == rv.type());
+    slassert(0 == rv.as_object().size());
+    slassert(0 == rv.as_array().size());
+    slassert(0 == rv.as_string().length());
+    slassert(0 == rv.as_int64());
+    slassert(41 < rv.as_double() && rv.as_double() < 43);
+    slassert(41 < rv.as_float() && rv.as_float() < 43);    
+    slassert(!rv.as_bool());
     // setters
-    slassert(!rv.set_boolean(true));
-    slassert(!rv.set_integer(42));
-    slassert(rv.set_real(43.0));
-    slassert(42 < rv.get_real() && rv.get_real() < 44);
+    slassert(!rv.set_bool(true));
+    slassert(!rv.set_int64(42));
+    slassert(rv.set_double(43.0));
+    slassert(42 < rv.as_double() && rv.as_double() < 44);
+    slassert(rv.set_float(43.0));
+    slassert(42 < rv.as_float() && rv.as_float() < 44);
     slassert(!rv.set_string("foo"));
     // mutators
-    slassert(!rv.get_object_ptr().second);
-    slassert(!rv.get_array_ptr().second);
+    slassert(!rv.as_object_mutable().second);
+    slassert(!rv.as_array_mutable().second);
 }
 
 void test_real_default() {
     ss::JsonValue rv{};
-    slassert(41 < rv.get_real(42) && rv.get_real(42) < 43);
+    slassert(41 < rv.as_double(42) && rv.as_double(42) < 43);
 }
 
 void test_boolean() {
     ss::JsonValue rvt{true};
-    slassert(ss::JsonType::BOOLEAN == rvt.get_type());
-    slassert(0 == rvt.get_object().size());
-    slassert(0 == rvt.get_array().size());
-    slassert(0 == rvt.get_string().length());
-    slassert(0 == rvt.get_integer());
-    slassert(-1 < rvt.get_real() && rvt.get_real() < 1);
-    slassert(rvt.get_boolean());
+    slassert(ss::JsonType::BOOLEAN == rvt.type());
+    slassert(0 == rvt.as_object().size());
+    slassert(0 == rvt.as_array().size());
+    slassert(0 == rvt.as_string().length());
+    slassert(0 == rvt.as_int64());
+    slassert(-1 < rvt.as_double() && rvt.as_double() < 1);
+    slassert(rvt.as_bool());
     // setters
-    slassert(rvt.set_boolean(false));
-    slassert(!rvt.get_boolean());
-    slassert(!rvt.set_integer(42));
-    slassert(!rvt.set_real(43.0));
+    slassert(rvt.set_bool(false));
+    slassert(!rvt.as_bool());
+    slassert(!rvt.set_int64(42));
+    slassert(!rvt.set_double(43.0));
     slassert(!rvt.set_string("foo"));
     // mutators
-    slassert(!rvt.get_object_ptr().second);
-    slassert(!rvt.get_array_ptr().second);
+    slassert(!rvt.as_object_mutable().second);
+    slassert(!rvt.as_array_mutable().second);
 
     ss::JsonValue rvf{false};
-    slassert(ss::JsonType::BOOLEAN == rvf.get_type());
-    slassert(0 == rvf.get_object().size());
-    slassert(0 == rvf.get_array().size());
-    slassert(0 == rvf.get_string().length());
-    slassert(0 == rvf.get_integer());
-    slassert(-1 < rvf.get_real() && rvf.get_real() < 1);
-    slassert(!rvf.get_boolean());
+    slassert(ss::JsonType::BOOLEAN == rvf.type());
+    slassert(0 == rvf.as_object().size());
+    slassert(0 == rvf.as_array().size());
+    slassert(0 == rvf.as_string().length());
+    slassert(0 == rvf.as_int64());
+    slassert(-1 < rvf.as_double() && rvf.as_double() < 1);
+    slassert(!rvf.as_bool());
     // setters
-    slassert(rvf.set_boolean(true));
-    slassert(rvf.get_boolean());
-    slassert(!rvf.set_integer(42));
-    slassert(!rvf.set_real(43.0));
+    slassert(rvf.set_bool(true));
+    slassert(rvf.as_bool());
+    slassert(!rvf.set_int64(42));
+    slassert(!rvf.set_double(43.0));
     slassert(!rvf.set_string("foo"));
     // mutators
-    slassert(!rvf.get_object_ptr().second);
-    slassert(!rvf.get_array_ptr().second);
+    slassert(!rvf.as_object_mutable().second);
+    slassert(!rvf.as_array_mutable().second);
 }
 
 void test_boolean_default() {
     ss::JsonValue rv{};
-    slassert(rv.get_boolean(true));
-    slassert(!rv.get_boolean(false));
+    slassert(rv.as_bool(true));
+    slassert(!rv.as_bool(false));
 }
 
 void test_from_range() {
     std::vector<std::string> vec{"foo", "bar"};
     
     auto rv = ss::JsonValue(vec);
-    slassert(ss::JsonType::ARRAY == rv.get_type());
+    slassert(ss::JsonType::ARRAY == rv.type());
 }
 
 void test_field_by_name() {
     TestRefl tr{};
     auto rv = tr.get_reflected_value();
     
-    auto& rvf = rv.get("transient_f4");
-    slassert(ss::JsonType::ARRAY == rvf.get_type());
-    slassert(2 == rvf.get_array().size());
-    slassert(42 == rvf.get_array()[0].get_integer());
-    slassert("foo" == rvf.get_array()[1].get_string());
+    auto& rvf = rv["transient_f4"];
+    slassert(ss::JsonType::ARRAY == rvf.type());
+    slassert(2 == rvf.as_array().size());
+    slassert(42 == rvf.as_array()[0].as_int64());
+    slassert("foo" == rvf.as_array()[1].as_string());
     
-    auto& rv_null = rv.get("aaa");
-    slassert(ss::JsonType::NULL_T == rv_null.get_type());
+    auto& rv_null = rv["aaa"];
+    slassert(ss::JsonType::NULL_T == rv_null.type());
 }
 
 #ifdef STATICLIB_WITH_ICU

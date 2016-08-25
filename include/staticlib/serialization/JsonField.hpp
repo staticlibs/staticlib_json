@@ -44,11 +44,11 @@ namespace serialization {
  * from this object without intermediate `get_value()` call.
  */
 class JsonField {
-    std::string name;
+    std::string jsonName;
 #ifdef STATICLIB_WITH_ICU
     mutable std::unique_ptr<icu::UnicodeString> uname;
 #endif // STATICLIB_WITH_ICU
-    JsonValue value;
+    JsonValue jsonValue;
     
 public:
     /**
@@ -107,7 +107,7 @@ public:
      * @param name field name
      * @param value field value
      */
-    JsonField(icu::UnicodeString uname, JsonValue value);
+    JsonField(icu::UnicodeString uname, JsonValue jsonValue);
 #endif // STATICLIB_WITH_ICU
     
     /**
@@ -115,7 +115,7 @@ public:
      * 
      * @return field name
      */
-    const std::string& get_name() const;
+    const std::string& name() const;
 
 #ifdef STATICLIB_WITH_ICU
     /**
@@ -131,14 +131,21 @@ public:
      * 
      * @return type type of the value in this field
      */
-    JsonType get_type() const;
+    JsonType type() const;
     
     /**
      * Field value accessor
      * 
      * @return field value
      */
-    const JsonValue& get_value() const;
+    const JsonValue& value() const;
+
+    /**
+     * Field value accessor
+     * 
+     * @return field value
+     */
+    JsonValue& value();
     
     /**
      * Field value mutator
@@ -159,21 +166,21 @@ public:
      * 
      * @return list of `name->value` pairs
      */
-    const std::vector<JsonField>& get_object() const;
+    const std::vector<JsonField>& as_object() const;
 
     /**
      * Access reflected value as an `ARRAY`
      * 
      * @return list of values
      */
-    const std::vector<JsonValue>& get_array() const;
+    const std::vector<JsonValue>& as_array() const;
 
     /**
      * Access reflected value as an `STRING`
      * 
      * @return string value
      */
-    const std::string& get_string() const;
+    const std::string& as_string() const;
 
     /**
      * Access reflected value as a `STRING`,
@@ -182,7 +189,7 @@ public:
      * @param default_val default value
      * @return string value
      */
-    const std::string& get_string(const std::string& default_val) const;
+    const std::string& as_string(const std::string& default_val) const;
 
 #ifdef STATICLIB_WITH_ICU 
     /**
@@ -207,7 +214,7 @@ public:
      * 
      * @return int value
      */
-    int64_t get_integer() const;
+    int64_t as_int64() const;
 
     /**
      * Access reflected value as an `INTEGER`,
@@ -216,14 +223,14 @@ public:
      * @param default_val default value
      * @return int value
      */
-    int64_t get_integer(int64_t default_val) const;
+    int64_t as_int64(int64_t default_val) const;
 
     /**
      * Access reflected value as an `int32_t` `INTEGER`
      * 
      * @return int value
      */
-    int32_t get_int32() const;
+    int32_t as_int32() const;
 
     /**
      * Access reflected value as an `int32_t` `INTEGER`,
@@ -232,14 +239,14 @@ public:
      * @param default_val default value
      * @return int value
      */
-    int32_t get_int32(int32_t default_val) const;
+    int32_t as_int32(int32_t default_val) const;
 
     /**
      * Access reflected value as an `uint32_t` `INTEGER`
      * 
      * @return int value
      */
-    uint32_t get_uint32() const;
+    uint32_t as_uint32() const;
 
     /**
      * Access reflected value as an `uint32_t` `INTEGER`,
@@ -248,14 +255,14 @@ public:
      * @param default_val default value
      * @return int value
      */
-    uint32_t get_uint32(uint32_t default_val) const;
+    uint32_t as_uint32(uint32_t default_val) const;
 
     /**
      * Access reflected value as an `int16_t` `INTEGER`
      * 
      * @return int value
      */
-    int16_t get_int16() const;
+    int16_t as_int16() const;
 
     /**
      * Access reflected value as an `int16_t` `INTEGER`,
@@ -264,14 +271,14 @@ public:
      * @param default_val default value
      * @return int value
      */
-    int16_t get_int16(int16_t default_val) const;
+    int16_t as_int16(int16_t default_val) const;
 
     /**
      * Access reflected value as an `uint16_t` `INTEGER`
      * 
      * @return int value
      */
-    uint16_t get_uint16() const;
+    uint16_t as_uint16() const;
 
     /**
      * Access reflected value as an `uint16_t` `INTEGER`,
@@ -280,7 +287,7 @@ public:
      * @param default_val default value
      * @return int value
      */
-    uint16_t get_uint16(uint16_t default_val) const;
+    uint16_t as_uint16(uint16_t default_val) const;
 
     /**
      * Access reflected value as a `REAL`,
@@ -288,7 +295,7 @@ public:
      * 
      * @return double value
      */
-    double get_real() const;
+    double as_double() const;
 
     /**
      * Access reflected value as an `REAL`,
@@ -296,14 +303,30 @@ public:
      * @param default_val default value
      * @return double value
      */
-    double get_real(double default_val) const;
+    double as_double(double default_val) const;
+
+    /**
+     * Access reflected value as a `REAL`,
+     * returns specified `default_val` if this value is not a `REAL`
+     * 
+     * @return double value
+     */
+    float as_float() const;
+
+    /**
+     * Access reflected value as an `REAL`,
+     * 
+     * @param default_val default value
+     * @return double value
+     */
+    float as_float(float default_val) const;    
 
     /**
      * Access reflected value as an `BOOLEAN`
      * 
      * @return bool value
      */
-    bool get_boolean() const;
+    bool as_bool() const;
 
     /**
      * Access reflected value as an `BOOLEAN`,
@@ -312,7 +335,7 @@ public:
      * @param default_val default value
      * @return bool value
      */
-    bool get_boolean(bool default_val) const;
+    bool as_bool(bool default_val) const;
 
 };
 

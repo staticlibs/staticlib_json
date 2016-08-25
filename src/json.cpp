@@ -89,10 +89,10 @@ std::unique_ptr<json_t, JanssonDeleter> dump_object(const std::vector<JsonField>
     if (!json_p) throw SerializationException(TRACEMSG("Error initializing JSON object"));
     std::unique_ptr<json_t, JanssonDeleter> obj{json_p, JanssonDeleter()};
     for (const auto& va : objectValue) {
-        auto jval = dump_internal(va.get_value());
-        auto err = json_object_set(obj.get(), va.get_name().c_str(), jval.get());
+        auto jval = dump_internal(va.value());
+        auto err = json_object_set(obj.get(), va.name().c_str(), jval.get());
         if (err) throw SerializationException(TRACEMSG(
-                "Error setting field to JSON object, field name:[" + va.get_name() + "]"));
+                "Error setting field to JSON object, field name:[" + va.name() + "]"));
     }
     return obj;
 }
@@ -139,16 +139,16 @@ std::unique_ptr<json_t, JanssonDeleter> dump_boolean(bool booleanValue) {
 }
 
 std::unique_ptr<json_t, JanssonDeleter> dump_internal(const JsonValue& value) {
-    switch (value.get_type()) {
+    switch (value.type()) {
     case (JsonType::NULL_T): return dump_null();
-    case (JsonType::OBJECT): return dump_object(value.get_object());
-    case (JsonType::ARRAY): return dump_array(value.get_array());
-    case (JsonType::STRING): return dump_string(value.get_string());
-    case (JsonType::INTEGER): return dump_integer(value.get_integer());
-    case (JsonType::REAL): return dump_real(value.get_real());
-    case (JsonType::BOOLEAN): return dump_boolean(value.get_boolean());
+    case (JsonType::OBJECT): return dump_object(value.as_object());
+    case (JsonType::ARRAY): return dump_array(value.as_array());
+    case (JsonType::STRING): return dump_string(value.as_string());
+    case (JsonType::INTEGER): return dump_integer(value.as_int64());
+    case (JsonType::REAL): return dump_real(value.as_double());
+    case (JsonType::BOOLEAN): return dump_boolean(value.as_bool());
     default: throw SerializationException(TRACEMSG(
-                "Unsupported JSON type:[" + sc::to_string(static_cast<char> (value.get_type())) + "]"));
+                "Unsupported JSON type:[" + sc::to_string(static_cast<char> (value.type())) + "]"));
     }
 }
 

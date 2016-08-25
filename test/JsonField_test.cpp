@@ -31,8 +31,8 @@ namespace ss = staticlib::serialization;
 
 void test_string() {
     ss::JsonField fi{"foo", "bar"};
-    slassert("foo" == fi.get_name());
-    slassert("bar" == fi.get_value().get_string());
+    slassert("foo" == fi.name());
+    slassert("bar" == fi.value().as_string());
 }
 
 #ifdef STATICLIB_WITH_ICU

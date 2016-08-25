@@ -75,7 +75,7 @@ std::vector<JsonValue> emplace_values_to_vector(T& range) {
  */
 class JsonValue {
 private:
-    JsonType type;
+    JsonType jsonType;
     // boost::variant can be used instead (and implementation will be simpler)
     // but executable will be bigger, 
     // and we do not want to leak boost::variant from this public header
@@ -95,6 +95,9 @@ private:
     mutable std::unique_ptr<icu::UnicodeString> ustringValCached;
 #endif // STATICLIB_WITH_ICU
 public:
+    /**
+     * Destructor
+     */
     ~JsonValue() STATICLIB_NOEXCEPT;
     /**
      * Deleted copy constructor
@@ -251,23 +254,7 @@ public:
      * 
      * @return type type of this reflected value
      */
-    JsonType get_type() const;
-    
-    /**
-     * Access reflected value as an `OBJECT`
-     * 
-     * @return list of `name->value` pairs
-     */
-    const std::vector<JsonField>& get_object() const;
-    
-    /**
-     * Access reflected value as a mutable `OBJECT`
-     * 
-     * @return pair, first element is a pointer to the fields
-     *         array or `nullptr` if this instance is not an `OBJECT`,
-     *         second element is flag whether this instance is an `OBJECT`
-     */
-    std::pair<std::vector<JsonField>*, bool> get_object_ptr();
+    JsonType type() const;
     
     /**
      * Returns value of the field with specified name if this
@@ -277,7 +264,17 @@ public:
      * 
      * @return value of specified field
      */
-    const JsonValue& get(const std::string& name) const;
+    const JsonValue& getattr(const std::string& name) const;
+
+    /**
+     * Returns value of the field with specified name if this
+     * value is an `OBJECT` and contains specified field.
+     * Otherwise returns `NULL_T` value.
+     * Note: this is O(number_of_fields) operation, consider using explicit loop instead.
+     * 
+     * @return value of specified field
+     */
+    const JsonValue& operator[](const std::string& name) const;
     
 #ifdef STATICLIB_WITH_ICU
     /**
@@ -290,13 +287,41 @@ public:
      */
     const JsonValue& getu(const icu::UnicodeString& uname) const;
 #endif // STATICLIB_WITH_ICU
+
+    /**
+     * Returns a mutable value of the field with specified name if this
+     * value is an `OBJECT` and contains specified field.
+     * If this value is not an `OBJECT` it will be changed to become an empty object.
+     * If this value doesn't contain specified attribute - new attribute of type `NULL_T`
+     * with the specified name will be created.
+     * Note: this is O(number_of_fields) operation, consider using explicit loop instead.
+     * 
+     * @return value of specified field
+     */
+    JsonValue& getattr_mutable(const std::string& name);
+    
+    /**
+     * Access reflected value as an `OBJECT`
+     * 
+     * @return list of `name->value` pairs
+     */
+    const std::vector<JsonField>& as_object() const;
+
+    /**
+     * Access reflected value as a mutable `OBJECT`
+     * 
+     * @return pair, first element is a pointer to the fields
+     *         array or `nullptr` if this instance is not an `OBJECT`,
+     *         second element is flag whether this instance is an `OBJECT`
+     */
+    std::pair<std::vector<JsonField>*, bool> as_object_mutable();
     
     /**
      * Access reflected value as an `ARRAY`
      * 
      * @return list of values
      */
-    const std::vector<JsonValue>& get_array() const;
+    const std::vector<JsonValue>& as_array() const;
 
     /**
      * Access reflected value as a mutable `ARRAY`
@@ -305,14 +330,14 @@ public:
      *         array or `nullptr` if this instance is not an `ARRAY`,
      *         second element is flag whether this instance is an `ARRAY`
      */
-    std::pair<std::vector<JsonValue>*, bool> get_array_ptr();
+    std::pair<std::vector<JsonValue>*, bool> as_array_mutable();
     
     /**
      * Access reflected value as an `STRING`
      * 
      * @return string value
      */
-    const std::string& get_string() const;
+    const std::string& as_string() const;
 
     /**
      * Access reflected value as a `STRING`,
@@ -321,7 +346,7 @@ public:
      * @param default_val default value
      * @return string value
      */
-    const std::string& get_string(const std::string& default_val) const;
+    const std::string& as_string(const std::string& default_val) const;
 
     /**
      * Setter for the `STRING` value
@@ -364,7 +389,7 @@ public:
      * 
      * @return int value
      */
-    int64_t get_integer() const;
+    int64_t as_int64() const;
 
     /**
      * Access reflected value as an `INTEGER`,
@@ -373,7 +398,7 @@ public:
      * @param default_val default value
      * @return int value
      */
-    int64_t get_integer(int64_t default_val) const;
+    int64_t as_int64(int64_t default_val) const;
 
     /**
      * Setter for the `INTEGER` value
@@ -382,13 +407,13 @@ public:
      * @return `true` if value was set, `false` if current
      *         instance is not a `INTEGER`
      */
-    bool set_integer(int64_t value);
+    bool set_int64(int64_t value);
     /**
      * Access reflected value as an `int32_t` `INTEGER`
      * 
      * @return int value
      */
-    int32_t get_int32() const;
+    int32_t as_int32() const;
 
     /**
      * Access reflected value as an `int32_t` `INTEGER`,
@@ -397,7 +422,7 @@ public:
      * @param default_val default value
      * @return int value
      */
-    int32_t get_int32(int32_t default_val) const;
+    int32_t as_int32(int32_t default_val) const;
 
     /**
      * Setter for the `INTEGER` value
@@ -413,7 +438,7 @@ public:
      * 
      * @return int value
      */
-    uint32_t get_uint32() const;
+    uint32_t as_uint32() const;
 
     /**
      * Access reflected value as an `uint32_t` `INTEGER`,
@@ -422,7 +447,7 @@ public:
      * @param default_val default value
      * @return int value
      */
-    uint32_t get_uint32(uint32_t default_val) const;
+    uint32_t as_uint32(uint32_t default_val) const;
 
     /**
      * Setter for the `INTEGER` value
@@ -438,7 +463,7 @@ public:
      * 
      * @return int value
      */
-    int16_t get_int16() const;
+    int16_t as_int16() const;
 
     /**
      * Access reflected value as an `int16_t` `INTEGER`,
@@ -447,7 +472,7 @@ public:
      * @param default_val default value
      * @return int value
      */
-    int16_t get_int16(int16_t default_val) const;
+    int16_t as_int16(int16_t default_val) const;
 
     /**
      * Setter for the `INTEGER` value
@@ -463,7 +488,7 @@ public:
      * 
      * @return int value
      */
-    uint16_t get_uint16() const;
+    uint16_t as_uint16() const;
 
     /**
      * Access reflected value as an `uint16_t` `INTEGER`,
@@ -472,7 +497,7 @@ public:
      * @param default_val default value
      * @return int value
      */
-    uint16_t get_uint16(uint16_t default_val) const;
+    uint16_t as_uint16(uint16_t default_val) const;
 
     /**
      * Setter for the `INTEGER` value
@@ -482,22 +507,22 @@ public:
      *         instance is not a `INTEGER`
      */
     bool set_uint16(uint16_t value);
-    
-    /**
-     * Access reflected value as a `REAL`,
-     * returns specified `default_val` if this value is not a `REAL`
-     * 
-     * @return double value
-     */
-    double get_real() const;
 
     /**
      * Access reflected value as an `REAL`,
      * 
      * @param default_val default value
      * @return double value
-     */
-    double get_real(double default_val) const;
+     */    
+    double as_double() const;
+
+    /**
+     * Access reflected value as a `REAL`,
+     * returns specified `default_val` if this value is not a `REAL`
+     * 
+     * @return double value
+     */    
+    double as_double(double default_val) const;
 
     /**
      * Setter for the `REAL` value
@@ -506,14 +531,39 @@ public:
      * @return `true` if value was set, `false` if current
      *         instance is not a `REAL`
      */
-    bool set_real(double value);
+    bool set_double(double value);
+
+    /**
+     * Access reflected value as an `REAL`,
+     * 
+     * @param default_val default value
+     * @return double value
+     */
+    float as_float() const;
+
+    /**
+     * Access reflected value as a `REAL`,
+     * returns specified `default_val` if this value is not a `REAL`
+     * 
+     * @return double value
+     */
+    float as_float(float default_val) const;
+
+    /**
+     * Setter for the `REAL` value
+     * 
+     * @param value new value
+     * @return `true` if value was set, `false` if current
+     *         instance is not a `REAL`
+     */
+    bool set_float(float value);    
     
     /**
      * Access reflected value as an `BOOLEAN`
      * 
      * @return bool value
      */
-    bool get_boolean() const;
+    bool as_bool() const;
 
     /**
      * Access reflected value as an `BOOLEAN`,
@@ -522,7 +572,7 @@ public:
      * @param default_val default value
      * @return bool value
      */
-    bool get_boolean(bool default_val) const;
+    bool as_bool(bool default_val) const;
 
     /**
      * Setter for the `BOOLEAN` value
@@ -531,7 +581,7 @@ public:
      * @return `true` if value was set, `false` if current
      *         instance is not a `BOOLEAN`
      */
-    bool set_boolean(bool value);
+    bool set_bool(bool value);
     
 };
 
