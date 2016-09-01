@@ -40,13 +40,13 @@ namespace serialization {
 
 /**
  * Representation of the reflected object field. Implemented as `name, JsonValue` tuple.
- * This class mimics `JsonValue` methods like `get_array` to access field value directly 
- * from this object without intermediate `get_value()` call.
+ * This class mimics `JsonValue` methods like `as_array` to access field value directly 
+ * from this object without intermediate `value()` call.
  */
 class JsonField {
     std::string jsonName;
 #ifdef STATICLIB_WITH_ICU
-    mutable std::unique_ptr<icu::UnicodeString> uname;
+    mutable std::unique_ptr<icu::UnicodeString> jsonUname;
 #endif // STATICLIB_WITH_ICU
     JsonValue jsonValue;
     
@@ -123,7 +123,7 @@ public:
      * 
      * @return field name
      */
-    const icu::UnicodeString& get_uname() const;
+    const icu::UnicodeString& uname() const;
 #endif // STATICLIB_WITH_ICU
 
     /**
@@ -197,7 +197,7 @@ public:
      * 
      * @return string value
      */
-    const icu::UnicodeString& get_ustring() const;
+    const icu::UnicodeString& as_ustring() const;
 
     /**
      * Access reflected value as a `STRING`,
@@ -206,7 +206,7 @@ public:
      * @param default_val default value
      * @return string value
      */
-    const icu::UnicodeString& get_ustring(const icu::UnicodeString& default_val) const;
+    const icu::UnicodeString& as_ustring(const icu::UnicodeString& default_val) const;
 #endif // STATICLIB_WITH_ICU
 
     /**

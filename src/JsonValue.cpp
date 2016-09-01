@@ -166,6 +166,9 @@ JsonValue(static_cast<int64_t> (integerValue)) { }
 JsonValue::JsonValue(double realValue) :
 jsonType(JsonType::REAL), realVal(realValue) { }
 
+JsonValue::JsonValue(float realValue) :
+JsonValue(static_cast<double> (realValue)) { }
+
 JsonValue::JsonValue(bool booleanValue) :
 jsonType(JsonType::BOOLEAN), booleanVal(booleanValue) { }
 
@@ -214,9 +217,9 @@ const JsonValue& JsonValue::operator[](const std::string& name) const {
 }
 
 #ifdef STATICLIB_WITH_ICU
-const JsonValue& JsonValue::getu(const icu::UnicodeString& uname) const {
+const JsonValue& JsonValue::getattru(const icu::UnicodeString& uname) const {
     for (auto& el : this->as_object()) {
-        if (uname == el.get_uname()) {
+        if (uname == el.uname()) {
             return el.value();
         }
     }
@@ -225,10 +228,46 @@ const JsonValue& JsonValue::getu(const icu::UnicodeString& uname) const {
 #endif // STATICLIB_WITH_ICU
 
 JsonValue& JsonValue::getattr_mutable(const std::string& name) {
-    // todo
-    (void) name;
-    return *this;
+    auto pa = this->as_object_mutable();
+    if (pa.second) { // actually object
+        for (JsonField& el : *pa.first) {
+            if (name == el.name()) {
+                return el.value();
+            }
+        }
+        std::vector<JsonField>& obj = *pa.first;
+        obj.emplace_back(JsonField(name, JsonValue()));
+        return obj[obj.size() - 1].value();
+    }
+    // not object    
+    *this = JsonValue(std::vector<JsonField>());
+    std::vector<JsonField>& obj = *(this->as_object_mutable().first);
+    obj.emplace_back(JsonField(name, JsonValue()));
+    return obj[obj.size() - 1].value();
 }
+
+#ifdef STATICLIB_WITH_ICU
+
+JsonValue& JsonValue::getattru_mutable(const icu::UnicodeString& name) {
+    auto pa = this->as_object_mutable();
+    if (pa.second) { // actually object
+        for (JsonField& el : *pa.first) {
+            if (name == el.uname()) {
+                return el.value();
+            }
+        }
+        std::vector<JsonField>& obj = *pa.first;
+        obj.emplace_back(JsonField(name, JsonValue()));
+        return obj[obj.size() - 1].value();
+    }
+    // not object    
+    *this = JsonValue(std::vector<JsonField>());
+    std::vector<JsonField>& obj = *(this->as_object_mutable().first);
+    obj.emplace_back(JsonField(name, JsonValue()));
+    return obj[obj.size() - 1].value();
+}
+
+#endif // STATICLIB_WITH_ICU  
 
 const std::vector<JsonField>& JsonValue::as_object() const {
     if (JsonType::OBJECT == jsonType) {
@@ -244,6 +283,15 @@ std::pair<std::vector<JsonField>*, bool> JsonValue::as_object_mutable() {
     return { nullptr, false };
 }
 
+bool JsonValue::set_object(std::vector<JsonField> value) {
+    if (JsonType::OBJECT == jsonType) {
+        *(this->objectVal) = std::move(value);
+        return true;
+    }
+    *this = JsonValue(std::move(value));
+    return false;
+}
+
 const std::vector<JsonValue>& JsonValue::as_array() const {
     if (JsonType::ARRAY == jsonType) {
         return *(this->arrayVal);
@@ -256,6 +304,15 @@ std::pair<std::vector<JsonValue>*, bool> JsonValue::as_array_mutable() {
         return {this->arrayVal, true};
     }
     return {nullptr, false};
+}
+
+bool JsonValue::set_array(std::vector<JsonValue> value) {
+    if (JsonType::ARRAY == jsonType) {
+        *(this->arrayVal) = std::move(value);
+        return true;
+    }
+    *this = JsonValue(std::move(value));
+    return false;
 }
 
 const std::string& JsonValue::as_string() const {
@@ -277,11 +334,12 @@ bool JsonValue::set_string(std::string value) {
         *(this->stringVal) = std::move(value);
         return true;
     }
+    *this = JsonValue(std::move(value));
     return false;
 }
 
 #ifdef STATICLIB_WITH_ICU
-const icu::UnicodeString& JsonValue::get_ustring() const {
+const icu::UnicodeString& JsonValue::as_ustring() const {
     if (JsonType::STRING == jsonType) {
         if (nullptr == ustringValCached.get()) {
             this->ustringValCached = std::unique_ptr<icu::UnicodeString>{new icu::UnicodeString{}};
@@ -292,9 +350,9 @@ const icu::UnicodeString& JsonValue::get_ustring() const {
     return EMPTY_USTRING;
 }
 
-const icu::UnicodeString& JsonValue::get_ustring(const icu::UnicodeString& default_val) const {
+const icu::UnicodeString& JsonValue::as_ustring(const icu::UnicodeString& default_val) const {
     if (JsonType::STRING == jsonType) {
-        return get_ustring();
+        return as_ustring();
     }
     return default_val;
 }
@@ -307,6 +365,7 @@ bool JsonValue::set_ustring(icu::UnicodeString value) {
         }
         return true;
     }
+    *this = JsonValue(std::move(value));
     return false;
 }
 #endif // STATICLIB_WITH_ICU
@@ -330,6 +389,7 @@ bool JsonValue::set_int64(int64_t value) {
         this->integerVal = value;
         return true;
     }
+    *this = JsonValue(value);
     return false;
 }
 
@@ -352,6 +412,7 @@ bool JsonValue::set_int32(int32_t value) {
         this->integerVal = value;
         return true;
     }
+    *this = JsonValue(value);
     return false;
 }
 
@@ -374,6 +435,7 @@ bool JsonValue::set_uint32(uint32_t value) {
         this->integerVal = value;
         return true;
     }
+    *this = JsonValue(value);
     return false;
 }
 
@@ -396,6 +458,7 @@ bool JsonValue::set_int16(int16_t value) {
         this->integerVal = value;
         return true;
     }
+    *this = JsonValue(value);
     return false;
 }
 
@@ -418,6 +481,7 @@ bool JsonValue::set_uint16(uint16_t value) {
         this->integerVal = value;
         return true;
     }
+    *this = JsonValue(value);
     return false;
 }
 
@@ -440,6 +504,7 @@ bool JsonValue::set_double(double value) {
         this->realVal = value;
         return true;
     }
+    *this = JsonValue(value);
     return false;    
 }
 
@@ -462,6 +527,7 @@ bool JsonValue::set_float(float value) {
         this->realVal = value;
         return true;
     }
+    *this = JsonValue(value);
     return false;
 }
 
@@ -484,6 +550,7 @@ bool JsonValue::set_bool(bool value) {
         this->booleanVal = value;
         return true;
     }
+    *this = JsonValue(value);
     return false; 
 }
 

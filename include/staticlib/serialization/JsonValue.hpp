@@ -64,7 +64,7 @@ std::vector<JsonValue> emplace_values_to_vector(T& range) {
  * Can represent any type of `JsonType` enum. Always hold exactly one 
  * value of the specified type (that can hold more values inside).
  * 
- * Access to the hold value through the wrong type (e.g. JsonValue::get_integer
+ * Access to the hold value through the wrong type (e.g. JsonValue::as_integer
  * on `STRING` value) is a valid operation and returns the default value of
  * the specified type. This class doesn't do automatic conversion between value types.
  * 
@@ -234,6 +234,13 @@ public:
      * @param realValue double value
      */
     JsonValue(double realValue);
+
+    /**
+     * Constructs `REAL` reflected value
+     * 
+     * @param realValue double value
+     */
+    JsonValue(float realValue);
     
     /**
      * Constructs `BOOLEAN` reflected value
@@ -285,7 +292,7 @@ public:
      * 
      * @return value of specified field
      */
-    const JsonValue& getu(const icu::UnicodeString& uname) const;
+    const JsonValue& getattru(const icu::UnicodeString& uname) const;
 #endif // STATICLIB_WITH_ICU
 
     /**
@@ -299,6 +306,20 @@ public:
      * @return value of specified field
      */
     JsonValue& getattr_mutable(const std::string& name);
+
+#ifdef STATICLIB_WITH_ICU
+    /**
+     * Returns a mutable value of the field with specified name if this
+     * value is an `OBJECT` and contains specified field.
+     * If this value is not an `OBJECT` it will be changed to become an empty object.
+     * If this value doesn't contain specified attribute - new attribute of type `NULL_T`
+     * with the specified name will be created.
+     * Note: this is O(number_of_fields) operation, consider using explicit loop instead.
+     * 
+     * @return value of specified field
+     */
+    JsonValue& getattru_mutable(const icu::UnicodeString& name);
+#endif // STATICLIB_WITH_ICU    
     
     /**
      * Access reflected value as an `OBJECT`
@@ -315,6 +336,15 @@ public:
      *         second element is flag whether this instance is an `OBJECT`
      */
     std::pair<std::vector<JsonField>*, bool> as_object_mutable();
+
+    /**
+     * Setter for the `OBJECT` value
+     * 
+     * @param value new value
+     * @return `true` if current instance was initially a `OBJECT`, `false` if current
+     *         instance was changed `OBJECT`
+     */
+    bool set_object(std::vector<JsonField> value);
     
     /**
      * Access reflected value as an `ARRAY`
@@ -331,6 +361,15 @@ public:
      *         second element is flag whether this instance is an `ARRAY`
      */
     std::pair<std::vector<JsonValue>*, bool> as_array_mutable();
+
+    /**
+     * Setter for the `ARRAY` value
+     * 
+     * @param value new value
+     * @return `true` if current instance was initially a `ARRAY`, `false` if current
+     *         instance was changed `ARRAY`
+     */
+    bool set_array(std::vector<JsonValue> value);    
     
     /**
      * Access reflected value as an `STRING`
@@ -352,8 +391,8 @@ public:
      * Setter for the `STRING` value
      * 
      * @param value new value
-     * @return `true` if value was set, `false` if current
-     *         instance is not a `STRING`
+     * @return `true` if current instance was initially a `STRING`, `false` if current
+     *         instance was changed `STRING`
      */
     bool set_string(std::string value);
     
@@ -363,7 +402,7 @@ public:
      * 
      * @return string value
      */
-    const icu::UnicodeString& get_ustring() const;
+    const icu::UnicodeString& as_ustring() const;
 
     /**
      * Access reflected value as a `STRING`,
@@ -372,14 +411,14 @@ public:
      * @param default_val default value
      * @return string value
      */
-    const icu::UnicodeString& get_ustring(const icu::UnicodeString& default_val) const;
+    const icu::UnicodeString& as_ustring(const icu::UnicodeString& default_val) const;
 
     /**
      * Setter for the `STRING` value
      * 
      * @param value new value
-     * @return `true` if value was set, `false` if current
-     *         instance is not a `STRING`
+     * @return `true` if current instance was initially a `STRING`, `false` if current
+     *         instance was changed `STRING`
      */
     bool set_ustring(icu::UnicodeString value);
 #endif // STATICLIB_WITH_ICU
@@ -404,8 +443,8 @@ public:
      * Setter for the `INTEGER` value
      * 
      * @param value new value
-     * @return `true` if value was set, `false` if current
-     *         instance is not a `INTEGER`
+     * @return `true` if current instance was initially a `INTEGER`, `false` if current
+     *         instance was changed `INTEGER`
      */
     bool set_int64(int64_t value);
     /**
@@ -428,8 +467,8 @@ public:
      * Setter for the `INTEGER` value
      * 
      * @param value new value
-     * @return `true` if value was set, `false` if current
-     *         instance is not a `INTEGER`
+     * @return `true` if current instance was initially a `INTEGER`, `false` if current
+     *         instance was changed `INTEGER`
      */
     bool set_int32(int32_t value);
 
@@ -453,8 +492,8 @@ public:
      * Setter for the `INTEGER` value
      * 
      * @param value new value
-     * @return `true` if value was set, `false` if current
-     *         instance is not a `INTEGER`
+     * @return `true` if current instance was initially a `INTEGER`, `false` if current
+     *         instance was changed `INTEGER`
      */
     bool set_uint32(uint32_t value);
     
@@ -478,8 +517,8 @@ public:
      * Setter for the `INTEGER` value
      * 
      * @param value new value
-     * @return `true` if value was set, `false` if current
-     *         instance is not a `INTEGER`
+     * @return `true` if current instance was initially a `INTEGER`, `false` if current
+     *         instance was changed `INTEGER`
      */
     bool set_int16(int16_t value);
     
@@ -503,8 +542,8 @@ public:
      * Setter for the `INTEGER` value
      * 
      * @param value new value
-     * @return `true` if value was set, `false` if current
-     *         instance is not a `INTEGER`
+     * @return `true` if current instance was initially a `INTEGER`, `false` if current
+     *         instance was changed `INTEGER`
      */
     bool set_uint16(uint16_t value);
 
@@ -528,8 +567,8 @@ public:
      * Setter for the `REAL` value
      * 
      * @param value new value
-     * @return `true` if value was set, `false` if current
-     *         instance is not a `REAL`
+     * @return `true` if current instance was initially a `REAL`, `false` if current
+     *         instance was changed `REAL`
      */
     bool set_double(double value);
 
@@ -553,8 +592,8 @@ public:
      * Setter for the `REAL` value
      * 
      * @param value new value
-     * @return `true` if value was set, `false` if current
-     *         instance is not a `REAL`
+     * @return `true` if current instance was initially a `REAL`, `false` if current
+     *         instance was changed `REAL`
      */
     bool set_float(float value);    
     
@@ -578,8 +617,8 @@ public:
      * Setter for the `BOOLEAN` value
      * 
      * @param value new value
-     * @return `true` if value was set, `false` if current
-     *         instance is not a `BOOLEAN`
+     * @return `true` if current instance was initially a `BOOLEAN`, `false` if current
+     *         instance was changed `BOOLEAN`
      */
     bool set_bool(bool value);
     

@@ -38,10 +38,10 @@ void test_string() {
 #ifdef STATICLIB_WITH_ICU
 void test_icu() {
     ss::JsonField fi{icu::UnicodeString{"foo"}, icu::UnicodeString{"bar"}};
-    slassert("foo" == fi.get_name());
-    slassert(icu::UnicodeString{"foo"} == fi.get_uname());
-    slassert("bar" == fi.get_value().get_string());
-    slassert(icu::UnicodeString{"bar"} == fi.get_value().get_ustring());
+    slassert("foo" == fi.name());
+    slassert(icu::UnicodeString{"foo"} == fi.uname());
+    slassert("bar" == fi.value().as_string());
+    slassert(icu::UnicodeString{"bar"} == fi.value().as_ustring());
 }
 #endif // STATICLIB_WITH_ICU
 

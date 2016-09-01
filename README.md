@@ -29,12 +29,12 @@ Example of implementing `to_json` logic using C++11 literals:
 Example implementing `from_json` constructor using a loop over `name`->`value` pairs:
 
     MyClass(const JsonValue& val) {
-        for(const auto& fi : val.get_object()) {
-            auto name = fi.get_name();                
+        for(auto& fi : val.as_object()) {
+            auto name = fi.name();
             if("f1" == name) {
-                this->f1 = fi.get_value().get_integer();
+                this->f1 = fi.value().as_int32();
             } else if("f2" == name) {
-                this->f2 = fi.get_value().get_string();
+                this->f2 = fi.value().as_string();
             }
             ...
         }
@@ -42,6 +42,13 @@ Example implementing `from_json` constructor using a loop over `name`->`value` p
 
 For most of the modern compilers this loop can be optimized using `switch` and `constexpr`
 expressions, but this won't work for MS Visual Studio 2013.
+
+Example of using "fluent" API for inspecting object graph:
+
+    const JsonValue& obj = ...
+    std::string& bazval = obj["foo"]["bar"]["baz"].as_string();
+
+Note: `operator[]` has `O(n)` complexity where n is a number of attributes in an object.
 
 Binary serialization
 --------------------
@@ -97,6 +104,12 @@ This project is released under the [Apache License 2.0](http://www.apache.org/li
 
 Changelog
 ---------
+
+**2016-09-01**
+
+ * version 1.5.1
+ * make API more fluent
+ * extend setters API
 
 **2016-06-29**
 

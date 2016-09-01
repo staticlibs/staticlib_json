@@ -65,12 +65,12 @@ const std::string& JsonField::name() const {
 }
 
 #ifdef STATICLIB_WITH_ICU
-const icu::UnicodeString& JsonField::get_uname() const {
-    if (nullptr == uname.get()) {
-        uname = std::unique_ptr<icu::UnicodeString>{new icu::UnicodeString{}};
-        *uname = icu::UnicodeString::fromUTF8(jsonName);
+const icu::UnicodeString& JsonField::uname() const {
+    if (nullptr == jsonUname.get()) {
+        jsonUname = std::unique_ptr<icu::UnicodeString>{new icu::UnicodeString{}};
+        *jsonUname = icu::UnicodeString::fromUTF8(jsonName);
     }
-    return *uname;
+    return *jsonUname;
 }
 #endif // STATICLIB_WITH_ICU
 
@@ -112,12 +112,12 @@ const std::string& JsonField::as_string(const std::string& default_val) const {
 }
 
 #ifdef STATICLIB_WITH_ICU
-const icu::UnicodeString& JsonField::get_ustring() const {
-    return value().get_ustring();
+const icu::UnicodeString& JsonField::as_ustring() const {
+    return value().as_ustring();
 }
 
-const icu::UnicodeString& JsonField::get_ustring(const icu::UnicodeString& default_val) const {
-    return value().get_ustring(default_val);
+const icu::UnicodeString& JsonField::as_ustring(const icu::UnicodeString& default_val) const {
+    return value().as_ustring(default_val);
 }
 #endif // STATICLIB_WITH_ICU
 

@@ -93,11 +93,6 @@ void test_object() {
     slassert(0 == rv.as_int64());
     slassert(-1 < rv.as_double() && rv.as_double() < 1);
     slassert(!rv.as_bool());
-    // setters
-    slassert(!rv.set_bool(true));
-    slassert(!rv.set_int64(42));
-    slassert(!rv.set_double(42.0));
-    slassert(!rv.set_string("foo"));
     // mutators
     slassert(rv.as_object_mutable().second);
     slassert(6 == rv.as_object_mutable().first->size());
@@ -105,6 +100,11 @@ void test_object() {
     slassert(7 == rv.as_object().size());
     slassert("aaa" == rv.as_object()[6].as_string());
     slassert(!rv.as_array_mutable().second);
+    // setters
+    slassert(!rv.set_bool(true));
+    slassert(!rv.set_int64(42));
+    slassert(!rv.set_double(42.0));
+    slassert(!rv.set_string("foo"));
 }
 
 void test_array() {
@@ -121,11 +121,6 @@ void test_array() {
     slassert(0 == rv.as_int64());
     slassert(-1 < rv.as_double() && rv.as_double() < 1);
     slassert(!rv.as_bool());
-    // setters
-    slassert(!rv.set_bool(true));
-    slassert(!rv.set_int64(42));
-    slassert(!rv.set_double(42.0));
-    slassert(!rv.set_string("foo"));
     // mutators
     slassert(!rv.as_object_mutable().second);
     slassert(rv.as_array_mutable().second);
@@ -133,6 +128,11 @@ void test_array() {
     rv.as_array_mutable().first->emplace_back("aaa");
     slassert(3 == rv.as_array().size());
     slassert("aaa" == rv.as_array()[2].as_string());
+    // setters
+    slassert(!rv.set_bool(true));
+    slassert(!rv.set_int64(42));
+    slassert(!rv.set_double(42.0));
+    slassert(!rv.set_string("foo"));
 }
 
 void test_string() {
@@ -145,15 +145,15 @@ void test_string() {
     slassert(0 == rv.as_int64());
     slassert(-1 < rv.as_double() && rv.as_double() < 1);
     slassert(!rv.as_bool());
-    // setters
-    slassert(!rv.set_bool(true));
-    slassert(!rv.set_int64(42));
-    slassert(!rv.set_double(42.0));
-    slassert(rv.set_string("foo"));
-    slassert("foo" == rv.as_string());
     // mutators
     slassert(!rv.as_object_mutable().second);
     slassert(!rv.as_array_mutable().second);
+    // setters
+    slassert(rv.set_string("foo"));
+    slassert("foo" == rv.as_string());
+    slassert(!rv.set_bool(true));
+    slassert(!rv.set_int64(42));
+    slassert(!rv.set_double(42.0));
 }
 
 void test_string_default() {
@@ -171,15 +171,15 @@ void test_int() {
     slassert(42 == rv.as_int64());
     slassert(-1 < rv.as_double() && rv.as_double() < 1);
     slassert(!rv.as_bool());
-    // setters
-    slassert(!rv.set_bool(true));
-    slassert(rv.set_int64(43));
-    slassert(43 == rv.as_int64());
-    slassert(!rv.set_double(42.0));
-    slassert(!rv.set_string("foo"));
     // mutators
     slassert(!rv.as_object_mutable().second);
     slassert(!rv.as_array_mutable().second);
+    // setters
+    slassert(rv.set_int64(43));
+    slassert(43 == rv.as_int64());
+    slassert(!rv.set_bool(true));
+    slassert(!rv.set_double(42.0));
+    slassert(!rv.set_string("foo"));
 }
 
 void test_int_default() {
@@ -197,17 +197,17 @@ void test_real() {
     slassert(41 < rv.as_double() && rv.as_double() < 43);
     slassert(41 < rv.as_float() && rv.as_float() < 43);    
     slassert(!rv.as_bool());
+    // mutators
+    slassert(!rv.as_object_mutable().second);
+    slassert(!rv.as_array_mutable().second);
     // setters
-    slassert(!rv.set_bool(true));
-    slassert(!rv.set_int64(42));
     slassert(rv.set_double(43.0));
     slassert(42 < rv.as_double() && rv.as_double() < 44);
     slassert(rv.set_float(43.0));
     slassert(42 < rv.as_float() && rv.as_float() < 44);
+    slassert(!rv.set_bool(true));
+    slassert(!rv.set_int64(42));
     slassert(!rv.set_string("foo"));
-    // mutators
-    slassert(!rv.as_object_mutable().second);
-    slassert(!rv.as_array_mutable().second);
 }
 
 void test_real_default() {
@@ -284,11 +284,55 @@ void test_field_by_name() {
 void test_icu() {
     icu::UnicodeString st{"foo"};
     ss::JsonValue val{st};
-    slassert(icu::UnicodeString{"foo"} == val.get_ustring());
+    slassert(icu::UnicodeString{"foo"} == val.as_ustring());
     val.set_ustring("bar");
-    slassert(icu::UnicodeString{"bar"} == val.get_ustring());
+    slassert(icu::UnicodeString{"bar"} == val.as_ustring());
 }
 #endif // STATICLIB_WITH_ICU
+
+void test_mutable() {
+    TestRefl tr{};
+    auto rv = tr.get_reflected_value();
+    
+    // get existing
+    slassert(41 == rv["f1"].as_int32());
+    slassert(41 == rv.getattr("f1").as_int32());
+    slassert(41 == rv.getattr_mutable("f1").as_int32());
+#ifdef STATICLIB_WITH_ICU
+    slassert(41 == rv.getattru("f1").as_int32());
+    slassert(41 == rv.getattru_mutable("f1").as_int32());
+#endif // STATICLIB_WITH_ICU
+    
+    // create new attr
+    ss::JsonValue& nval = rv.getattr_mutable("foo");
+    slassert(ss::JsonType::NULL_T == nval.type());
+    nval.set_int32(42);
+    slassert(ss::JsonType::INTEGER == nval.type());
+    nval.set_string("foo");
+    slassert(ss::JsonType::STRING == nval.type());
+    nval.set_float(0.1);
+    slassert(ss::JsonType::REAL == nval.type());
+    nval.set_bool(false);
+    slassert(ss::JsonType::BOOLEAN == nval.type());
+    std::vector<ss::JsonValue> arrval{};
+    arrval.emplace_back("bar");
+    nval.set_array(std::move(arrval));
+    slassert(ss::JsonType::ARRAY == nval.type());
+    slassert("bar" == nval.as_array()[0].as_string());
+    std::vector<ss::JsonField> objval{};
+    objval.emplace_back("baz", 42);
+    nval.set_object(std::move(objval));
+    slassert(ss::JsonType::OBJECT == nval.type());
+    slassert("baz" == nval.as_object()[0].name());
+    slassert(42 == nval.as_object()[0].value().as_int32());
+    
+    // convert to object
+    ss::JsonValue& exval = rv.getattr_mutable("f1");
+    slassert(ss::JsonType::INTEGER == exval.type());
+    ss::JsonValue& crval = exval.getattr_mutable("foo");
+    slassert(ss::JsonType::OBJECT == exval.type());
+    slassert(ss::JsonType::NULL_T == crval.type());
+}
 
 int main() {
     try {
@@ -308,6 +352,7 @@ int main() {
 #ifdef STATICLIB_WITH_ICU
         test_icu();
 #endif // STATICLIB_WITH_ICU
+        test_mutable();
     } catch (const std::exception& e) {
         std::cout << e.what() << std::endl;
         return 1;
