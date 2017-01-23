@@ -310,7 +310,7 @@ void test_mutable() {
     slassert(ss::JsonType::INTEGER == nval.type());
     nval.set_string("foo");
     slassert(ss::JsonType::STRING == nval.type());
-    nval.set_float(0.1);
+    nval.set_float(static_cast<float>(0.1));
     slassert(ss::JsonType::REAL == nval.type());
     nval.set_bool(false);
     slassert(ss::JsonType::BOOLEAN == nval.type());
