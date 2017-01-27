@@ -263,7 +263,7 @@ void test_real() {
     // float
     rv.set_double(std::numeric_limits<float>::max());
     slassert(!throws_exc([&rv] { rv.as_float_or_throw(); }))
-    rv.set_double(static_cast<int64_t> (std::numeric_limits<float>::max()) + 1);
+    rv.set_double(static_cast<double>(std::numeric_limits<float>::max()) * 2);
     slassert(throws_exc([&rv] { rv.as_float_or_throw(); }))
 }
 
