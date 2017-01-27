@@ -362,10 +362,10 @@ public:
      * @return `true` if current instance was initially a `OBJECT`, `false` if current
      *         instance was changed `OBJECT`
      */
-    bool set_object(std::vector<JsonField> value);
+    bool set_object(std::vector<JsonField>&& value);
     
     /**
-     * Access value as an `ARRAY`
+     * Access value as an `ARRAY`     
      * 
      * @return list of values
      */
@@ -373,12 +373,11 @@ public:
 
     /**
      * Access value as a mutable `ARRAY`
+     * If this value is not an `ARRAY`: "SerializationException" will be thrown.
      * 
-     * @return pair, first element is a pointer to the values
-     *         array or `nullptr` if this instance is not an `ARRAY`,
-     *         second element is flag whether this instance is an `ARRAY`
+     * @return list of values
      */
-    std::pair<std::vector<JsonValue>*, bool> as_array_mutable();
+    std::vector<JsonValue>& as_array_or_throw();
 
     /**
      * Setter for the `ARRAY` value
@@ -387,7 +386,7 @@ public:
      * @return `true` if current instance was initially a `ARRAY`, `false` if current
      *         instance was changed `ARRAY`
      */
-    bool set_array(std::vector<JsonValue> value);    
+    bool set_array(std::vector<JsonValue>&& value);    
     
     /**
      * Access value as an `STRING`

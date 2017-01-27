@@ -298,7 +298,7 @@ std::vector<JsonField>& JsonValue::as_object_or_throw() {
             " from target value: [" + dump_json_to_string(*this) + "]"));
 }
 
-bool JsonValue::set_object(std::vector<JsonField> value) {
+bool JsonValue::set_object(std::vector<JsonField>&& value) {
     if (JsonType::OBJECT == jsonType) {
         *(this->objectVal) = std::move(value);
         return true;
@@ -314,14 +314,16 @@ const std::vector<JsonValue>& JsonValue::as_array() const {
     return EMPTY_ARRAY;
 }
 
-std::pair<std::vector<JsonValue>*, bool> JsonValue::as_array_mutable() {
+std::vector<JsonValue>& JsonValue::as_array_or_throw() {
     if (JsonType::ARRAY == jsonType) {
-        return {this->arrayVal, true};
+        return *(this->arrayVal);
     }
-    return {nullptr, false};
+    // not array    
+    throw SerializationException(TRACEMSG("Cannot access array" +
+            " from target value: [" + dump_json_to_string(*this) + "]"));
 }
 
-bool JsonValue::set_array(std::vector<JsonValue> value) {
+bool JsonValue::set_array(std::vector<JsonValue>&& value) {
     if (JsonType::ARRAY == jsonType) {
         *(this->arrayVal) = std::move(value);
         return true;
