@@ -35,6 +35,7 @@ namespace serialization {
 
 namespace { // anonymous
 
+namespace sc = staticlib::config;
 #ifdef STATICLIB_WITH_ICU
 namespace su = staticlib::icu_utils;
 #endif // STATICLIB_WITH_ICU
@@ -419,6 +420,16 @@ int64_t JsonValue::as_int64() const {
     return 0;
 }
 
+int64_t JsonValue::as_int64_or_throw(const std::string& context) const {
+    if (JsonType::INTEGER == jsonType) {
+        return this->integerVal;
+    }
+    // not integer
+    throw SerializationException(TRACEMSG("Cannot access 'int64'" +
+            " from target value: [" + dump_json_to_string(*this) + "]," +
+            " context: [" + context + "]"));
+}
+
 int64_t JsonValue::as_int64(int64_t default_val) const {
     if (JsonType::INTEGER == jsonType) {
         return this->integerVal;
@@ -440,6 +451,17 @@ int32_t JsonValue::as_int32() const {
         return static_cast<int32_t> (this->integerVal);
     }
     return 0;
+}
+
+int32_t JsonValue::as_int32_or_throw(const std::string& context) const {
+    int64_t val = this->as_int64_or_throw(context);
+    if (sc::is_int32(val)) {
+        return static_cast<int32_t>(val);
+    }
+    // not int32_t
+    throw SerializationException(TRACEMSG("Cannot access 'int32'" +
+            " from target value: [" + dump_json_to_string(*this) + "]," +
+            " context: [" + context + "]"));
 }
 
 int32_t JsonValue::as_int32(int32_t default_val) const {
@@ -465,6 +487,17 @@ uint32_t JsonValue::as_uint32() const {
     return 0;
 }
 
+uint32_t JsonValue::as_uint32_or_throw(const std::string& context) const {
+    int64_t val = this->as_int64_or_throw(context);
+    if (sc::is_uint32(val)) {
+        return static_cast<uint32_t> (val);
+    }
+    // not uint32_t
+    throw SerializationException(TRACEMSG("Cannot access 'uint32'" +
+            " from target value: [" + dump_json_to_string(*this) + "]," +
+            " context: [" + context + "]"));
+}
+
 uint32_t JsonValue::as_uint32(uint32_t default_val) const {
     if (JsonType::INTEGER == jsonType) {
         return static_cast<uint32_t> (this->integerVal);
@@ -486,6 +519,17 @@ int16_t JsonValue::as_int16() const {
         return static_cast<int16_t> (this->integerVal);
     }
     return 0;
+}
+
+int16_t JsonValue::as_int16_or_throw(const std::string& context) const {
+    int64_t val = this->as_int64_or_throw(context);
+    if (sc::is_int16(val)) {
+        return static_cast<int16_t> (val);
+    }
+    // not int16_t
+    throw SerializationException(TRACEMSG("Cannot access 'int16'" +
+            " from target value: [" + dump_json_to_string(*this) + "]," +
+            " context: [" + context + "]"));
 }
 
 int16_t JsonValue::as_int16(int16_t default_val) const {
@@ -511,6 +555,17 @@ uint16_t JsonValue::as_uint16() const {
     return 0;
 }
 
+uint16_t JsonValue::as_uint16_or_throw(const std::string& context) const {
+    int64_t val = this->as_int64_or_throw(context);
+    if (sc::is_uint16(val)) {
+        return static_cast<uint16_t> (val);
+    }
+    // not uint16_t
+    throw SerializationException(TRACEMSG("Cannot access 'uint16'" +
+            " from target value: [" + dump_json_to_string(*this) + "]," +
+            " context: [" + context + "]"));
+}
+
 uint16_t JsonValue::as_uint16(uint16_t default_val) const {
     if (JsonType::INTEGER == jsonType) {
         return static_cast<uint16_t> (this->integerVal);
@@ -532,6 +587,16 @@ double JsonValue::as_double() const {
         return this->realVal;
     }
     return 0;
+}
+
+double JsonValue::as_double_or_throw(const std::string& context) const {
+    if (JsonType::REAL == jsonType) {
+        return this->realVal;
+    }
+    // not real
+    throw SerializationException(TRACEMSG("Cannot access 'double'" +
+            " from target value: [" + dump_json_to_string(*this) + "]," +
+            " context: [" + context + "]"));
 }
 
 double JsonValue::as_double(double default_val) const {
@@ -557,6 +622,17 @@ float JsonValue::as_float() const {
     return 0;
 }
 
+float JsonValue::as_float_or_throw(const std::string& context) const {
+    double val = this->as_double_or_throw(context);
+    if (val >= std::numeric_limits<float>::min() && val <= std::numeric_limits<float>::max()) {
+        return static_cast<float>(val);
+    }
+    // not float
+    throw SerializationException(TRACEMSG("Cannot access 'float'" +
+            " from target value: [" + dump_json_to_string(*this) + "]," +
+            " context: [" + context + "]"));
+}
+
 float JsonValue::as_float(float default_val) const {
     if (JsonType::REAL == jsonType) {
         return static_cast<float> (this->realVal);
@@ -578,6 +654,16 @@ bool JsonValue::as_bool() const {
         return this->booleanVal;
     }
     return false;
+}
+
+bool JsonValue::as_bool_or_throw(const std::string& context) const {
+    if (JsonType::BOOLEAN == jsonType) {
+        return this->booleanVal;
+    }
+    // not boolean
+    throw SerializationException(TRACEMSG("Cannot access 'boolean'" +
+            " from target value: [" + dump_json_to_string(*this) + "]," +
+            " context: [" + context + "]"));
 }
 
 bool JsonValue::as_bool(bool default_val) const {

@@ -31,6 +31,16 @@
 
 namespace ss = staticlib::serialization;
 
+bool throws_exc(std::function<void()> fun) {
+    try {
+        fun();
+    } catch (const ss::SerializationException& e) {
+        (void) e;
+        return true;
+    }
+    return false;
+}
+
 class TestRefl {
     int32_t f1 = 41;
     std::string f2 = "42";
@@ -99,13 +109,7 @@ void test_object() {
     // not object
     ss::JsonValue& exval = rv.getattr_or_throw("f1");
     slassert(ss::JsonType::INTEGER == exval.type());
-    bool caught = false;
-    try {
-        exval.as_object_or_throw();
-    } catch (const ss::SerializationException& e) {
-        (void) e;
-        caught = true;
-    }
+    bool caught = throws_exc([&exval]{ exval.as_object_or_throw(); });
     slassert(caught);
     // setters
     slassert(!rv.set_bool(true));
@@ -137,13 +141,7 @@ void test_array() {
     // not array
     auto exval = ss::JsonValue(42);
     slassert(ss::JsonType::INTEGER == exval.type());
-    bool caught = false;
-    try {
-        exval.as_array_or_throw();
-    } catch (const ss::SerializationException& e) {
-        (void) e;
-        caught = true;
-    }
+    bool caught = throws_exc([&exval] { exval.as_array_or_throw(); });
     slassert(caught);
     // setters
     slassert(!rv.set_bool(true));
@@ -171,13 +169,7 @@ void test_string() {
     // not string
     auto exval = ss::JsonValue(42);
     slassert(ss::JsonType::INTEGER == exval.type());
-    bool caught = false;
-    try {
-        exval.as_string_or_throw();
-    } catch (const ss::SerializationException& e) {
-        (void) e;
-        caught = true;
-    }
+    bool caught = throws_exc([&exval] { exval.as_string_or_throw(); });
     slassert(caught);
     // setters
     slassert(rv.set_string("foo"));
@@ -212,6 +204,32 @@ void test_int() {
     slassert(!rv.set_bool(true));
     slassert(!rv.set_double(42.0));
     slassert(!rv.set_string("foo"));
+    // limits
+    // int64
+    auto st = ss::JsonValue("foo");
+    slassert(throws_exc([&st] { st.as_int64_or_throw(); }))
+    rv.set_int64(std::numeric_limits<int64_t>::max());
+    slassert(!throws_exc([&rv] { rv.as_int64_or_throw(); }))
+    // int32
+    rv.set_int64(std::numeric_limits<int32_t>::max());
+    slassert(!throws_exc([&rv] { rv.as_int32_or_throw(); }))
+    rv.set_int64(static_cast<int64_t>(std::numeric_limits<int32_t>::max()) + 1);
+    slassert(throws_exc([&rv] { rv.as_int32_or_throw(); }))
+    // uint32
+    rv.set_int64(std::numeric_limits<uint32_t>::max());
+    slassert(!throws_exc([&rv] { rv.as_uint32_or_throw(); }))
+    rv.set_int64(static_cast<int64_t> (std::numeric_limits<uint32_t>::max()) + 1);
+    slassert(throws_exc([&rv] { rv.as_uint32_or_throw(); }))
+    // int16
+    rv.set_int64(std::numeric_limits<int16_t>::max());
+    slassert(!throws_exc([&rv] { rv.as_int16_or_throw(); }))
+    rv.set_int64(static_cast<int64_t> (std::numeric_limits<int16_t>::max()) + 1);
+    slassert(throws_exc([&rv] { rv.as_int16_or_throw(); }))
+    // uint16
+    rv.set_int64(std::numeric_limits<uint16_t>::max());
+    slassert(!throws_exc([&rv] { rv.as_uint16_or_throw(); }))
+    rv.set_int64(static_cast<int64_t> (std::numeric_limits<uint16_t>::max()) + 1);
+    slassert(throws_exc([&rv] { rv.as_uint16_or_throw(); }))
 }
 
 void test_int_default() {
@@ -237,6 +255,16 @@ void test_real() {
     slassert(!rv.set_bool(true));
     slassert(!rv.set_int64(42));
     slassert(!rv.set_string("foo"));
+    // limits
+    auto st = ss::JsonValue("foo");
+    slassert(throws_exc([&st] { st.as_double_or_throw(); }))
+    rv.set_double(std::numeric_limits<double>::max());
+    slassert(!throws_exc([&rv] { rv.as_double_or_throw(); }))
+    // float
+    rv.set_double(std::numeric_limits<float>::max());
+    slassert(!throws_exc([&rv] { rv.as_float_or_throw(); }))
+    rv.set_double(static_cast<int64_t> (std::numeric_limits<float>::max()) + 1);
+    slassert(throws_exc([&rv] { rv.as_float_or_throw(); }))
 }
 
 void test_real_default() {
@@ -274,6 +302,10 @@ void test_boolean() {
     slassert(!rvf.set_int64(42));
     slassert(!rvf.set_double(43.0));
     slassert(!rvf.set_string("foo"));
+    
+    // throw
+    auto st = ss::JsonValue("foo");
+    slassert(throws_exc([&st] { st.as_bool_or_throw(); }))
 }
 
 void test_boolean_default() {
@@ -352,13 +384,7 @@ void test_get_or_throw() {
     // not object
     ss::JsonValue& exval = rv.getattr_or_throw("f1");
     slassert(ss::JsonType::INTEGER == exval.type());
-    bool caught = false;
-    try {
-        exval.getattr_or_throw("foo");
-    } catch (const ss::SerializationException& e) {
-        (void) e;
-        caught = true;
-    }
+    bool caught = throws_exc([&exval] { exval.getattr_or_throw("foo"); });
     slassert(caught);
 }
 
