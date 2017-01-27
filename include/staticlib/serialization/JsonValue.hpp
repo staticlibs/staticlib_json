@@ -356,6 +356,14 @@ public:
     std::vector<JsonField>& as_object_or_throw();
 
     /**
+     * Access value as a mutable `OBJECT`
+     * If this value is not an `OBJECT`: "SerializationException" will be thrown.
+     * 
+     * @return list of `name->value` pairs
+     */
+    const std::vector<JsonField>& as_object_or_throw() const;
+
+    /**
      * Setter for the `OBJECT` value
      * 
      * @param value new value
@@ -380,6 +388,14 @@ public:
     std::vector<JsonValue>& as_array_or_throw();
 
     /**
+     * Access value as a mutable `ARRAY`
+     * If this value is not an `ARRAY`: "SerializationException" will be thrown.
+     * 
+     * @return list of values
+     */
+    const std::vector<JsonValue>& as_array_or_throw() const;
+
+    /**
      * Setter for the `ARRAY` value
      * 
      * @param value new value
@@ -402,6 +418,14 @@ public:
      * @return string value
      */
     std::string& as_string_or_throw();
+
+    /**
+     * Access value as an `STRING`
+     * If this value is not a `STRING`: "SerializationException" will be thrown.
+     * 
+     * @return string value
+     */
+    const std::string& as_string_or_throw() const;
 
     /**
      * Access value as a `STRING`,

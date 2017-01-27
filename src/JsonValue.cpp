@@ -290,6 +290,10 @@ const std::vector<JsonField>& JsonValue::as_object() const {
 }
 
 std::vector<JsonField>& JsonValue::as_object_or_throw() {
+    return const_cast<std::vector<JsonField>&> (const_cast<const JsonValue*> (this)->as_object_or_throw());
+}
+
+const std::vector<JsonField>& JsonValue::as_object_or_throw() const {
     if (JsonType::OBJECT == jsonType) {
         return *(this->objectVal);
     }
@@ -315,6 +319,10 @@ const std::vector<JsonValue>& JsonValue::as_array() const {
 }
 
 std::vector<JsonValue>& JsonValue::as_array_or_throw() {
+    return const_cast<std::vector<JsonValue>&> (const_cast<const JsonValue*> (this)->as_array_or_throw());
+}
+
+const std::vector<JsonValue>& JsonValue::as_array_or_throw() const {
     if (JsonType::ARRAY == jsonType) {
         return *(this->arrayVal);
     }
@@ -340,6 +348,10 @@ const std::string& JsonValue::as_string() const {
 }
 
 std::string& JsonValue::as_string_or_throw() {
+    return const_cast<std::string&> (const_cast<const JsonValue*> (this)->as_string_or_throw());
+}
+
+const std::string& JsonValue::as_string_or_throw() const {
     if (JsonType::STRING == jsonType) {
         return *(this->stringVal);
     }
