@@ -32,7 +32,7 @@ namespace serialization {
 
 /**
  * @enum JsonType
- * Enumeration with all possible types of reflected values.
+ * Enumeration with all possible types of values.
  * Matches types supported by Jansson JSON library.
  */
 enum class JsonType : uint8_t {

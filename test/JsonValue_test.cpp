@@ -154,6 +154,10 @@ void test_string() {
     slassert(!rv.set_bool(true));
     slassert(!rv.set_int64(42));
     slassert(!rv.set_double(42.0));
+    // copy
+    const std::string str{"43"};
+    ss::JsonValue rvc{str};
+    slassert("43" == rvc.as_string());
 }
 
 void test_string_default() {

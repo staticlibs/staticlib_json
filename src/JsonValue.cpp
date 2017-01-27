@@ -109,7 +109,7 @@ jsonType(JsonType::NULL_T) { }
 JsonValue::JsonValue(std::nullptr_t nullValue) :
 jsonType(JsonType::NULL_T) { (void) nullValue; }
 
-JsonValue::JsonValue(std::vector<JsonField> objectValue) :
+JsonValue::JsonValue(std::vector<JsonField>&& objectValue) :
 jsonType(JsonType::OBJECT) { 
     // allocate empty vector and move data into it
     this->objectVal = new std::vector<JsonField>{};
@@ -124,14 +124,28 @@ jsonType(JsonType::OBJECT) {
     }
 }
 
-JsonValue::JsonValue(std::vector<JsonValue> arrayValue) :
+JsonValue::JsonValue(std::vector<JsonValue>&& arrayValue) :
 jsonType(JsonType::ARRAY) { 
     // allocate empty vector and move data into it
     this->arrayVal = new std::vector<JsonValue>{};
     *(this->arrayVal) = std::move(arrayValue);
 }
 
-JsonValue::JsonValue(std::string stringValue) :
+JsonValue::JsonValue(const std::string& stringValue) :
+jsonType(JsonType::STRING) {
+    std::string copy(stringValue.data(), stringValue.length());
+    this->stringVal = new std::string();
+    *(this->stringVal) = std::move(copy);
+}
+
+JsonValue::JsonValue(std::string& stringValue) :
+jsonType(JsonType::STRING) {
+    std::string copy(stringValue.data(), stringValue.length());
+    this->stringVal = new std::string();
+    *(this->stringVal) = std::move(copy);
+}
+
+JsonValue::JsonValue(std::string&& stringValue) :
 jsonType(JsonType::STRING) {
     this->stringVal = new std::string();
     *(this->stringVal) = std::move(stringValue);

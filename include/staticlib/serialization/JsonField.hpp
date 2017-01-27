@@ -162,28 +162,28 @@ public:
     JsonField clone() const;
 
     /**
-     * Access reflected value as an `OBJECT`
+     * Access value as an `OBJECT`
      * 
      * @return list of `name->value` pairs
      */
     const std::vector<JsonField>& as_object() const;
 
     /**
-     * Access reflected value as an `ARRAY`
+     * Access value as an `ARRAY`
      * 
      * @return list of values
      */
     const std::vector<JsonValue>& as_array() const;
 
     /**
-     * Access reflected value as an `STRING`
+     * Access value as an `STRING`
      * 
      * @return string value
      */
     const std::string& as_string() const;
 
     /**
-     * Access reflected value as a `STRING`,
+     * Access value as a `STRING`,
      * returns specified `default_val` if this value is not a `STRING`
      * 
      * @param default_val default value
@@ -193,14 +193,14 @@ public:
 
 #ifdef STATICLIB_WITH_ICU 
     /**
-     * Access reflected value as an `STRING`
+     * Access value as an `STRING`
      * 
      * @return string value
      */
     const icu::UnicodeString& as_ustring() const;
 
     /**
-     * Access reflected value as a `STRING`,
+     * Access value as a `STRING`,
      * returns specified default string if this value is not a `STRING`
      * 
      * @param default_val default value
@@ -210,14 +210,14 @@ public:
 #endif // STATICLIB_WITH_ICU
 
     /**
-     * Access reflected value as an `INTEGER`
+     * Access value as an `INTEGER`
      * 
      * @return int value
      */
     int64_t as_int64() const;
 
     /**
-     * Access reflected value as an `INTEGER`,
+     * Access value as an `INTEGER`,
      * returns specified `default_val` if this value is not an `INTEGER`
      * 
      * @param default_val default value
@@ -226,14 +226,14 @@ public:
     int64_t as_int64(int64_t default_val) const;
 
     /**
-     * Access reflected value as an `int32_t` `INTEGER`
+     * Access value as an `int32_t` `INTEGER`
      * 
      * @return int value
      */
     int32_t as_int32() const;
 
     /**
-     * Access reflected value as an `int32_t` `INTEGER`,
+     * Access value as an `int32_t` `INTEGER`,
      * returns specified `default_val` if this value is not an `INTEGER`
      * 
      * @param default_val default value
@@ -242,14 +242,14 @@ public:
     int32_t as_int32(int32_t default_val) const;
 
     /**
-     * Access reflected value as an `uint32_t` `INTEGER`
+     * Access value as an `uint32_t` `INTEGER`
      * 
      * @return int value
      */
     uint32_t as_uint32() const;
 
     /**
-     * Access reflected value as an `uint32_t` `INTEGER`,
+     * Access value as an `uint32_t` `INTEGER`,
      * returns specified `default_val` if this value is not an `INTEGER`
      * 
      * @param default_val default value
@@ -258,14 +258,14 @@ public:
     uint32_t as_uint32(uint32_t default_val) const;
 
     /**
-     * Access reflected value as an `int16_t` `INTEGER`
+     * Access value as an `int16_t` `INTEGER`
      * 
      * @return int value
      */
     int16_t as_int16() const;
 
     /**
-     * Access reflected value as an `int16_t` `INTEGER`,
+     * Access value as an `int16_t` `INTEGER`,
      * returns specified `default_val` if this value is not an `INTEGER`
      * 
      * @param default_val default value
@@ -274,14 +274,14 @@ public:
     int16_t as_int16(int16_t default_val) const;
 
     /**
-     * Access reflected value as an `uint16_t` `INTEGER`
+     * Access value as an `uint16_t` `INTEGER`
      * 
      * @return int value
      */
     uint16_t as_uint16() const;
 
     /**
-     * Access reflected value as an `uint16_t` `INTEGER`,
+     * Access value as an `uint16_t` `INTEGER`,
      * returns specified `default_val` if this value is not an `INTEGER`
      * 
      * @param default_val default value
@@ -290,7 +290,7 @@ public:
     uint16_t as_uint16(uint16_t default_val) const;
 
     /**
-     * Access reflected value as a `REAL`,
+     * Access value as a `REAL`,
      * returns specified `default_val` if this value is not a `REAL`
      * 
      * @return double value
@@ -298,7 +298,7 @@ public:
     double as_double() const;
 
     /**
-     * Access reflected value as an `REAL`,
+     * Access value as an `REAL`,
      * 
      * @param default_val default value
      * @return double value
@@ -306,7 +306,7 @@ public:
     double as_double(double default_val) const;
 
     /**
-     * Access reflected value as a `REAL`,
+     * Access value as a `REAL`,
      * returns specified `default_val` if this value is not a `REAL`
      * 
      * @return double value
@@ -314,7 +314,7 @@ public:
     float as_float() const;
 
     /**
-     * Access reflected value as an `REAL`,
+     * Access value as an `REAL`,
      * 
      * @param default_val default value
      * @return double value
@@ -322,14 +322,14 @@ public:
     float as_float(float default_val) const;    
 
     /**
-     * Access reflected value as an `BOOLEAN`
+     * Access value as an `BOOLEAN`
      * 
      * @return bool value
      */
     bool as_bool() const;
 
     /**
-     * Access reflected value as an `BOOLEAN`,
+     * Access value as an `BOOLEAN`,
      * returns specified `default_val` if this value is not a `BOOLEAN`
      * 
      * @param default_val default value

@@ -94,11 +94,13 @@ private:
 #ifdef STATICLIB_WITH_ICU
     mutable std::unique_ptr<icu::UnicodeString> ustringValCached;
 #endif // STATICLIB_WITH_ICU
+    
 public:
     /**
      * Destructor
      */
     ~JsonValue() STATICLIB_NOEXCEPT;
+    
     /**
      * Deleted copy constructor
      * 
@@ -128,12 +130,12 @@ public:
     JsonValue& operator=(JsonValue&& other) STATICLIB_NOEXCEPT;
     
     /**
-     * Constructs `NULL_T` reflected value
+     * Constructs `NULL_T` value
      */
     JsonValue();
     
     /**
-     * Constructs `NULL_T` reflected value.
+     * Constructs `NULL_T` value.
      * Added for `nullptr` support in `initializer_list` literals.
      * 
      * @param nullValue nullptr
@@ -141,51 +143,67 @@ public:
     JsonValue(std::nullptr_t nullValue);
 
     /**
-     * Constructs `OBJECT` reflected value
+     * Constructs `OBJECT` value
      * 
      * @param objectValue list of `name->value` pairs
      */
-    JsonValue(std::vector<JsonField> objectValue);
+    JsonValue(std::vector<JsonField>&& objectValue);
 
     /**
-     * Constructs `OBJECT` reflected value using `std::initializer_list`.
+     * Constructs `OBJECT` value using `std::initializer_list`.
      * 
      * @param objectValue
      */
     JsonValue(const std::initializer_list<JsonField>& objectValue);
     
     /**
-     * Constructs `ARRAY` reflected value
+     * Constructs `ARRAY` value
      * 
-     * @param arrayValue list of reflected values
+     * @param arrayValue list of values
      */
-    JsonValue(std::vector<JsonValue> arrayValue);
+    JsonValue(std::vector<JsonValue>&& arrayValue);
 
     /**
-     * Constructs `ARRAY` reflected value
+     * Constructs `ARRAY` value
      * 
-     * @param arrayValue range of reflected values
+     * @param arrayValue range of values
      */
     template <typename T>
     JsonValue(T& arrayValueRange) :
     JsonValue(emplace_values_to_vector(arrayValueRange)) { }
    
     /**
-     * Constructs `STRING` reflected value
+     * Constructs `STRING` value,
+     * passed value will be copied explicitely
      * 
      * @param stringValue string value
      */
-    JsonValue(std::string stringValue);
+    JsonValue(const std::string& stringValue);
 
     /**
-     * Constructs `STRING` reflected value
+     * Constructs `STRING` value,
+     * passed value will be copied explicitely
+     * 
+     * @param stringValue string value
+     */
+    JsonValue(std::string& stringValue);
+
+    /**
+     * Constructs `STRING` value
+     * 
+     * @param stringValue string value
+     */
+    JsonValue(std::string&& stringValue);
+
+    /**
+     * Constructs `STRING` value
      * 
      * @param stringValue string value
      */
     JsonValue(const char* stringValue);    
     
     /**
-     * Constructs `STRING` reflected value
+     * Constructs `STRING` value
      * 
      * @param stringValue string value
      */
@@ -194,56 +212,56 @@ public:
 #endif // STATICLIB_WITH_ICU    
     
     /**
-     * Constructs `INTEGER` reflected value
+     * Constructs `INTEGER` value
      * 
      * @param integerValue int value
      */
     JsonValue(int32_t integerValue);
 
     /**
-     * Constructs `INTEGER` reflected value
+     * Constructs `INTEGER` value
      * 
      * @param integerValue int value
      */    
     JsonValue(int64_t integerValue);
 
     /**
-     * Constructs `INTEGER` reflected value
+     * Constructs `INTEGER` value
      * 
      * @param integerValue int value
      */
     JsonValue(uint32_t integerValue);
 
     /**
-     * Constructs `INTEGER` reflected value
+     * Constructs `INTEGER` value
      * 
      * @param integerValue int value
      */
     JsonValue(int16_t integerValue);
 
     /**
-     * Constructs `INTEGER` reflected value
+     * Constructs `INTEGER` value
      * 
      * @param integerValue int value
      */
     JsonValue(uint16_t integerValue);
     
     /**
-     * Constructs `REAL` reflected value
+     * Constructs `REAL` value
      * 
      * @param realValue double value
      */
     JsonValue(double realValue);
 
     /**
-     * Constructs `REAL` reflected value
+     * Constructs `REAL` value
      * 
      * @param realValue double value
      */
     JsonValue(float realValue);
     
     /**
-     * Constructs `BOOLEAN` reflected value
+     * Constructs `BOOLEAN` value
      * 
      * @param booleanValue bool value
      */
@@ -257,9 +275,9 @@ public:
     JsonValue clone() const;
     
     /**
-     * Returns type of this reflected value
+     * Returns type of this value
      * 
-     * @return type type of this reflected value
+     * @return type type of this value
      */
     JsonType type() const;
     
@@ -322,14 +340,14 @@ public:
 #endif // STATICLIB_WITH_ICU    
     
     /**
-     * Access reflected value as an `OBJECT`
+     * Access value as an `OBJECT`
      * 
      * @return list of `name->value` pairs
      */
     const std::vector<JsonField>& as_object() const;
 
     /**
-     * Access reflected value as a mutable `OBJECT`
+     * Access value as a mutable `OBJECT`
      * 
      * @return pair, first element is a pointer to the fields
      *         array or `nullptr` if this instance is not an `OBJECT`,
@@ -347,14 +365,14 @@ public:
     bool set_object(std::vector<JsonField> value);
     
     /**
-     * Access reflected value as an `ARRAY`
+     * Access value as an `ARRAY`
      * 
      * @return list of values
      */
     const std::vector<JsonValue>& as_array() const;
 
     /**
-     * Access reflected value as a mutable `ARRAY`
+     * Access value as a mutable `ARRAY`
      * 
      * @return pair, first element is a pointer to the values
      *         array or `nullptr` if this instance is not an `ARRAY`,
@@ -372,14 +390,14 @@ public:
     bool set_array(std::vector<JsonValue> value);    
     
     /**
-     * Access reflected value as an `STRING`
+     * Access value as an `STRING`
      * 
      * @return string value
      */
     const std::string& as_string() const;
 
     /**
-     * Access reflected value as a `STRING`,
+     * Access value as a `STRING`,
      * returns specified `default_val` if this value is not a `STRING`
      * 
      * @param default_val default value
@@ -398,14 +416,14 @@ public:
     
 #ifdef STATICLIB_WITH_ICU        
     /**
-     * Access reflected value as an `STRING`
+     * Access value as an `STRING`
      * 
      * @return string value
      */
     const icu::UnicodeString& as_ustring() const;
 
     /**
-     * Access reflected value as a `STRING`,
+     * Access value as a `STRING`,
      * returns specified default string if this value is not a `STRING`
      * 
      * @param default_val default value
@@ -424,14 +442,14 @@ public:
 #endif // STATICLIB_WITH_ICU
     
     /**
-     * Access reflected value as an `INTEGER`
+     * Access value as an `INTEGER`
      * 
      * @return int value
      */
     int64_t as_int64() const;
 
     /**
-     * Access reflected value as an `INTEGER`,
+     * Access value as an `INTEGER`,
      * returns specified `default_val` if this value is not an `INTEGER`
      * 
      * @param default_val default value
@@ -448,14 +466,14 @@ public:
      */
     bool set_int64(int64_t value);
     /**
-     * Access reflected value as an `int32_t` `INTEGER`
+     * Access value as an `int32_t` `INTEGER`
      * 
      * @return int value
      */
     int32_t as_int32() const;
 
     /**
-     * Access reflected value as an `int32_t` `INTEGER`,
+     * Access value as an `int32_t` `INTEGER`,
      * returns specified `default_val` if this value is not an `INTEGER`
      * 
      * @param default_val default value
@@ -473,14 +491,14 @@ public:
     bool set_int32(int32_t value);
 
     /**
-     * Access reflected value as an `uint32_t` `INTEGER`
+     * Access value as an `uint32_t` `INTEGER`
      * 
      * @return int value
      */
     uint32_t as_uint32() const;
 
     /**
-     * Access reflected value as an `uint32_t` `INTEGER`,
+     * Access value as an `uint32_t` `INTEGER`,
      * returns specified `default_val` if this value is not an `INTEGER`
      * 
      * @param default_val default value
@@ -498,14 +516,14 @@ public:
     bool set_uint32(uint32_t value);
     
     /**
-     * Access reflected value as an `int16_t` `INTEGER`
+     * Access value as an `int16_t` `INTEGER`
      * 
      * @return int value
      */
     int16_t as_int16() const;
 
     /**
-     * Access reflected value as an `int16_t` `INTEGER`,
+     * Access value as an `int16_t` `INTEGER`,
      * returns specified `default_val` if this value is not an `INTEGER`
      * 
      * @param default_val default value
@@ -523,14 +541,14 @@ public:
     bool set_int16(int16_t value);
     
     /**
-     * Access reflected value as an `uint16_t` `INTEGER`
+     * Access value as an `uint16_t` `INTEGER`
      * 
      * @return int value
      */
     uint16_t as_uint16() const;
 
     /**
-     * Access reflected value as an `uint16_t` `INTEGER`,
+     * Access value as an `uint16_t` `INTEGER`,
      * returns specified `default_val` if this value is not an `INTEGER`
      * 
      * @param default_val default value
@@ -548,7 +566,7 @@ public:
     bool set_uint16(uint16_t value);
 
     /**
-     * Access reflected value as an `REAL`,
+     * Access value as an `REAL`,
      * 
      * @param default_val default value
      * @return double value
@@ -556,7 +574,7 @@ public:
     double as_double() const;
 
     /**
-     * Access reflected value as a `REAL`,
+     * Access value as a `REAL`,
      * returns specified `default_val` if this value is not a `REAL`
      * 
      * @return double value
@@ -573,7 +591,7 @@ public:
     bool set_double(double value);
 
     /**
-     * Access reflected value as an `REAL`,
+     * Access value as an `REAL`,
      * 
      * @param default_val default value
      * @return double value
@@ -581,7 +599,7 @@ public:
     float as_float() const;
 
     /**
-     * Access reflected value as a `REAL`,
+     * Access value as a `REAL`,
      * returns specified `default_val` if this value is not a `REAL`
      * 
      * @return double value
@@ -598,14 +616,14 @@ public:
     bool set_float(float value);    
     
     /**
-     * Access reflected value as an `BOOLEAN`
+     * Access value as an `BOOLEAN`
      * 
      * @return bool value
      */
     bool as_bool() const;
 
     /**
-     * Access reflected value as an `BOOLEAN`,
+     * Access value as an `BOOLEAN`,
      * returns specified `default_val` if this value is not a `BOOLEAN`
      * 
      * @param default_val default value
