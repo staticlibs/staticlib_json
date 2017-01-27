@@ -28,6 +28,7 @@
 #endif // STATICLIB_WITH_ICU
 
 #include "staticlib/serialization/JsonField.hpp"
+#include "staticlib/serialization/json.hpp"
 
 namespace staticlib {
 namespace serialization {
@@ -241,7 +242,7 @@ const JsonValue& JsonValue::getattru(const icu::UnicodeString& uname) const {
 }
 #endif // STATICLIB_WITH_ICU
 
-JsonValue& JsonValue::getattr_mutable(const std::string& name) {
+JsonValue& JsonValue::getattr_or_throw(const std::string& name) {
     auto pa = this->as_object_mutable();
     if (pa.second) { // actually object
         for (JsonField& el : *pa.first) {
@@ -254,10 +255,8 @@ JsonValue& JsonValue::getattr_mutable(const std::string& name) {
         return obj[obj.size() - 1].value();
     }
     // not object    
-    *this = JsonValue(std::vector<JsonField>());
-    std::vector<JsonField>& obj = *(this->as_object_mutable().first);
-    obj.emplace_back(JsonField(name, JsonValue()));
-    return obj[obj.size() - 1].value();
+    throw SerializationException(TRACEMSG("Cannot get attribute: [" + name + "]" +
+            " from target value: [" + dump_json_to_string(*this) + "]"));
 }
 
 #ifdef STATICLIB_WITH_ICU

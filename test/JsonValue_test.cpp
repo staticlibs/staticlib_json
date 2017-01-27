@@ -294,21 +294,21 @@ void test_icu() {
 }
 #endif // STATICLIB_WITH_ICU
 
-void test_mutable() {
+void test_get_or_throw() {
     TestRefl tr{};
     auto rv = tr.get_reflected_value();
     
     // get existing
     slassert(41 == rv["f1"].as_int32());
     slassert(41 == rv.getattr("f1").as_int32());
-    slassert(41 == rv.getattr_mutable("f1").as_int32());
+    slassert(41 == rv.getattr_or_throw("f1").as_int32());
 #ifdef STATICLIB_WITH_ICU
     slassert(41 == rv.getattru("f1").as_int32());
     slassert(41 == rv.getattru_mutable("f1").as_int32());
 #endif // STATICLIB_WITH_ICU
     
     // create new attr
-    ss::JsonValue& nval = rv.getattr_mutable("foo");
+    ss::JsonValue& nval = rv.getattr_or_throw("foo");
     slassert(ss::JsonType::NULL_T == nval.type());
     nval.set_int32(42);
     slassert(ss::JsonType::INTEGER == nval.type());
@@ -330,12 +330,17 @@ void test_mutable() {
     slassert("baz" == nval.as_object()[0].name());
     slassert(42 == nval.as_object()[0].value().as_int32());
     
-    // convert to object
-    ss::JsonValue& exval = rv.getattr_mutable("f1");
+    // not object
+    ss::JsonValue& exval = rv.getattr_or_throw("f1");
     slassert(ss::JsonType::INTEGER == exval.type());
-    ss::JsonValue& crval = exval.getattr_mutable("foo");
-    slassert(ss::JsonType::OBJECT == exval.type());
-    slassert(ss::JsonType::NULL_T == crval.type());
+    bool caught = false;
+    try {
+        exval.getattr_or_throw("foo");
+    } catch (const ss::SerializationException& e) {
+        (void) e;
+        caught = true;
+    }
+    slassert(caught);
 }
 
 int main() {
@@ -356,7 +361,7 @@ int main() {
 #ifdef STATICLIB_WITH_ICU
         test_icu();
 #endif // STATICLIB_WITH_ICU
-        test_mutable();
+        test_get_or_throw();
     } catch (const std::exception& e) {
         std::cout << e.what() << std::endl;
         return 1;

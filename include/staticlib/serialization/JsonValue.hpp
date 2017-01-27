@@ -39,6 +39,7 @@
 #include "staticlib/ranges.hpp"
 
 #include "staticlib/serialization/JsonType.hpp"
+#include "staticlib/serialization/SerializationException.hpp"
 
 namespace staticlib {
 namespace serialization {
@@ -315,16 +316,16 @@ public:
 
     /**
      * Returns a mutable value of the field with specified name if this
-     * value is an `OBJECT` and contains specified field.
-     * If this value is not an `OBJECT` it will be changed to become an empty object.
+     * value is an `OBJECT` and contains specified attribute.     
      * If this value doesn't contain specified attribute - new attribute of type `NULL_T`
      * with the specified name will be created.
+     * If this value is not an `OBJECT`: "SerializationException" will be thrown.
      * Note: this is O(number_of_fields) operation, consider using explicit loop instead.
      * 
      * @return value of specified field
      */
-    JsonValue& getattr_mutable(const std::string& name);
-
+    JsonValue& getattr_or_throw(const std::string& name);
+    
 #ifdef STATICLIB_WITH_ICU
     /**
      * Returns a mutable value of the field with specified name if this
