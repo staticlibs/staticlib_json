@@ -99,12 +99,36 @@ const std::vector<JsonField>& JsonField::as_object() const {
     return value().as_object();
 }
 
+std::vector<JsonField>& JsonField::as_object_or_throw(const std::string& context) {
+    return value().as_object_or_throw(context);
+}
+
+const std::vector<JsonField>& JsonField::as_object_or_throw(const std::string& context) const {
+    return value().as_object_or_throw(context);
+}
+
 const std::vector<JsonValue>& JsonField::as_array() const {
     return value().as_array();
 }
 
+std::vector<JsonValue>& JsonField::as_array_or_throw(const std::string& context) {
+    return value().as_array_or_throw(context);
+}
+
+const std::vector<JsonValue>& JsonField::as_array_or_throw(const std::string& context) const {
+    return value().as_array_or_throw(context);
+}
+
 const std::string& JsonField::as_string() const {
     return value().as_string();
+}
+
+std::string& JsonField::as_string_or_throw(const std::string& context) {
+    return value().as_string_or_throw(context);
+}
+
+const std::string& JsonField::as_string_or_throw(const std::string& context) const {
+    return value().as_string_or_throw(context);
 }
 
 const std::string& JsonField::as_string(const std::string& default_val) const {
@@ -125,12 +149,20 @@ int64_t JsonField::as_int64() const {
     return value().as_int64();
 }
 
+int64_t JsonField::as_int64_or_throw(const std::string& context) const {
+    return value().as_int64_or_throw(context);
+}
+
 int64_t JsonField::as_int64(int64_t default_val) const {
     return value().as_int64(default_val);
 }
 
 int32_t JsonField::as_int32() const {
     return value().as_int32();
+}
+
+int32_t JsonField::as_int32_or_throw(const std::string& context) const {
+    return value().as_int32_or_throw(context);
 }
 
 int32_t JsonField::as_int32(int32_t default_val) const {
@@ -141,12 +173,20 @@ uint32_t JsonField::as_uint32() const {
     return value().as_uint32();
 }
 
+uint32_t JsonField::as_uint32_or_throw(const std::string& context) const {
+    return value().as_uint32_or_throw(context);
+}
+
 uint32_t JsonField::as_uint32(uint32_t default_val) const {
     return value().as_uint32(default_val);
 }
 
 int16_t JsonField::as_int16() const {
     return value().as_int16();
+}
+
+int16_t JsonField::as_int16_or_throw(const std::string& context) const {
+    return value().as_int16_or_throw(context);
 }
 
 int16_t JsonField::as_int16(int16_t default_val) const {
@@ -157,12 +197,20 @@ uint16_t JsonField::as_uint16() const {
     return value().as_uint16();
 }
 
+uint16_t JsonField::as_uint16_or_throw(const std::string& context) const {
+    return value().as_uint16_or_throw(context);
+}
+
 uint16_t JsonField::as_uint16(uint16_t default_val) const {
     return value().as_uint16(default_val);
 }
 
 double JsonField::as_double() const {
     return value().as_double();
+}
+
+double JsonField::as_double_or_throw(const std::string& context) const {
+    return value().as_double_or_throw(context);
 }
 
 double JsonField::as_double(double default_val) const {
@@ -173,12 +221,20 @@ float JsonField::as_float() const {
     return value().as_float();
 }
 
+float JsonField::as_float_or_throw(const std::string& context) const {
+    return value().as_float_or_throw(context);
+}
+
 float JsonField::as_float(float default_val) const {
     return value().as_float(default_val);
 }
 
 bool JsonField::as_bool() const {
     return value().as_bool();
+}
+
+bool JsonField::as_bool_or_throw(const std::string& context) const {
+    return value().as_bool_or_throw(context);
 }
 
 bool JsonField::as_bool(bool default_val) const {

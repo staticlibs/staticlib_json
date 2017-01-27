@@ -169,6 +169,22 @@ public:
     const std::vector<JsonField>& as_object() const;
 
     /**
+     * Access value as a mutable `OBJECT`
+     * If this value is not an `OBJECT`: "SerializationException" will be thrown.
+     * 
+     * @return list of `name->value` pairs
+     */
+    std::vector<JsonField>& as_object_or_throw(const std::string& context = "");
+
+    /**
+     * Access value as a mutable `OBJECT`
+     * If this value is not an `OBJECT`: "SerializationException" will be thrown.
+     * 
+     * @return list of `name->value` pairs
+     */
+    const std::vector<JsonField>& as_object_or_throw(const std::string& context = "") const;
+
+    /**
      * Access value as an `ARRAY`
      * 
      * @return list of values
@@ -176,12 +192,44 @@ public:
     const std::vector<JsonValue>& as_array() const;
 
     /**
+     * Access value as a mutable `ARRAY`
+     * If this value is not an `ARRAY`: "SerializationException" will be thrown.
+     * 
+     * @return list of values
+     */
+    std::vector<JsonValue>& as_array_or_throw(const std::string& context = "");
+
+    /**
+     * Access value as a mutable `ARRAY`
+     * If this value is not an `ARRAY`: "SerializationException" will be thrown.
+     * 
+     * @return list of values
+     */
+    const std::vector<JsonValue>& as_array_or_throw(const std::string& context = "") const;
+    
+    /**
      * Access value as an `STRING`
      * 
      * @return string value
      */
     const std::string& as_string() const;
 
+    /**
+     * Access value as an `STRING`
+     * If this value is not a `STRING`: "SerializationException" will be thrown.
+     * 
+     * @return string value
+     */
+    std::string& as_string_or_throw(const std::string& context = "");
+
+    /**
+     * Access value as an `STRING`
+     * If this value is not a `STRING`: "SerializationException" will be thrown.
+     * 
+     * @return string value
+     */
+    const std::string& as_string_or_throw(const std::string& context = "") const;
+    
     /**
      * Access value as a `STRING`,
      * returns specified `default_val` if this value is not a `STRING`
@@ -217,6 +265,14 @@ public:
     int64_t as_int64() const;
 
     /**
+     * Access value as an `INTEGER`
+     * If this value is not an `INTEGER`: "SerializationException" will be thrown.
+     * 
+     * @return int value
+     */
+    int64_t as_int64_or_throw(const std::string& context = "") const;
+
+    /**
      * Access value as an `INTEGER`,
      * returns specified `default_val` if this value is not an `INTEGER`
      * 
@@ -232,6 +288,15 @@ public:
      */
     int32_t as_int32() const;
 
+    /**
+     * Access value as `int32_t` `INTEGER`
+     * If this value is not an `INTEGER` or cannot be converted to `int32_t`: 
+     * "SerializationException" will be thrown.
+     * 
+     * @return int value
+     */
+    int32_t as_int32_or_throw(const std::string& context = "") const;
+    
     /**
      * Access value as an `int32_t` `INTEGER`,
      * returns specified `default_val` if this value is not an `INTEGER`
@@ -249,6 +314,15 @@ public:
     uint32_t as_uint32() const;
 
     /**
+     * Access value as `uint32_t` `INTEGER`
+     * If this value is not an `INTEGER` or cannot be converted to `uint32_t`: 
+     * "SerializationException" will be thrown.
+     * 
+     * @return int value
+     */
+    uint32_t as_uint32_or_throw(const std::string& context = "") const;
+    
+    /**
      * Access value as an `uint32_t` `INTEGER`,
      * returns specified `default_val` if this value is not an `INTEGER`
      * 
@@ -265,6 +339,15 @@ public:
     int16_t as_int16() const;
 
     /**
+     * Access value as `int16_t` `INTEGER`
+     * If this value is not an `INTEGER` or cannot be converted to `int16_t`: 
+     * "SerializationException" will be thrown.
+     * 
+     * @return int value
+     */
+    int16_t as_int16_or_throw(const std::string& context = "") const;
+    
+    /**
      * Access value as an `int16_t` `INTEGER`,
      * returns specified `default_val` if this value is not an `INTEGER`
      * 
@@ -280,6 +363,15 @@ public:
      */
     uint16_t as_uint16() const;
 
+    /**
+     * Access value as `uint16_t` `INTEGER`
+     * If this value is not an `INTEGER` or cannot be converted to `uint16_t`: 
+     * "SerializationException" will be thrown.
+     * 
+     * @return int value
+     */
+    uint16_t as_uint16_or_throw(const std::string& context = "") const;
+    
     /**
      * Access value as an `uint16_t` `INTEGER`,
      * returns specified `default_val` if this value is not an `INTEGER`
@@ -298,6 +390,15 @@ public:
     double as_double() const;
 
     /**
+     * Access value as `REAL`
+     * If this value is not a `REAL`: 
+     * "SerializationException" will be thrown.
+     * 
+     * @return int value
+     */
+    double as_double_or_throw(const std::string& context = "") const;
+    
+    /**
      * Access value as an `REAL`,
      * 
      * @param default_val default value
@@ -314,6 +415,15 @@ public:
     float as_float() const;
 
     /**
+     * Access value as `float` `REAL`
+     * If this value is not a `REAL` or cannot be converted to `float`: 
+     * "SerializationException" will be thrown.
+     * 
+     * @return int value
+     */
+    float as_float_or_throw(const std::string& context = "") const;
+    
+    /**
      * Access value as an `REAL`,
      * 
      * @param default_val default value
@@ -328,6 +438,15 @@ public:
      */
     bool as_bool() const;
 
+    /**
+     * Access value as `BOOLEAN`
+     * If this value is not a `BOOLEAN`: 
+     * "SerializationException" will be thrown.
+     * 
+     * @return int value
+     */
+    bool as_bool_or_throw(const std::string& context = "") const;
+    
     /**
      * Access value as an `BOOLEAN`,
      * returns specified `default_val` if this value is not a `BOOLEAN`
