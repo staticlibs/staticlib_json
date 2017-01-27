@@ -339,6 +339,15 @@ const std::string& JsonValue::as_string() const {
     return EMPTY_STRING;
 }
 
+std::string& JsonValue::as_string_or_throw() {
+    if (JsonType::STRING == jsonType) {
+        return *(this->stringVal);
+    }
+    // not string    
+    throw SerializationException(TRACEMSG("Cannot access string" +
+            " from target value: [" + dump_json_to_string(*this) + "]"));
+}
+
 const std::string& JsonValue::as_string(const std::string& default_val) const {
     if (JsonType::STRING == jsonType) {
         return *(this->stringVal);

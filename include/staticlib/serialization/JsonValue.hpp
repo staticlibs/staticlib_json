@@ -396,6 +396,14 @@ public:
     const std::string& as_string() const;
 
     /**
+     * Access value as an `STRING`
+     * If this value is not a `STRING`: "SerializationException" will be thrown.
+     * 
+     * @return string value
+     */
+    std::string& as_string_or_throw();
+
+    /**
      * Access value as a `STRING`,
      * returns specified `default_val` if this value is not a `STRING`
      * 

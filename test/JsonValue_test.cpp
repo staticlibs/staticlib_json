@@ -162,6 +162,23 @@ void test_string() {
     slassert(0 == rv.as_int64());
     slassert(-1 < rv.as_double() && rv.as_double() < 1);
     slassert(!rv.as_bool());
+    // mutable
+    slassert("42" == rv.as_string_or_throw());
+    std::string& ref = rv.as_string_or_throw();
+    ref[1] = '3';
+    slassert("43" == rv.as_string());
+    slassert("43" == rv.as_string_or_throw());
+    // not string
+    auto exval = ss::JsonValue(42);
+    slassert(ss::JsonType::INTEGER == exval.type());
+    bool caught = false;
+    try {
+        exval.as_string_or_throw();
+    } catch (const ss::SerializationException& e) {
+        (void) e;
+        caught = true;
+    }
+    slassert(caught);
     // setters
     slassert(rv.set_string("foo"));
     slassert("foo" == rv.as_string());
@@ -171,7 +188,7 @@ void test_string() {
     // copy
     const std::string str{"43"};
     ss::JsonValue rvc{str};
-    slassert("43" == rvc.as_string());
+    slassert("43" == rvc.as_string());       
 }
 
 void test_string_default() {
