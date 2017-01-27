@@ -324,7 +324,7 @@ public:
      * 
      * @return value of specified field
      */
-    JsonValue& getattr_or_throw(const std::string& name);
+    JsonValue& getattr_or_throw(const std::string& name, const std::string& context = "");
     
 #ifdef STATICLIB_WITH_ICU
     /**
@@ -353,7 +353,7 @@ public:
      * 
      * @return list of `name->value` pairs
      */
-    std::vector<JsonField>& as_object_or_throw();
+    std::vector<JsonField>& as_object_or_throw(const std::string& context = "");
 
     /**
      * Access value as a mutable `OBJECT`
@@ -361,7 +361,7 @@ public:
      * 
      * @return list of `name->value` pairs
      */
-    const std::vector<JsonField>& as_object_or_throw() const;
+    const std::vector<JsonField>& as_object_or_throw(const std::string& context = "") const;
 
     /**
      * Setter for the `OBJECT` value
@@ -385,7 +385,7 @@ public:
      * 
      * @return list of values
      */
-    std::vector<JsonValue>& as_array_or_throw();
+    std::vector<JsonValue>& as_array_or_throw(const std::string& context = "");
 
     /**
      * Access value as a mutable `ARRAY`
@@ -393,7 +393,7 @@ public:
      * 
      * @return list of values
      */
-    const std::vector<JsonValue>& as_array_or_throw() const;
+    const std::vector<JsonValue>& as_array_or_throw(const std::string& context = "") const;
 
     /**
      * Setter for the `ARRAY` value
@@ -417,7 +417,7 @@ public:
      * 
      * @return string value
      */
-    std::string& as_string_or_throw();
+    std::string& as_string_or_throw(const std::string& context = "");
 
     /**
      * Access value as an `STRING`
@@ -425,7 +425,7 @@ public:
      * 
      * @return string value
      */
-    const std::string& as_string_or_throw() const;
+    const std::string& as_string_or_throw(const std::string& context = "") const;
 
     /**
      * Access value as a `STRING`,

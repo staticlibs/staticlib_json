@@ -242,7 +242,7 @@ const JsonValue& JsonValue::getattru(const icu::UnicodeString& uname) const {
 }
 #endif // STATICLIB_WITH_ICU
 
-JsonValue& JsonValue::getattr_or_throw(const std::string& name) {
+JsonValue& JsonValue::getattr_or_throw(const std::string& name, const std::string& context) {
     if (JsonType::OBJECT == jsonType) {
         std::vector<JsonField>& obj = this->as_object_or_throw();
         for (JsonField& el : obj) {
@@ -256,7 +256,8 @@ JsonValue& JsonValue::getattr_or_throw(const std::string& name) {
     }
     // not object    
     throw SerializationException(TRACEMSG("Cannot get attribute: [" + name + "]" +
-            " from target value: [" + dump_json_to_string(*this) + "]"));
+            " from target value: [" + dump_json_to_string(*this) + "],"
+            " context: [" + context + "]"));
 }
 
 #ifdef STATICLIB_WITH_ICU
@@ -289,17 +290,18 @@ const std::vector<JsonField>& JsonValue::as_object() const {
     return EMPTY_OBJECT;
 }
 
-std::vector<JsonField>& JsonValue::as_object_or_throw() {
-    return const_cast<std::vector<JsonField>&> (const_cast<const JsonValue*> (this)->as_object_or_throw());
+std::vector<JsonField>& JsonValue::as_object_or_throw(const std::string& context) {
+    return const_cast<std::vector<JsonField>&> (const_cast<const JsonValue*> (this)->as_object_or_throw(context));
 }
 
-const std::vector<JsonField>& JsonValue::as_object_or_throw() const {
+const std::vector<JsonField>& JsonValue::as_object_or_throw(const std::string& context) const {
     if (JsonType::OBJECT == jsonType) {
         return *(this->objectVal);
     }
     // not object    
     throw SerializationException(TRACEMSG("Cannot access object" +
-            " from target value: [" + dump_json_to_string(*this) + "]"));
+            " from target value: [" + dump_json_to_string(*this) + "],"
+            " context: [" + context + "]"));
 }
 
 bool JsonValue::set_object(std::vector<JsonField>&& value) {
@@ -318,17 +320,18 @@ const std::vector<JsonValue>& JsonValue::as_array() const {
     return EMPTY_ARRAY;
 }
 
-std::vector<JsonValue>& JsonValue::as_array_or_throw() {
-    return const_cast<std::vector<JsonValue>&> (const_cast<const JsonValue*> (this)->as_array_or_throw());
+std::vector<JsonValue>& JsonValue::as_array_or_throw(const std::string& context) {
+    return const_cast<std::vector<JsonValue>&> (const_cast<const JsonValue*> (this)->as_array_or_throw(context));
 }
 
-const std::vector<JsonValue>& JsonValue::as_array_or_throw() const {
+const std::vector<JsonValue>& JsonValue::as_array_or_throw(const std::string& context) const {
     if (JsonType::ARRAY == jsonType) {
         return *(this->arrayVal);
     }
     // not array    
     throw SerializationException(TRACEMSG("Cannot access array" +
-            " from target value: [" + dump_json_to_string(*this) + "]"));
+            " from target value: [" + dump_json_to_string(*this) + "]," +
+            " context: [" + context + "]"));
 }
 
 bool JsonValue::set_array(std::vector<JsonValue>&& value) {
@@ -347,17 +350,18 @@ const std::string& JsonValue::as_string() const {
     return EMPTY_STRING;
 }
 
-std::string& JsonValue::as_string_or_throw() {
-    return const_cast<std::string&> (const_cast<const JsonValue*> (this)->as_string_or_throw());
+std::string& JsonValue::as_string_or_throw(const std::string& context) {
+    return const_cast<std::string&> (const_cast<const JsonValue*> (this)->as_string_or_throw(context));
 }
 
-const std::string& JsonValue::as_string_or_throw() const {
+const std::string& JsonValue::as_string_or_throw(const std::string& context) const {
     if (JsonType::STRING == jsonType) {
         return *(this->stringVal);
     }
     // not string    
     throw SerializationException(TRACEMSG("Cannot access string" +
-            " from target value: [" + dump_json_to_string(*this) + "]"));
+            " from target value: [" + dump_json_to_string(*this) + "]," +
+            " context: [" + context + "]"));
 }
 
 const std::string& JsonValue::as_string(const std::string& default_val) const {
