@@ -70,7 +70,6 @@ void test_null() {
     slassert(!rv.set_double(42.0));
     slassert(!rv.set_string("foo"));
     // mutators
-    slassert(!rv.as_object_mutable().second);
     slassert(!rv.as_array_mutable().second);
 }
 
@@ -94,12 +93,23 @@ void test_object() {
     slassert(-1 < rv.as_double() && rv.as_double() < 1);
     slassert(!rv.as_bool());
     // mutators
-    slassert(rv.as_object_mutable().second);
-    slassert(6 == rv.as_object_mutable().first->size());
-    rv.as_object_mutable().first->emplace_back("added", "aaa");
+    slassert(!rv.as_object_or_throw().empty());
+    slassert(6 == rv.as_object_or_throw().size());
+    rv.as_object_or_throw().emplace_back("added", "aaa");
     slassert(7 == rv.as_object().size());
     slassert("aaa" == rv.as_object()[6].as_string());
     slassert(!rv.as_array_mutable().second);
+    // not object
+    ss::JsonValue& exval = rv.getattr_or_throw("f1");
+    slassert(ss::JsonType::INTEGER == exval.type());
+    bool caught = false;
+    try {
+        exval.getattr_or_throw("foo");
+    } catch (const ss::SerializationException& e) {
+        (void) e;
+        caught = true;
+    }
+    slassert(caught);
     // setters
     slassert(!rv.set_bool(true));
     slassert(!rv.set_int64(42));
@@ -122,7 +132,6 @@ void test_array() {
     slassert(-1 < rv.as_double() && rv.as_double() < 1);
     slassert(!rv.as_bool());
     // mutators
-    slassert(!rv.as_object_mutable().second);
     slassert(rv.as_array_mutable().second);
     slassert(2 == rv.as_array_mutable().first->size());
     rv.as_array_mutable().first->emplace_back("aaa");
@@ -146,7 +155,6 @@ void test_string() {
     slassert(-1 < rv.as_double() && rv.as_double() < 1);
     slassert(!rv.as_bool());
     // mutators
-    slassert(!rv.as_object_mutable().second);
     slassert(!rv.as_array_mutable().second);
     // setters
     slassert(rv.set_string("foo"));
@@ -176,7 +184,6 @@ void test_int() {
     slassert(-1 < rv.as_double() && rv.as_double() < 1);
     slassert(!rv.as_bool());
     // mutators
-    slassert(!rv.as_object_mutable().second);
     slassert(!rv.as_array_mutable().second);
     // setters
     slassert(rv.set_int64(43));
@@ -202,7 +209,6 @@ void test_real() {
     slassert(41 < rv.as_float() && rv.as_float() < 43);    
     slassert(!rv.as_bool());
     // mutators
-    slassert(!rv.as_object_mutable().second);
     slassert(!rv.as_array_mutable().second);
     // setters
     slassert(rv.set_double(43.0));
@@ -235,7 +241,6 @@ void test_boolean() {
     slassert(!rvt.set_double(43.0));
     slassert(!rvt.set_string("foo"));
     // mutators
-    slassert(!rvt.as_object_mutable().second);
     slassert(!rvt.as_array_mutable().second);
 
     ss::JsonValue rvf{false};
@@ -253,7 +258,6 @@ void test_boolean() {
     slassert(!rvf.set_double(43.0));
     slassert(!rvf.set_string("foo"));
     // mutators
-    slassert(!rvf.as_object_mutable().second);
     slassert(!rvf.as_array_mutable().second);
 }
 

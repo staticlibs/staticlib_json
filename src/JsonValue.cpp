@@ -243,14 +243,14 @@ const JsonValue& JsonValue::getattru(const icu::UnicodeString& uname) const {
 #endif // STATICLIB_WITH_ICU
 
 JsonValue& JsonValue::getattr_or_throw(const std::string& name) {
-    auto pa = this->as_object_mutable();
-    if (pa.second) { // actually object
-        for (JsonField& el : *pa.first) {
+    if (JsonType::OBJECT == jsonType) {
+        std::vector<JsonField>& obj = this->as_object_or_throw();
+        for (JsonField& el : obj) {
             if (name == el.name()) {
                 return el.value();
             }
         }
-        std::vector<JsonField>& obj = *pa.first;
+        // add attr
         obj.emplace_back(JsonField(name, JsonValue()));
         return obj[obj.size() - 1].value();
     }
@@ -289,11 +289,13 @@ const std::vector<JsonField>& JsonValue::as_object() const {
     return EMPTY_OBJECT;
 }
 
-std::pair<std::vector<JsonField>*, bool> JsonValue::as_object_mutable() {
+std::vector<JsonField>& JsonValue::as_object_or_throw() {
     if (JsonType::OBJECT == jsonType) {
-        return { this->objectVal, true };
+        return *(this->objectVal);
     }
-    return { nullptr, false };
+    // not object    
+    throw SerializationException(TRACEMSG("Cannot access object" +
+            " from target value: [" + dump_json_to_string(*this) + "]"));
 }
 
 bool JsonValue::set_object(std::vector<JsonField> value) {

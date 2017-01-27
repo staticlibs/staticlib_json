@@ -349,12 +349,11 @@ public:
 
     /**
      * Access value as a mutable `OBJECT`
+     * If this value is not an `OBJECT`: "SerializationException" will be thrown.
      * 
-     * @return pair, first element is a pointer to the fields
-     *         array or `nullptr` if this instance is not an `OBJECT`,
-     *         second element is flag whether this instance is an `OBJECT`
+     * @return list of `name->value` pairs
      */
-    std::pair<std::vector<JsonField>*, bool> as_object_mutable();
+    std::vector<JsonField>& as_object_or_throw();
 
     /**
      * Setter for the `OBJECT` value
