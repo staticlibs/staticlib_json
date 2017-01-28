@@ -555,6 +555,15 @@ public:
     uint32_t as_uint32_or_throw(const std::string& context = "") const;
 
     /**
+     * Access value as positive `uint32_t` `INTEGER`
+     * If this value is not a positive `INTEGER` or cannot be converted to `uint32_t`: 
+     * "SerializationException" will be thrown.
+     * 
+     * @return int value
+     */
+    uint32_t as_uint32_positive_or_throw(const std::string& context = "") const;
+
+    /**
      * Access value as an `uint32_t` `INTEGER`,
      * returns specified `default_val` if this value is not an `INTEGER`
      * 
@@ -621,6 +630,15 @@ public:
      * @return int value
      */
     uint16_t as_uint16_or_throw(const std::string& context = "") const;
+
+    /**
+     * Access value as positive `uint16_t` `INTEGER`
+     * If this value is not a positive `INTEGER` or cannot be converted to `uint16_t`: 
+     * "SerializationException" will be thrown.
+     * 
+     * @return int value
+     */
+    uint16_t as_uint16_positive_or_throw(const std::string& context = "") const;
     
     /**
      * Access value as an `uint16_t` `INTEGER`,

@@ -220,11 +220,23 @@ void test_int() {
     slassert(!throws_exc([&rv] { rv.as_uint32_or_throw(); }))
     rv.set_int64(static_cast<int64_t> (std::numeric_limits<uint32_t>::max()) + 1);
     slassert(throws_exc([&rv] { rv.as_uint32_or_throw(); }))
+    rv.set_int64(std::numeric_limits<uint32_t>::max());
+    slassert(!throws_exc([&rv] { rv.as_uint32_positive_or_throw(); }))
+    rv.set_int64(-1);
+    slassert(throws_exc([&rv] { rv.as_uint32_positive_or_throw(); }))
+    rv.set_int64(0);
+    slassert(throws_exc([&rv] { rv.as_uint32_positive_or_throw(); }))
     // int16
     rv.set_int64(std::numeric_limits<int16_t>::max());
     slassert(!throws_exc([&rv] { rv.as_int16_or_throw(); }))
     rv.set_int64(static_cast<int64_t> (std::numeric_limits<int16_t>::max()) + 1);
     slassert(throws_exc([&rv] { rv.as_int16_or_throw(); }))
+    rv.set_int64(std::numeric_limits<int16_t>::max());
+    slassert(!throws_exc([&rv] { rv.as_uint16_positive_or_throw(); }))
+    rv.set_int64(-1);
+    slassert(throws_exc([&rv] { rv.as_uint16_positive_or_throw(); }))
+    rv.set_int64(0);
+    slassert(throws_exc([&rv] { rv.as_uint16_positive_or_throw(); }))
     // uint16
     rv.set_int64(std::numeric_limits<uint16_t>::max());
     slassert(!throws_exc([&rv] { rv.as_uint16_or_throw(); }))

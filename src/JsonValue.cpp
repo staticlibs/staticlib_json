@@ -498,6 +498,17 @@ uint32_t JsonValue::as_uint32_or_throw(const std::string& context) const {
             " context: [" + context + "]"));
 }
 
+uint32_t JsonValue::as_uint32_positive_or_throw(const std::string& context) const {
+    int64_t val = this->as_int64_or_throw(context);
+    if (sc::is_uint32_positive(val)) {
+        return static_cast<uint32_t> (val);
+    }
+    // not positive uint32_t
+    throw SerializationException(TRACEMSG("Cannot access positive 'uint32'" +
+            " from target value: [" + dump_json_to_string(*this) + "]," +
+            " context: [" + context + "]"));
+}
+
 uint32_t JsonValue::as_uint32(uint32_t default_val) const {
     if (JsonType::INTEGER == jsonType) {
         return static_cast<uint32_t> (this->integerVal);
@@ -562,6 +573,17 @@ uint16_t JsonValue::as_uint16_or_throw(const std::string& context) const {
     }
     // not uint16_t
     throw SerializationException(TRACEMSG("Cannot access 'uint16'" +
+            " from target value: [" + dump_json_to_string(*this) + "]," +
+            " context: [" + context + "]"));
+}
+
+uint16_t JsonValue::as_uint16_positive_or_throw(const std::string& context) const {
+    int64_t val = this->as_int64_or_throw(context);
+    if (sc::is_uint16_positive(val)) {
+        return static_cast<int16_t> (val);
+    }
+    // not positive unt16_t
+    throw SerializationException(TRACEMSG("Cannot access 'int16'" +
             " from target value: [" + dump_json_to_string(*this) + "]," +
             " context: [" + context + "]"));
 }

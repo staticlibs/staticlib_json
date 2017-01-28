@@ -21,6 +21,9 @@
  * Created on January 23, 2015, 10:33 AM
  */
 
+#ifndef STATICLIB_SERIALIZATION_JSONFIELD_HPP
+#define	STATICLIB_SERIALIZATION_JSONFIELD_HPP
+
 #include <memory>
 #include <string>
 #include <vector>
@@ -31,9 +34,6 @@
 #endif // STATICLIB_WITH_ICU
 
 #include "staticlib/serialization/JsonValue.hpp"
-
-#ifndef STATICLIB_SERIALIZATION_JSONFIELD_HPP
-#define	STATICLIB_SERIALIZATION_JSONFIELD_HPP
 
 namespace staticlib {
 namespace serialization {
