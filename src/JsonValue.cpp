@@ -27,6 +27,8 @@
 #include "staticlib/icu_utils.hpp"
 #endif // STATICLIB_WITH_ICU
 
+#include "staticlib/config.hpp"
+
 #include "staticlib/serialization/JsonField.hpp"
 #include "staticlib/serialization/json.hpp"
 

@@ -24,12 +24,12 @@
 #ifndef STATICLIB_SERIALIZATION_JSONFIELD_HPP
 #define	STATICLIB_SERIALIZATION_JSONFIELD_HPP
 
-#include <memory>
+#include <cstdint>
 #include <string>
 #include <vector>
-#include <cstdint>
 
 #ifdef STATICLIB_WITH_ICU
+#include <memory>
 #include <unicode/unistr.h>
 #endif // STATICLIB_WITH_ICU
 

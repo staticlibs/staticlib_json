@@ -24,8 +24,8 @@
 #ifndef STATICLIB_SERIALIZATION_JSONTYPE_HPP
 #define	STATICLIB_SERIALIZATION_JSONTYPE_HPP
 
-#include <string>
 #include <cstdint>
+#include <string>
 
 namespace staticlib {
 namespace serialization {

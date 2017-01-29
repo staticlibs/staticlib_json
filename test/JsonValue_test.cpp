@@ -24,6 +24,8 @@
 #include "staticlib/serialization/JsonValue.hpp"
 
 #include <iostream>
+#include <functional>
+#include <limits>
 
 #include "staticlib/config/assert.hpp"
 

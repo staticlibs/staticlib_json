@@ -24,19 +24,14 @@
 #ifndef STATICLIB_SERIALIZATION_JSONVALUE_HPP
 #define	STATICLIB_SERIALIZATION_JSONVALUE_HPP
 
-#include <functional>
-#include <memory>
-#include <string>
-#include <utility>
-#include <vector>
 #include <cstdint>
+#include <string>
+#include <vector>
 
 #ifdef STATICLIB_WITH_ICU
+#include <memory>
 #include <unicode/unistr.h>
 #endif // STATICLIB_WITH_ICU
-
-#include "staticlib/config.hpp"
-#include "staticlib/ranges.hpp"
 
 #include "staticlib/serialization/JsonType.hpp"
 #include "staticlib/serialization/SerializationException.hpp"
