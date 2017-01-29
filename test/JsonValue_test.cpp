@@ -326,13 +326,6 @@ void test_boolean_default() {
     slassert(!rv.as_bool(false));
 }
 
-void test_from_range() {
-    std::vector<std::string> vec{"foo", "bar"};
-    
-    auto rv = ss::JsonValue(vec);
-    slassert(ss::JsonType::ARRAY == rv.type());
-}
-
 void test_field_by_name() {
     TestRefl tr{};
     auto rv = tr.get_reflected_value();
@@ -413,7 +406,6 @@ int main() {
         test_real_default();
         test_boolean();
         test_boolean_default();
-        test_from_range();
         test_field_by_name();
 #ifdef STATICLIB_WITH_ICU
         test_icu();

@@ -48,18 +48,6 @@ namespace serialization {
 class JsonField;
 class JsonValue;
 
-// utility function
-namespace { //anonymous
-template <typename T>
-std::vector<JsonValue> emplace_values_to_vector(T& range) {
-    auto vec = std::vector<JsonValue>{};
-    for (auto&& el : range) {
-        vec.emplace_back(std::move(el));
-    }
-    return vec;
-}
-} // namespace
-
 /**
  * Representation of single arbitrary value for reflected classes.
  * Can represent any type of `JsonType` enum. Always hold exactly one 
@@ -165,29 +153,12 @@ public:
     JsonValue(std::vector<JsonValue>&& arrayValue);
 
     /**
-     * Constructs `ARRAY` value
-     * 
-     * @param arrayValue range of values
-     */
-    template <typename T>
-    JsonValue(T& arrayValueRange) :
-    JsonValue(emplace_values_to_vector(arrayValueRange)) { }
-   
-    /**
      * Constructs `STRING` value,
      * passed value will be copied explicitely
      * 
      * @param stringValue string value
      */
     JsonValue(const std::string& stringValue);
-
-    /**
-     * Constructs `STRING` value,
-     * passed value will be copied explicitely
-     * 
-     * @param stringValue string value
-     */
-    JsonValue(std::string& stringValue);
 
     /**
      * Constructs `STRING` value

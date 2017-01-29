@@ -140,13 +140,6 @@ jsonType(JsonType::STRING) {
     *(this->stringVal) = std::move(copy);
 }
 
-JsonValue::JsonValue(std::string& stringValue) :
-jsonType(JsonType::STRING) {
-    std::string copy(stringValue.data(), stringValue.length());
-    this->stringVal = new std::string();
-    *(this->stringVal) = std::move(copy);
-}
-
 JsonValue::JsonValue(std::string&& stringValue) :
 jsonType(JsonType::STRING) {
     this->stringVal = new std::string();
