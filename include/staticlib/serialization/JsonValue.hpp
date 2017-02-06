@@ -295,15 +295,15 @@ public:
 #ifdef STATICLIB_WITH_ICU
     /**
      * Returns a mutable value of the field with specified name if this
-     * value is an `OBJECT` and contains specified field.
-     * If this value is not an `OBJECT` it will be changed to become an empty object.
+     * value is an `OBJECT` and contains specified attribute.     
      * If this value doesn't contain specified attribute - new attribute of type `NULL_T`
      * with the specified name will be created.
+     * If this value is not an `OBJECT`: "SerializationException" will be thrown.
      * Note: this is O(number_of_fields) operation, consider using explicit loop instead.
      * 
      * @return value of specified field
      */
-    JsonValue& getattru_mutable(const icu::UnicodeString& name);
+    JsonValue& getattru_or_throw(const icu::UnicodeString& name, const icu::UnicodeString& context = "");
 #endif // STATICLIB_WITH_ICU    
     
     /**
@@ -419,6 +419,14 @@ public:
      */
     const icu::UnicodeString& as_ustring() const;
 
+    /**
+     * Access value as an `STRING`
+     * If this value is not a `STRING`: "SerializationException" will be thrown.
+     * 
+     * @return string value
+     */
+    const icu::UnicodeString& as_ustring_or_throw(const icu::UnicodeString& context = "") const;
+    
     /**
      * Access value as a `STRING`,
      * returns specified default string if this value is not a `STRING`

@@ -362,7 +362,7 @@ void test_get_or_throw() {
     slassert(41 == rv.getattr_or_throw("f1").as_int32());
 #ifdef STATICLIB_WITH_ICU
     slassert(41 == rv.getattru("f1").as_int32());
-    slassert(41 == rv.getattru_mutable("f1").as_int32());
+    slassert(41 == rv.getattru_or_throw("f1").as_int32());
 #endif // STATICLIB_WITH_ICU
     
     // create new attr

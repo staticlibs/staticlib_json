@@ -140,6 +140,10 @@ const icu::UnicodeString& JsonField::as_ustring() const {
     return value().as_ustring();
 }
 
+const icu::UnicodeString& JsonField::as_ustring_or_throw(const icu::UnicodeString& context) const {
+    return value().as_ustring_or_throw(context);
+}
+
 const icu::UnicodeString& JsonField::as_ustring(const icu::UnicodeString& default_val) const {
     return value().as_ustring(default_val);
 }

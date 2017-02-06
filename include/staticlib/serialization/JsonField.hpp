@@ -248,6 +248,14 @@ public:
     const icu::UnicodeString& as_ustring() const;
 
     /**
+     * Access value as an `STRING`
+     * If this value is not a `STRING`: "SerializationException" will be thrown.
+     * 
+     * @return string value
+     */
+    const icu::UnicodeString& as_ustring_or_throw(const icu::UnicodeString& context = "") const;
+    
+    /**
      * Access value as a `STRING`,
      * returns specified default string if this value is not a `STRING`
      * 

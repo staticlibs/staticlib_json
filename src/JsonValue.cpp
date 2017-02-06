@@ -258,23 +258,22 @@ JsonValue& JsonValue::getattr_or_throw(const std::string& name, const std::strin
 
 #ifdef STATICLIB_WITH_ICU
 
-JsonValue& JsonValue::getattru_mutable(const icu::UnicodeString& name) {
-    auto pa = this->as_object_mutable();
-    if (pa.second) { // actually object
-        for (JsonField& el : *pa.first) {
+JsonValue& JsonValue::getattru_or_throw(const icu::UnicodeString& name, const icu::UnicodeString& context) {
+    if (JsonType::OBJECT == jsonType) {
+        std::vector<JsonField>& obj = this->as_object_or_throw();
+        for (JsonField& el : obj) {
             if (name == el.uname()) {
                 return el.value();
             }
         }
-        std::vector<JsonField>& obj = *pa.first;
+        // add attr
         obj.emplace_back(JsonField(name, JsonValue()));
         return obj[obj.size() - 1].value();
     }
     // not object    
-    *this = JsonValue(std::vector<JsonField>());
-    std::vector<JsonField>& obj = *(this->as_object_mutable().first);
-    obj.emplace_back(JsonField(name, JsonValue()));
-    return obj[obj.size() - 1].value();
+    throw SerializationException(TRACEMSG("Cannot get attribute: [" + su::to_utf8(name) + "]" +
+            " from target value: [" + dump_json_to_string(*this) + "],"
+            " context: [" + su::to_utf8(context) + "]"));
 }
 
 #endif // STATICLIB_WITH_ICU  
@@ -386,6 +385,20 @@ const icu::UnicodeString& JsonValue::as_ustring() const {
         return *(this->ustringValCached);
     }
     return EMPTY_USTRING;
+}
+
+const icu::UnicodeString& JsonValue::as_ustring_or_throw(const icu::UnicodeString& context) const {
+    if (JsonType::STRING == jsonType) {
+        if (nullptr == ustringValCached.get()) {
+            this->ustringValCached = std::unique_ptr<icu::UnicodeString>{new icu::UnicodeString{}};
+            *(this->ustringValCached) = icu::UnicodeString::fromUTF8(*(this->stringVal));
+        }
+        return *(this->ustringValCached);
+    }
+    // not string    
+    throw SerializationException(TRACEMSG("Cannot access string" +
+            " from target value: [" + dump_json_to_string(*this) + "]," +
+            " context: [" + su::to_utf8(context) + "]"));
 }
 
 const icu::UnicodeString& JsonValue::as_ustring(const icu::UnicodeString& default_val) const {
