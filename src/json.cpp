@@ -167,7 +167,7 @@ public:
     int write(const char* buffer, size_t size) {
         size_t result = 0;
         while (result < size) {
-            auto amt = dest.write(buffer + result, size - result);
+            auto amt = dest.write({buffer + result, size - result});
             result += static_cast<size_t> (amt);
         }
         return 0;
@@ -285,7 +285,7 @@ public:
     int read(char* buffer, size_t size) {
         std::streamsize res = 0;
         while (0 == res) {
-            res = src.read(buffer, size);
+            res = src.read({buffer, size});
         }
         return std::char_traits<char>::eof() != res ? static_cast<int>(res) : 0;
     }

@@ -66,7 +66,7 @@ public:
      */
     bool compute_next() {
         typename std::aligned_storage<sizeof(Pod), std::alignment_of<Pod>::value>::type pod_space;
-        std::streamsize read = staticlib::io::read_all(source, reinterpret_cast<char*>(std::addressof(pod_space)), sizeof(Pod));
+        std::streamsize read = staticlib::io::read_all(source, {reinterpret_cast<char*>(std::addressof(pod_space)), sizeof(Pod)});
         switch (read) {
         case sizeof(Pod):
             return this->set_current(std::move(*reinterpret_cast<Pod*>(std::addressof(pod_space))));
@@ -92,7 +92,7 @@ template <typename Range, typename Sink>
 void dump_binary(Range& range, Sink& sink) {
     static_assert(std::is_pod<typename Range::value_type>::value, "Range element type must be a POD type");
     for(auto&& el : range) {
-        staticlib::io::write_all(sink, reinterpret_cast<char*>(std::addressof(el)), sizeof(typename Range::value_type));
+        staticlib::io::write_all(sink, {reinterpret_cast<char*>(std::addressof(el)), sizeof(typename Range::value_type)});
     }
 }
 
