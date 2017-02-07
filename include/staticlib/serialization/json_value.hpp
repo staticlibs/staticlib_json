@@ -59,24 +59,24 @@ class json_value;
  */
 class json_value {
 private:
-    json_type jsonType;
+    json_type value_type;
     // boost::variant can be used instead (and implementation will be simpler)
     // but executable will be bigger, 
     // and we do not want to leak boost::variant from this public header
     union {
-        std::nullptr_t nullVal = nullptr;
+        std::nullptr_t null_val = nullptr;
         // direct std::vector is unsafe here
         // http://stackoverflow.com/q/18672135/314015
         // http://stackoverflow.com/q/8329826/314015
-        std::vector<json_field>* objectVal;
-        std::vector<json_value>* arrayVal;
-        std::string* stringVal;
-        int64_t integerVal;
-        double realVal;
-        bool booleanVal;
+        std::vector<json_field>* object_val;
+        std::vector<json_value>* array_val;
+        std::string* string_val;
+        int64_t integer_val;
+        double real_val;
+        bool boolean_val;
     };
 #ifdef STATICLIB_WITH_ICU
-    mutable std::unique_ptr<icu::UnicodeString> ustringValCached;
+    mutable std::unique_ptr<icu::UnicodeString> ustring_val_cached;
 #endif // STATICLIB_WITH_ICU
     
 public:
@@ -122,117 +122,117 @@ public:
      * Constructs `NULL_T` value.
      * Added for `nullptr` support in `initializer_list` literals.
      * 
-     * @param nullValue nullptr
+     * @param null_valueue nullptr
      */
-    json_value(std::nullptr_t nullValue);
+    json_value(std::nullptr_t null_valueue);
 
     /**
      * Constructs `OBJECT` value
      * 
-     * @param objectValue list of `name->value` pairs
+     * @param object_value list of `name->value` pairs
      */
-    json_value(std::vector<json_field>&& objectValue);
+    json_value(std::vector<json_field>&& object_value);
 
     /**
      * Constructs `OBJECT` value using `std::initializer_list`.
      * 
-     * @param objectValue
+     * @param object_value
      */
-    json_value(const std::initializer_list<json_field>& objectValue);
+    json_value(const std::initializer_list<json_field>& object_value);
     
     /**
      * Constructs `ARRAY` value
      * 
-     * @param arrayValue list of values
+     * @param array_value list of values
      */
-    json_value(std::vector<json_value>&& arrayValue);
+    json_value(std::vector<json_value>&& array_value);
 
     /**
      * Constructs `STRING` value,
      * passed value will be copied explicitely
      * 
-     * @param stringValue string value
+     * @param string_value string value
      */
-    json_value(const std::string& stringValue);
+    json_value(const std::string& string_value);
 
     /**
      * Constructs `STRING` value
      * 
-     * @param stringValue string value
+     * @param string_value string value
      */
-    json_value(std::string&& stringValue);
+    json_value(std::string&& string_value);
 
     /**
      * Constructs `STRING` value
      * 
-     * @param stringValue string value
+     * @param string_value string value
      */
-    json_value(const char* stringValue);    
+    json_value(const char* string_value);    
     
     /**
      * Constructs `STRING` value
      * 
-     * @param stringValue string value
+     * @param string_value string value
      */
 #ifdef STATICLIB_WITH_ICU
-    json_value(icu::UnicodeString ustringValue);
+    json_value(icu::UnicodeString ustring_value);
 #endif // STATICLIB_WITH_ICU    
     
     /**
      * Constructs `INTEGER` value
      * 
-     * @param integerValue int value
+     * @param integer_value int value
      */
-    json_value(int32_t integerValue);
+    json_value(int32_t integer_value);
 
     /**
      * Constructs `INTEGER` value
      * 
-     * @param integerValue int value
+     * @param integer_value int value
      */    
-    json_value(int64_t integerValue);
+    json_value(int64_t integer_value);
 
     /**
      * Constructs `INTEGER` value
      * 
-     * @param integerValue int value
+     * @param integer_value int value
      */
-    json_value(uint32_t integerValue);
+    json_value(uint32_t integer_value);
 
     /**
      * Constructs `INTEGER` value
      * 
-     * @param integerValue int value
+     * @param integer_value int value
      */
-    json_value(int16_t integerValue);
+    json_value(int16_t integer_value);
 
     /**
      * Constructs `INTEGER` value
      * 
-     * @param integerValue int value
+     * @param integer_value int value
      */
-    json_value(uint16_t integerValue);
+    json_value(uint16_t integer_value);
     
     /**
      * Constructs `REAL` value
      * 
-     * @param realValue double value
+     * @param real_value double value
      */
-    json_value(double realValue);
+    json_value(double real_value);
 
     /**
      * Constructs `REAL` value
      * 
-     * @param realValue double value
+     * @param real_value double value
      */
-    json_value(float realValue);
+    json_value(float real_value);
     
     /**
      * Constructs `BOOLEAN` value
      * 
-     * @param booleanValue bool value
+     * @param boolean_value bool value
      */
-    json_value(bool booleanValue);
+    json_value(bool boolean_value);
 
     /**
      * Explicit deep-copy method
