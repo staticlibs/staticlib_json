@@ -15,26 +15,26 @@
  */
 
 /* 
- * File:   JsonType.cpp
+ * File:   json_type.cpp
  * Author: alex
  * 
  * Created on January 23, 2015, 9:52 PM
  */
 
-#include "staticlib/serialization/JsonType.hpp"
+#include "staticlib/serialization/json_type.hpp"
 
 namespace staticlib {
 namespace serialization {
 
-std::string stringify_json_type(JsonType jt) { 
+std::string stringify_json_type(json_type jt) { 
     switch(jt) {
-    case JsonType::NULL_T: return "NULL_T";
-    case JsonType::OBJECT: return "OBJECT";
-    case JsonType::ARRAY: return "ARRAY";
-    case JsonType::STRING: return "STRING";
-    case JsonType::INTEGER: return "INTEGER";
-    case JsonType::REAL: return "REAL";
-    case JsonType::BOOLEAN: return "BOOLEAN";
+    case json_type::NULL_T: return "NULL_T";
+    case json_type::OBJECT: return "OBJECT";
+    case json_type::ARRAY: return "ARRAY";
+    case json_type::STRING: return "STRING";
+    case json_type::INTEGER: return "INTEGER";
+    case json_type::REAL: return "REAL";
+    case json_type::BOOLEAN: return "BOOLEAN";
     default: return "UNKNOWN";
     }
 }

@@ -15,14 +15,14 @@
  */
 
 /* 
- * File:   JsonValue.hpp
+ * File:   json_value.hpp
  * Author: alex
  *
  * Created on December 28, 2014, 8:00 PM
  */
 
-#ifndef STATICLIB_SERIALIZATION_JSONVALUE_HPP
-#define	STATICLIB_SERIALIZATION_JSONVALUE_HPP
+#ifndef STATICLIB_SERIALIZATION_JSON_VALUE_HPP
+#define	STATICLIB_SERIALIZATION_JSON_VALUE_HPP
 
 #include <cstdint>
 #include <string>
@@ -33,33 +33,33 @@
 #include <unicode/unistr.h>
 #endif // STATICLIB_WITH_ICU
 
-#include "staticlib/serialization/JsonType.hpp"
-#include "staticlib/serialization/SerializationException.hpp"
+#include "staticlib/serialization/json_type.hpp"
+#include "staticlib/serialization/serialization_exception.hpp"
 
 namespace staticlib {
 namespace serialization {
 
 // forward declaration
-class JsonField;
-class JsonValue;
+class json_field;
+class json_value;
 
 /**
  * Representation of single arbitrary value for reflected classes.
- * Can represent any type of `JsonType` enum. Always hold exactly one 
+ * Can represent any type of `json_type` enum. Always hold exactly one 
  * value of the specified type (that can hold more values inside).
  * 
- * Access to the hold value through the wrong type (e.g. JsonValue::as_integer
+ * Access to the hold value through the wrong type (e.g. json_value::as_integer
  * on `STRING` value) is a valid operation and returns the default value of
  * the specified type. This class doesn't do automatic conversion between value types.
  * 
  * Uses pointer to vector instead of direct `std::vector` to hold recursive 
- * array and object fields of JsonValue (that is UB with `std::vector`).
+ * array and object fields of json_value (that is UB with `std::vector`).
  * `unique_ptr` cannot be used here instead of bare pointer because of lack of support for 
  * unrestricted unions in msvc 2013
  */
-class JsonValue {
+class json_value {
 private:
-    JsonType jsonType;
+    json_type jsonType;
     // boost::variant can be used instead (and implementation will be simpler)
     // but executable will be bigger, 
     // and we do not want to leak boost::variant from this public header
@@ -68,8 +68,8 @@ private:
         // direct std::vector is unsafe here
         // http://stackoverflow.com/q/18672135/314015
         // http://stackoverflow.com/q/8329826/314015
-        std::vector<JsonField>* objectVal;
-        std::vector<JsonValue>* arrayVal;
+        std::vector<json_field>* objectVal;
+        std::vector<json_value>* arrayVal;
         std::string* stringVal;
         int64_t integerVal;
         double realVal;
@@ -83,40 +83,40 @@ public:
     /**
      * Destructor
      */
-    ~JsonValue() STATICLIB_NOEXCEPT;
+    ~json_value() STATICLIB_NOEXCEPT;
     
     /**
      * Deleted copy constructor
      * 
      * @param other deleted
      */
-    JsonValue(const JsonValue& other) = delete;
+    json_value(const json_value& other) = delete;
 
     /**
      * Deleted copy assignment operator
      * 
      * @param other deleted
      */
-    JsonValue& operator=(const JsonValue& other) = delete;
+    json_value& operator=(const json_value& other) = delete;
 
     /**
      * Move constructor
      * 
      * @param other other value
      */
-    JsonValue(JsonValue&& other) STATICLIB_NOEXCEPT;
+    json_value(json_value&& other) STATICLIB_NOEXCEPT;
 
     /**
      * Move assignment operator
      * 
      * @param other other value
      */
-    JsonValue& operator=(JsonValue&& other) STATICLIB_NOEXCEPT;
+    json_value& operator=(json_value&& other) STATICLIB_NOEXCEPT;
     
     /**
      * Constructs `NULL_T` value
      */
-    JsonValue();
+    json_value();
     
     /**
      * Constructs `NULL_T` value.
@@ -124,28 +124,28 @@ public:
      * 
      * @param nullValue nullptr
      */
-    JsonValue(std::nullptr_t nullValue);
+    json_value(std::nullptr_t nullValue);
 
     /**
      * Constructs `OBJECT` value
      * 
      * @param objectValue list of `name->value` pairs
      */
-    JsonValue(std::vector<JsonField>&& objectValue);
+    json_value(std::vector<json_field>&& objectValue);
 
     /**
      * Constructs `OBJECT` value using `std::initializer_list`.
      * 
      * @param objectValue
      */
-    JsonValue(const std::initializer_list<JsonField>& objectValue);
+    json_value(const std::initializer_list<json_field>& objectValue);
     
     /**
      * Constructs `ARRAY` value
      * 
      * @param arrayValue list of values
      */
-    JsonValue(std::vector<JsonValue>&& arrayValue);
+    json_value(std::vector<json_value>&& arrayValue);
 
     /**
      * Constructs `STRING` value,
@@ -153,21 +153,21 @@ public:
      * 
      * @param stringValue string value
      */
-    JsonValue(const std::string& stringValue);
+    json_value(const std::string& stringValue);
 
     /**
      * Constructs `STRING` value
      * 
      * @param stringValue string value
      */
-    JsonValue(std::string&& stringValue);
+    json_value(std::string&& stringValue);
 
     /**
      * Constructs `STRING` value
      * 
      * @param stringValue string value
      */
-    JsonValue(const char* stringValue);    
+    json_value(const char* stringValue);    
     
     /**
      * Constructs `STRING` value
@@ -175,7 +175,7 @@ public:
      * @param stringValue string value
      */
 #ifdef STATICLIB_WITH_ICU
-    JsonValue(icu::UnicodeString ustringValue);
+    json_value(icu::UnicodeString ustringValue);
 #endif // STATICLIB_WITH_ICU    
     
     /**
@@ -183,70 +183,70 @@ public:
      * 
      * @param integerValue int value
      */
-    JsonValue(int32_t integerValue);
+    json_value(int32_t integerValue);
 
     /**
      * Constructs `INTEGER` value
      * 
      * @param integerValue int value
      */    
-    JsonValue(int64_t integerValue);
+    json_value(int64_t integerValue);
 
     /**
      * Constructs `INTEGER` value
      * 
      * @param integerValue int value
      */
-    JsonValue(uint32_t integerValue);
+    json_value(uint32_t integerValue);
 
     /**
      * Constructs `INTEGER` value
      * 
      * @param integerValue int value
      */
-    JsonValue(int16_t integerValue);
+    json_value(int16_t integerValue);
 
     /**
      * Constructs `INTEGER` value
      * 
      * @param integerValue int value
      */
-    JsonValue(uint16_t integerValue);
+    json_value(uint16_t integerValue);
     
     /**
      * Constructs `REAL` value
      * 
      * @param realValue double value
      */
-    JsonValue(double realValue);
+    json_value(double realValue);
 
     /**
      * Constructs `REAL` value
      * 
      * @param realValue double value
      */
-    JsonValue(float realValue);
+    json_value(float realValue);
     
     /**
      * Constructs `BOOLEAN` value
      * 
      * @param booleanValue bool value
      */
-    JsonValue(bool booleanValue);
+    json_value(bool booleanValue);
 
     /**
      * Explicit deep-copy method
      * 
      * @return deep copy of current instance
      */
-    JsonValue clone() const;
+    json_value clone() const;
     
     /**
      * Returns type of this value
      * 
      * @return type type of this value
      */
-    JsonType type() const;
+    json_type type() const;
     
     /**
      * Returns value of the field with specified name if this
@@ -256,7 +256,7 @@ public:
      * 
      * @return value of specified field
      */
-    const JsonValue& getattr(const std::string& name) const;
+    const json_value& getattr(const std::string& name) const;
 
     /**
      * Returns value of the field with specified name if this
@@ -266,7 +266,7 @@ public:
      * 
      * @return value of specified field
      */
-    const JsonValue& operator[](const std::string& name) const;
+    const json_value& operator[](const std::string& name) const;
     
 #ifdef STATICLIB_WITH_ICU
     /**
@@ -277,7 +277,7 @@ public:
      * 
      * @return value of specified field
      */
-    const JsonValue& getattru(const icu::UnicodeString& uname) const;
+    const json_value& getattru(const icu::UnicodeString& uname) const;
 #endif // STATICLIB_WITH_ICU
 
     /**
@@ -285,12 +285,12 @@ public:
      * value is an `OBJECT` and contains specified attribute.     
      * If this value doesn't contain specified attribute - new attribute of type `NULL_T`
      * with the specified name will be created.
-     * If this value is not an `OBJECT`: "SerializationException" will be thrown.
+     * If this value is not an `OBJECT`: "serialization_exception" will be thrown.
      * Note: this is O(number_of_fields) operation, consider using explicit loop instead.
      * 
      * @return value of specified field
      */
-    JsonValue& getattr_or_throw(const std::string& name, const std::string& context = "");
+    json_value& getattr_or_throw(const std::string& name, const std::string& context = "");
     
 #ifdef STATICLIB_WITH_ICU
     /**
@@ -298,12 +298,12 @@ public:
      * value is an `OBJECT` and contains specified attribute.     
      * If this value doesn't contain specified attribute - new attribute of type `NULL_T`
      * with the specified name will be created.
-     * If this value is not an `OBJECT`: "SerializationException" will be thrown.
+     * If this value is not an `OBJECT`: "serialization_exception" will be thrown.
      * Note: this is O(number_of_fields) operation, consider using explicit loop instead.
      * 
      * @return value of specified field
      */
-    JsonValue& getattru_or_throw(const icu::UnicodeString& name, const icu::UnicodeString& context = "");
+    json_value& getattru_or_throw(const icu::UnicodeString& name, const icu::UnicodeString& context = "");
 #endif // STATICLIB_WITH_ICU    
     
     /**
@@ -311,23 +311,23 @@ public:
      * 
      * @return list of `name->value` pairs
      */
-    const std::vector<JsonField>& as_object() const;
+    const std::vector<json_field>& as_object() const;
 
     /**
      * Access value as a mutable `OBJECT`
-     * If this value is not an `OBJECT`: "SerializationException" will be thrown.
+     * If this value is not an `OBJECT`: "serialization_exception" will be thrown.
      * 
      * @return list of `name->value` pairs
      */
-    std::vector<JsonField>& as_object_or_throw(const std::string& context = "");
+    std::vector<json_field>& as_object_or_throw(const std::string& context = "");
 
     /**
      * Access value as a mutable `OBJECT`
-     * If this value is not an `OBJECT`: "SerializationException" will be thrown.
+     * If this value is not an `OBJECT`: "serialization_exception" will be thrown.
      * 
      * @return list of `name->value` pairs
      */
-    const std::vector<JsonField>& as_object_or_throw(const std::string& context = "") const;
+    const std::vector<json_field>& as_object_or_throw(const std::string& context = "") const;
 
     /**
      * Setter for the `OBJECT` value
@@ -336,30 +336,30 @@ public:
      * @return `true` if current instance was initially a `OBJECT`, `false` if current
      *         instance was changed `OBJECT`
      */
-    bool set_object(std::vector<JsonField>&& value);
+    bool set_object(std::vector<json_field>&& value);
     
     /**
      * Access value as an `ARRAY`     
      * 
      * @return list of values
      */
-    const std::vector<JsonValue>& as_array() const;
+    const std::vector<json_value>& as_array() const;
 
     /**
      * Access value as a mutable `ARRAY`
-     * If this value is not an `ARRAY`: "SerializationException" will be thrown.
+     * If this value is not an `ARRAY`: "serialization_exception" will be thrown.
      * 
      * @return list of values
      */
-    std::vector<JsonValue>& as_array_or_throw(const std::string& context = "");
+    std::vector<json_value>& as_array_or_throw(const std::string& context = "");
 
     /**
      * Access value as a mutable `ARRAY`
-     * If this value is not an `ARRAY`: "SerializationException" will be thrown.
+     * If this value is not an `ARRAY`: "serialization_exception" will be thrown.
      * 
      * @return list of values
      */
-    const std::vector<JsonValue>& as_array_or_throw(const std::string& context = "") const;
+    const std::vector<json_value>& as_array_or_throw(const std::string& context = "") const;
 
     /**
      * Setter for the `ARRAY` value
@@ -368,7 +368,7 @@ public:
      * @return `true` if current instance was initially a `ARRAY`, `false` if current
      *         instance was changed `ARRAY`
      */
-    bool set_array(std::vector<JsonValue>&& value);    
+    bool set_array(std::vector<json_value>&& value);    
     
     /**
      * Access value as an `STRING`
@@ -379,7 +379,7 @@ public:
 
     /**
      * Access value as an `STRING`
-     * If this value is not a `STRING`: "SerializationException" will be thrown.
+     * If this value is not a `STRING`: "serialization_exception" will be thrown.
      * 
      * @return string value
      */
@@ -387,7 +387,7 @@ public:
 
     /**
      * Access value as an `STRING`
-     * If this value is not a `STRING`: "SerializationException" will be thrown.
+     * If this value is not a `STRING`: "serialization_exception" will be thrown.
      * 
      * @return string value
      */
@@ -421,7 +421,7 @@ public:
 
     /**
      * Access value as an `STRING`
-     * If this value is not a `STRING`: "SerializationException" will be thrown.
+     * If this value is not a `STRING`: "serialization_exception" will be thrown.
      * 
      * @return string value
      */
@@ -455,7 +455,7 @@ public:
 
     /**
      * Access value as an `INTEGER`
-     * If this value is not an `INTEGER`: "SerializationException" will be thrown.
+     * If this value is not an `INTEGER`: "serialization_exception" will be thrown.
      * 
      * @return int value
      */
@@ -488,7 +488,7 @@ public:
     /**
      * Access value as `int32_t` `INTEGER`
      * If this value is not an `INTEGER` or cannot be converted to `int32_t`: 
-     * "SerializationException" will be thrown.
+     * "serialization_exception" will be thrown.
      * 
      * @return int value
      */
@@ -522,7 +522,7 @@ public:
     /**
      * Access value as `uint32_t` `INTEGER`
      * If this value is not an `INTEGER` or cannot be converted to `uint32_t`: 
-     * "SerializationException" will be thrown.
+     * "serialization_exception" will be thrown.
      * 
      * @return int value
      */
@@ -531,7 +531,7 @@ public:
     /**
      * Access value as positive `uint32_t` `INTEGER`
      * If this value is not a positive `INTEGER` or cannot be converted to `uint32_t`: 
-     * "SerializationException" will be thrown.
+     * "serialization_exception" will be thrown.
      * 
      * @return int value
      */
@@ -565,7 +565,7 @@ public:
     /**
      * Access value as `int16_t` `INTEGER`
      * If this value is not an `INTEGER` or cannot be converted to `int16_t`: 
-     * "SerializationException" will be thrown.
+     * "serialization_exception" will be thrown.
      * 
      * @return int value
      */
@@ -599,7 +599,7 @@ public:
     /**
      * Access value as `uint16_t` `INTEGER`
      * If this value is not an `INTEGER` or cannot be converted to `uint16_t`: 
-     * "SerializationException" will be thrown.
+     * "serialization_exception" will be thrown.
      * 
      * @return int value
      */
@@ -608,7 +608,7 @@ public:
     /**
      * Access value as positive `uint16_t` `INTEGER`
      * If this value is not a positive `INTEGER` or cannot be converted to `uint16_t`: 
-     * "SerializationException" will be thrown.
+     * "serialization_exception" will be thrown.
      * 
      * @return int value
      */
@@ -643,7 +643,7 @@ public:
     /**
      * Access value as `REAL`
      * If this value is not a `REAL`: 
-     * "SerializationException" will be thrown.
+     * "serialization_exception" will be thrown.
      * 
      * @return int value
      */
@@ -677,7 +677,7 @@ public:
     /**
      * Access value as `float` `REAL`
      * If this value is not a `REAL` or cannot be converted to `float`: 
-     * "SerializationException" will be thrown.
+     * "serialization_exception" will be thrown.
      * 
      * @return int value
      */
@@ -709,7 +709,7 @@ public:
     /**
      * Access value as `BOOLEAN`
      * If this value is not a `BOOLEAN`: 
-     * "SerializationException" will be thrown.
+     * "serialization_exception" will be thrown.
      * 
      * @return int value
      */
@@ -738,5 +738,5 @@ public:
 } // namespace
 }
 
-#endif	/* STATICLIB_SERIALIZATION_JSONVALUE_HPP */
+#endif	/* STATICLIB_SERIALIZATION_JSON_VALUE_HPP */
 

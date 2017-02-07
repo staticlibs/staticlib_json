@@ -15,14 +15,14 @@
  */
 
 /* 
- * File:   JsonField.hpp
+ * File:   json_field.hpp
  * Author: alex
  *
  * Created on January 23, 2015, 10:33 AM
  */
 
-#ifndef STATICLIB_SERIALIZATION_JSONFIELD_HPP
-#define	STATICLIB_SERIALIZATION_JSONFIELD_HPP
+#ifndef STATICLIB_SERIALIZATION_JSON_FIELD_HPP
+#define	STATICLIB_SERIALIZATION_JSON_FIELD_HPP
 
 #include <cstdint>
 #include <string>
@@ -33,22 +33,22 @@
 #include <unicode/unistr.h>
 #endif // STATICLIB_WITH_ICU
 
-#include "staticlib/serialization/JsonValue.hpp"
+#include "staticlib/serialization/json_value.hpp"
 
 namespace staticlib {
 namespace serialization {
 
 /**
- * Representation of the reflected object field. Implemented as `name, JsonValue` tuple.
- * This class mimics `JsonValue` methods like `as_array` to access field value directly 
+ * Representation of the reflected object field. Implemented as `name, json_value` tuple.
+ * This class mimics `json_value` methods like `as_array` to access field value directly 
  * from this object without intermediate `value()` call.
  */
-class JsonField {
+class json_field {
     std::string jsonName;
 #ifdef STATICLIB_WITH_ICU
     mutable std::unique_ptr<icu::UnicodeString> jsonUname;
 #endif // STATICLIB_WITH_ICU
-    JsonValue jsonValue;
+    json_value jsonValue;
     
 public:
     /**
@@ -56,33 +56,33 @@ public:
      * 
      * @param other deleted
      */
-    JsonField(const JsonField& other) = delete;
+    json_field(const json_field& other) = delete;
 
     /**
      * Deleted copy assignment operator
      * 
      * @param other deleted
      */
-    JsonField& operator=(const JsonField& other) = delete;
+    json_field& operator=(const json_field& other) = delete;
 
     /**
      * Move constructor
      * 
      * @param other other value
      */
-    JsonField(JsonField&& other); /* default */
+    json_field(json_field&& other); /* default */
 
     /**
      * Move assignment operator
      * 
      * @param other other value
      */
-    JsonField& operator=(JsonField&& other); /* default */
+    json_field& operator=(json_field&& other); /* default */
     
     /**
      * Default constructor
      */
-    JsonField();
+    json_field();
     
     /**
      * Constructor
@@ -90,7 +90,7 @@ public:
      * @param name field name
      * @param value field value
      */
-    JsonField(std::string name, JsonValue value);
+    json_field(std::string name, json_value value);
 
     /**
      * Constructor
@@ -98,7 +98,7 @@ public:
      * @param name field name
      * @param value field value
      */
-    JsonField(const char* name, JsonValue value);
+    json_field(const char* name, json_value value);
 
 #ifdef STATICLIB_WITH_ICU
     /**
@@ -107,7 +107,7 @@ public:
      * @param name field name
      * @param value field value
      */
-    JsonField(icu::UnicodeString uname, JsonValue jsonValue);
+    json_field(icu::UnicodeString uname, json_value jsonValue);
 #endif // STATICLIB_WITH_ICU
     
     /**
@@ -131,81 +131,81 @@ public:
      * 
      * @return type type of the value in this field
      */
-    JsonType type() const;
+    json_type type() const;
     
     /**
      * Field value accessor
      * 
      * @return field value
      */
-    const JsonValue& value() const;
+    const json_value& value() const;
 
     /**
      * Field value accessor
      * 
      * @return field value
      */
-    JsonValue& value();
+    json_value& value();
     
     /**
      * Field value mutator
      * 
      * @param value new value
      */
-    void set_value(JsonValue&& value);
+    void set_value(json_value&& value);
 
     /**
      * Explicit deep-copy method
      * 
      * @return deep copy of current instance
      */
-    JsonField clone() const;
+    json_field clone() const;
 
     /**
      * Access value as an `OBJECT`
      * 
      * @return list of `name->value` pairs
      */
-    const std::vector<JsonField>& as_object() const;
+    const std::vector<json_field>& as_object() const;
 
     /**
      * Access value as a mutable `OBJECT`
-     * If this value is not an `OBJECT`: "SerializationException" will be thrown.
+     * If this value is not an `OBJECT`: "serialization_exception" will be thrown.
      * 
      * @return list of `name->value` pairs
      */
-    std::vector<JsonField>& as_object_or_throw(const std::string& context = "");
+    std::vector<json_field>& as_object_or_throw(const std::string& context = "");
 
     /**
      * Access value as a mutable `OBJECT`
-     * If this value is not an `OBJECT`: "SerializationException" will be thrown.
+     * If this value is not an `OBJECT`: "serialization_exception" will be thrown.
      * 
      * @return list of `name->value` pairs
      */
-    const std::vector<JsonField>& as_object_or_throw(const std::string& context = "") const;
+    const std::vector<json_field>& as_object_or_throw(const std::string& context = "") const;
 
     /**
      * Access value as an `ARRAY`
      * 
      * @return list of values
      */
-    const std::vector<JsonValue>& as_array() const;
+    const std::vector<json_value>& as_array() const;
 
     /**
      * Access value as a mutable `ARRAY`
-     * If this value is not an `ARRAY`: "SerializationException" will be thrown.
+     * If this value is not an `ARRAY`: "serialization_exception" will be thrown.
      * 
      * @return list of values
      */
-    std::vector<JsonValue>& as_array_or_throw(const std::string& context = "");
+    std::vector<json_value>& as_array_or_throw(const std::string& context = "");
 
     /**
      * Access value as a mutable `ARRAY`
-     * If this value is not an `ARRAY`: "SerializationException" will be thrown.
+     * If this value is not an `ARRAY`: "serialization_exception" will be thrown.
      * 
      * @return list of values
      */
-    const std::vector<JsonValue>& as_array_or_throw(const std::string& context = "") const;
+    const std::vector<json_value>& as_array_or_throw(const std::string& context = "") const;
     
     /**
      * Access value as an `STRING`
@@ -216,7 +216,7 @@ public:
 
     /**
      * Access value as an `STRING`
-     * If this value is not a `STRING`: "SerializationException" will be thrown.
+     * If this value is not a `STRING`: "serialization_exception" will be thrown.
      * 
      * @return string value
      */
@@ -224,7 +224,7 @@ public:
 
     /**
      * Access value as an `STRING`
-     * If this value is not a `STRING`: "SerializationException" will be thrown.
+     * If this value is not a `STRING`: "serialization_exception" will be thrown.
      * 
      * @return string value
      */
@@ -249,7 +249,7 @@ public:
 
     /**
      * Access value as an `STRING`
-     * If this value is not a `STRING`: "SerializationException" will be thrown.
+     * If this value is not a `STRING`: "serialization_exception" will be thrown.
      * 
      * @return string value
      */
@@ -274,7 +274,7 @@ public:
 
     /**
      * Access value as an `INTEGER`
-     * If this value is not an `INTEGER`: "SerializationException" will be thrown.
+     * If this value is not an `INTEGER`: "serialization_exception" will be thrown.
      * 
      * @return int value
      */
@@ -299,7 +299,7 @@ public:
     /**
      * Access value as `int32_t` `INTEGER`
      * If this value is not an `INTEGER` or cannot be converted to `int32_t`: 
-     * "SerializationException" will be thrown.
+     * "serialization_exception" will be thrown.
      * 
      * @return int value
      */
@@ -324,7 +324,7 @@ public:
     /**
      * Access value as `uint32_t` `INTEGER`
      * If this value is not an `INTEGER` or cannot be converted to `uint32_t`: 
-     * "SerializationException" will be thrown.
+     * "serialization_exception" will be thrown.
      * 
      * @return int value
      */
@@ -349,7 +349,7 @@ public:
     /**
      * Access value as `int16_t` `INTEGER`
      * If this value is not an `INTEGER` or cannot be converted to `int16_t`: 
-     * "SerializationException" will be thrown.
+     * "serialization_exception" will be thrown.
      * 
      * @return int value
      */
@@ -374,7 +374,7 @@ public:
     /**
      * Access value as `uint16_t` `INTEGER`
      * If this value is not an `INTEGER` or cannot be converted to `uint16_t`: 
-     * "SerializationException" will be thrown.
+     * "serialization_exception" will be thrown.
      * 
      * @return int value
      */
@@ -400,7 +400,7 @@ public:
     /**
      * Access value as `REAL`
      * If this value is not a `REAL`: 
-     * "SerializationException" will be thrown.
+     * "serialization_exception" will be thrown.
      * 
      * @return int value
      */
@@ -425,7 +425,7 @@ public:
     /**
      * Access value as `float` `REAL`
      * If this value is not a `REAL` or cannot be converted to `float`: 
-     * "SerializationException" will be thrown.
+     * "serialization_exception" will be thrown.
      * 
      * @return int value
      */
@@ -449,7 +449,7 @@ public:
     /**
      * Access value as `BOOLEAN`
      * If this value is not a `BOOLEAN`: 
-     * "SerializationException" will be thrown.
+     * "serialization_exception" will be thrown.
      * 
      * @return int value
      */
@@ -469,5 +469,5 @@ public:
 } // namespace
 }
 
-#endif	/* STATICLIB_SERIALIZATION_JSONFIELD_HPP */
+#endif	/* STATICLIB_SERIALIZATION_JSON_FIELD_HPP */
 

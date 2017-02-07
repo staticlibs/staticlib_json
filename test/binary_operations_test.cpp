@@ -21,7 +21,7 @@
  * Created on November 29, 2015, 12:30 PM
  */
 
-#include "staticlib/serialization/binary.hpp"
+#include "staticlib/serialization/binary_operations.hpp"
 
 #include <iostream>
 #include <cstdint>

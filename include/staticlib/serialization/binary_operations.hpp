@@ -21,8 +21,8 @@
  * Created on November 28, 2015, 7:36 PM
  */
 
-#ifndef STATICLIB_SERIALIZATION_BINARY_HPP
-#define	STATICLIB_SERIALIZATION_BINARY_HPP
+#ifndef STATICLIB_SERIALIZATION_BINARY_OPERATIONS_HPP
+#define	STATICLIB_SERIALIZATION_BINARY_OPERATIONS_HPP
 
 #include <memory>
 #include <type_traits>
@@ -31,7 +31,7 @@
 #include "staticlib/io.hpp"
 #include "staticlib/ranges.hpp"
 
-#include "staticlib/serialization/SerializationException.hpp"
+#include "staticlib/serialization/serialization_exception.hpp"
 
 namespace staticlib {
 namespace serialization {
@@ -73,7 +73,7 @@ public:
         case 0:
             return false;
         default:
-            throw SerializationException(TRACEMSG(
+            throw serialization_exception(TRACEMSG(
                     "Invalid read of size: [" + staticlib::config::to_string(read) + "],"
                     " expected size: [" + staticlib::config::to_string(sizeof(Pod)) + "]"));
         }
@@ -111,5 +111,5 @@ detail_binary::pod_range<Source, Pod> load_binary(Source&& src) {
 } // namespace
 }
 
-#endif	/* STATICLIB_SERIALIZATION_BINARY_HPP */
+#endif	/* STATICLIB_SERIALIZATION_BINARY_OPERATIONS_HPP */
 

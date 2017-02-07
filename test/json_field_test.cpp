@@ -15,13 +15,13 @@
  */
 
 /* 
- * File:   JsonField_test.cpp
+ * File:   json_field_test.cpp
  * Author: alex
  *
  * Created on June 29, 2016, 9:47 AM
  */
 
-#include "staticlib/serialization/JsonField.hpp"
+#include "staticlib/serialization/json_field.hpp"
 
 #include <iostream>
 
@@ -30,14 +30,14 @@
 namespace ss = staticlib::serialization;
 
 void test_string() {
-    ss::JsonField fi{"foo", "bar"};
+    ss::json_field fi{"foo", "bar"};
     slassert("foo" == fi.name());
     slassert("bar" == fi.value().as_string());
 }
 
 #ifdef STATICLIB_WITH_ICU
 void test_icu() {
-    ss::JsonField fi{icu::UnicodeString{"foo"}, icu::UnicodeString{"bar"}};
+    ss::json_field fi{icu::UnicodeString{"foo"}, icu::UnicodeString{"bar"}};
     slassert("foo" == fi.name());
     slassert(icu::UnicodeString{"foo"} == fi.uname());
     slassert("bar" == fi.value().as_string());

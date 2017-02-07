@@ -21,7 +21,7 @@
  * Created on January 1, 2015, 6:18 PM
  */
 
-#include "staticlib/serialization/json.hpp"
+#include "staticlib/serialization/json_operations.hpp"
 
 #include <iostream>
 #include <sstream>
@@ -66,7 +66,7 @@ void test_init() {
 
 class TestReflInner {
 public:    
-    ss::JsonValue get_reflected_value() const {
+    ss::json_value get_reflected_value() const {
         return {
             { "f42", 42 },
             { "fnullable", nullptr }
@@ -80,8 +80,8 @@ class TestRefl {
     bool f3 = true;
 
 public:    
-    ss::JsonValue get_reflected_value() const {
-        std::vector<ss::JsonValue> vec{};
+    ss::json_value get_reflected_value() const {
+        std::vector<ss::json_value> vec{};
         vec.emplace_back(41);
         vec.emplace_back("43");
         return {
@@ -111,15 +111,15 @@ void test_dumpu() {
 void test_loads() {
     {
         auto rv = ss::load_json_from_string("null");
-        slassert(ss::JsonType::NULL_T == rv.type());
+        slassert(ss::json_type::NULL_T == rv.type());
     }
     {
         auto rv = ss::load_json_from_string("42");
-        slassert(ss::JsonType::INTEGER == rv.type());
+        slassert(ss::json_type::INTEGER == rv.type());
     }
     {
         auto rv = ss::load_json_from_string("[1,2,3]i am a foobar");
-        slassert(ss::JsonType::ARRAY == rv.type());
+        slassert(ss::json_type::ARRAY == rv.type());
         slassert(3 == rv.as_array().size());
     }
     
@@ -130,29 +130,29 @@ void test_loads() {
     for (const auto& fi : obj) {
         set.insert(fi.name());
         if (fi.name() == "f1") {
-            slassert(ss::JsonType::INTEGER == fi.value().type());
+            slassert(ss::json_type::INTEGER == fi.value().type());
             slassert(41 == fi.value().as_int64());
         } else if (fi.name() == "f2") {
-            slassert(ss::JsonType::STRING == fi.value().type());
+            slassert(ss::json_type::STRING == fi.value().type());
             slassert(fi.value().as_string() == "42");
         } else if (fi.name() == "f3") { 
-            slassert(ss::JsonType::BOOLEAN == fi.value().type());
+            slassert(ss::json_type::BOOLEAN == fi.value().type());
             slassert(fi.value().as_bool());
         } else if (fi.name() == "f4") {
-            slassert(ss::JsonType::ARRAY == fi.value().type());
+            slassert(ss::json_type::ARRAY == fi.value().type());
             slassert(2 == fi.value().as_array().size());
-            slassert(ss::JsonType::INTEGER == fi.value().as_array()[0].type());
+            slassert(ss::json_type::INTEGER == fi.value().as_array()[0].type());
             slassert(41 == fi.value().as_array()[0].as_int64());
-            slassert(ss::JsonType::STRING == fi.value().as_array()[1].type());
+            slassert(ss::json_type::STRING == fi.value().as_array()[1].type());
             slassert(fi.value().as_array()[1].as_string() == "43");
         } else if (fi.name() == "f5") {
-            slassert(ss::JsonType::OBJECT == fi.value().type());
+            slassert(ss::json_type::OBJECT == fi.value().type());
             slassert(2 == fi.value().as_object().size());
             slassert(fi.value().as_object()[0].name() == "f42");
-            slassert(ss::JsonType::INTEGER == fi.value().as_object()[0].value().type());
+            slassert(ss::json_type::INTEGER == fi.value().as_object()[0].value().type());
             slassert(42 == fi.value().as_object()[0].value().as_int64());
             slassert(fi.value().as_object()[1].name() == "fnullable");
-            slassert(ss::JsonType::NULL_T == fi.value().as_object()[1].value().type());
+            slassert(ss::json_type::NULL_T == fi.value().as_object()[1].value().type());
         }
     }
     slassert(5 == set.size());
@@ -160,11 +160,11 @@ void test_loads() {
 }
 
 void test_preserve_order() {
-    auto vec = std::vector<ss::JsonField>{};
+    auto vec = std::vector<ss::json_field>{};
     for(auto i = 0; i < (1<<10); i++) {
         vec.emplace_back(sc::to_string(i).c_str(), i);
     }
-    auto rv = ss::JsonValue(std::move(vec));
+    auto rv = ss::json_value(std::move(vec));
     auto json = ss::dump_json_to_string(rv);
     auto loaded = ss::load_json_from_string(json);
     for (auto i = 0; i < (1<<10); i++) {
@@ -174,8 +174,8 @@ void test_preserve_order() {
 }
 
 void test_dump_string() {
-    ss::JsonValue val{"Not Found"};
-    slassert(ss::JsonType::STRING == val.type());
+    ss::json_value val{"Not Found"};
+    slassert(ss::json_type::STRING == val.type());
     auto dumped = ss::dump_json_to_string(val);
     slassert("\"Not Found\"" == dumped);    
 }

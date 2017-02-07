@@ -24,12 +24,12 @@
 #ifndef STATICLIB_SERIALIZATION_HPP
 #define	STATICLIB_SERIALIZATION_HPP
 
-#include "staticlib/serialization/JsonField.hpp"
-#include "staticlib/serialization/JsonType.hpp"
-#include "staticlib/serialization/JsonValue.hpp"
-#include "staticlib/serialization/SerializationException.hpp"
-#include "staticlib/serialization/binary.hpp"
-#include "staticlib/serialization/json.hpp"
+#include "staticlib/serialization/binary_operations.hpp"
+#include "staticlib/serialization/json_field.hpp"
+#include "staticlib/serialization/json_operations.hpp"
+#include "staticlib/serialization/json_type.hpp"
+#include "staticlib/serialization/json_value.hpp"
+#include "staticlib/serialization/serialization_exception.hpp"
 
 #endif	/* STATICLIB_SERIALIZATION_HPP */
 

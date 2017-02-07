@@ -15,16 +15,16 @@
  */
 
 /* 
- * File:   SerializationException.hpp
+ * File:   serialization_exception.hpp
  * Author: alex
  *
  * Created on January 2, 2015, 2:22 PM
  */
 
-#ifndef STATICLIB_SERIALIZATION_SERIALIZATIONEXCEPTION_HPP
-#define	STATICLIB_SERIALIZATION_SERIALIZATIONEXCEPTION_HPP
+#ifndef STATICLIB_SERIALIZATION_SERIALIZATION_EXCEPTION_HPP
+#define	STATICLIB_SERIALIZATION_SERIALIZATION_EXCEPTION_HPP
 
-#include "staticlib/config/BaseException.hpp"
+#include "staticlib/config/staticlib_exception.hpp"
 
 namespace staticlib {
 namespace serialization {
@@ -32,23 +32,23 @@ namespace serialization {
 /**
  * Module specific exception
  */
-class SerializationException : public staticlib::config::BaseException {
+class serialization_exception : public staticlib::config::staticlib_exception {
 public:
     /**
      * Default constructor
      */
-    SerializationException() = default;
+    serialization_exception() = default;
 
     /**
      * Constructor with message
      * 
      * @param msg error message
      */
-    SerializationException(const std::string& msg) :
-    staticlib::config::BaseException(msg) { }
+    serialization_exception(const std::string& msg) :
+    staticlib::config::staticlib_exception(msg) { }
 };
 
 }
 } // namespace
 
-#endif	/* STATICLIB_SERIALIZATION_SERIALIZATIONEXCEPTION_HPP */
+#endif	/* STATICLIB_SERIALIZATION_SERIALIZATION_EXCEPTION_HPP */

@@ -15,14 +15,14 @@
  */
 
 /* 
- * File:   JsonType.hpp
+ * File:   json_type.hpp
  * Author: alex
  *
  * Created on December 28, 2014, 8:21 PM
  */
 
-#ifndef STATICLIB_SERIALIZATION_JSONTYPE_HPP
-#define	STATICLIB_SERIALIZATION_JSONTYPE_HPP
+#ifndef STATICLIB_SERIALIZATION_JSON_TYPE_HPP
+#define	STATICLIB_SERIALIZATION_JSON_TYPE_HPP
 
 #include <cstdint>
 #include <string>
@@ -31,11 +31,11 @@ namespace staticlib {
 namespace serialization {
 
 /**
- * @enum JsonType
+ * @enum json_type
  * Enumeration with all possible types of values.
  * Matches types supported by Jansson JSON library.
  */
-enum class JsonType : uint8_t {
+enum class json_type : uint8_t {
     NULL_T,
     OBJECT,
     ARRAY,
@@ -46,15 +46,15 @@ enum class JsonType : uint8_t {
 };
 
 /**
- * Helper standalone function that converts `JsonType` values into string representation.
+ * Helper standalone function that converts `json_type` values into string representation.
  * 
  * @param jt type enumeration value
  * @return string representation of the specified value
  */
-std::string stringify_json_type(JsonType jt);
+std::string stringify_json_type(json_type jt);
 
 }
 } // namespace
 
-#endif	/* STATICLIB_SERIALIZATION_JSONTYPE_HPP */
+#endif	/* STATICLIB_SERIALIZATION_JSON_TYPE_HPP */
 
