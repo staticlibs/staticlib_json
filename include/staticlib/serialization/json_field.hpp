@@ -44,11 +44,11 @@ namespace serialization {
  * from this object without intermediate `value()` call.
  */
 class json_field {
-    std::string jsonName;
+    std::string field_name;
 #ifdef STATICLIB_WITH_ICU
-    mutable std::unique_ptr<icu::UnicodeString> jsonUname;
+    mutable std::unique_ptr<icu::UnicodeString> field_uname;
 #endif // STATICLIB_WITH_ICU
-    json_value jsonValue;
+    json_value field_value;
     
 public:
     /**
@@ -107,7 +107,7 @@ public:
      * @param name field name
      * @param value field value
      */
-    json_field(icu::UnicodeString uname, json_value jsonValue);
+    json_field(icu::UnicodeString uname, json_value field_value);
 #endif // STATICLIB_WITH_ICU
     
     /**

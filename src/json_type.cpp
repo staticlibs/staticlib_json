@@ -28,13 +28,13 @@ namespace serialization {
 
 std::string stringify_json_type(json_type jt) { 
     switch(jt) {
-    case json_type::NULL_T: return "NULL_T";
-    case json_type::OBJECT: return "OBJECT";
-    case json_type::ARRAY: return "ARRAY";
-    case json_type::STRING: return "STRING";
-    case json_type::INTEGER: return "INTEGER";
-    case json_type::REAL: return "REAL";
-    case json_type::BOOLEAN: return "BOOLEAN";
+    case json_type::nullt: return "NULL_T";
+    case json_type::object: return "OBJECT";
+    case json_type::array: return "ARRAY";
+    case json_type::string: return "STRING";
+    case json_type::integer: return "INTEGER";
+    case json_type::real: return "REAL";
+    case json_type::boolean: return "BOOLEAN";
     default: return "UNKNOWN";
     }
 }

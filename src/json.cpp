@@ -140,13 +140,13 @@ std::unique_ptr<json_t, JanssonDeleter> dump_boolean(bool booleanValue) {
 
 std::unique_ptr<json_t, JanssonDeleter> dump_internal(const json_value& value) {
     switch (value.type()) {
-    case (json_type::NULL_T): return dump_null();
-    case (json_type::OBJECT): return dump_object(value.as_object());
-    case (json_type::ARRAY): return dump_array(value.as_array());
-    case (json_type::STRING): return dump_string(value.as_string());
-    case (json_type::INTEGER): return dump_integer(value.as_int64());
-    case (json_type::REAL): return dump_real(value.as_double());
-    case (json_type::BOOLEAN): return dump_boolean(value.as_bool());
+    case (json_type::nullt): return dump_null();
+    case (json_type::object): return dump_object(value.as_object());
+    case (json_type::array): return dump_array(value.as_array());
+    case (json_type::string): return dump_string(value.as_string());
+    case (json_type::integer): return dump_integer(value.as_int64());
+    case (json_type::real): return dump_real(value.as_double());
+    case (json_type::boolean): return dump_boolean(value.as_bool());
     default: throw serialization_exception(TRACEMSG(
                 "Unsupported JSON type:[" + sc::to_string(static_cast<char> (value.type())) + "]"));
     }

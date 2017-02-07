@@ -36,13 +36,13 @@ namespace serialization {
  * Matches types supported by Jansson JSON library.
  */
 enum class json_type : uint8_t {
-    NULL_T,
-    OBJECT,
-    ARRAY,
-    STRING,
-    INTEGER,
-    REAL,
-    BOOLEAN
+    nullt,
+    object,
+    array,
+    string,
+    integer,
+    real,
+    boolean
 };
 
 /**

@@ -39,38 +39,38 @@ namespace su = staticlib::icu_utils;
 } // namespace
 
 json_field::json_field(json_field&& other) :
-jsonName(std::move(other.jsonName)), jsonValue(std::move(other.jsonValue)) { }
+field_name(std::move(other.field_name)), field_value(std::move(other.field_value)) { }
 
 json_field& json_field::operator=(json_field&& other) {
-    this->jsonName = std::move(other.jsonName);
-    this->jsonValue = std::move(other.jsonValue);
+    this->field_name = std::move(other.field_name);
+    this->field_value = std::move(other.field_value);
     return *this;
 }
 
 json_field::json_field() { }
 
 json_field::json_field(std::string name, json_value value) :
-jsonName(std::move(name)), jsonValue(std::move(value)) { }
+field_name(std::move(name)), field_value(std::move(value)) { }
 
 json_field::json_field(const char* name, json_value value) :
-jsonName(name), jsonValue(std::move(value)) { }
+field_name(name), field_value(std::move(value)) { }
 
 #ifdef STATICLIB_WITH_ICU
 json_field::json_field(icu::UnicodeString uname, json_value value) :
-jsonName(su::to_utf8(uname)), jsonValue(std::move(value)) { }
+field_name(su::to_utf8(uname)), field_value(std::move(value)) { }
 #endif // STATICLIB_WITH_ICU
 
 const std::string& json_field::name() const {
-    return jsonName;
+    return field_name;
 }
 
 #ifdef STATICLIB_WITH_ICU
 const icu::UnicodeString& json_field::uname() const {
-    if (nullptr == jsonUname.get()) {
-        jsonUname = std::unique_ptr<icu::UnicodeString>{new icu::UnicodeString{}};
-        *jsonUname = icu::UnicodeString::fromUTF8(jsonName);
+    if (nullptr == field_uname.get()) {
+        field_uname = std::unique_ptr<icu::UnicodeString>{new icu::UnicodeString{}};
+        *field_uname = icu::UnicodeString::fromUTF8(field_name);
     }
-    return *jsonUname;
+    return *field_uname;
 }
 #endif // STATICLIB_WITH_ICU
 
@@ -79,20 +79,20 @@ json_type json_field::type() const {
 }
 
 const json_value& json_field::value() const {
-    return jsonValue;
+    return field_value;
 }
 
 json_value& json_field::value() {
-    return jsonValue;
+    return field_value;
 }
 
 void json_field::set_value(json_value&& value) {
-    json_value previous = std::move(this->jsonValue);
-    this->jsonValue = std::move(value);
+    json_value previous = std::move(this->field_value);
+    this->field_value = std::move(value);
 }
 
 json_field json_field::clone() const {
-    return json_field(jsonName, jsonValue.clone());
+    return json_field(field_name, field_value.clone());
 }
 
 const std::vector<json_field>& json_field::as_object() const {
