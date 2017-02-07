@@ -33,6 +33,8 @@
 #include <unicode/unistr.h>
 #endif // STATICLIB_WITH_ICU
 
+#include "staticlib/config/noexcept.hpp"
+
 #include "staticlib/serialization/json_value.hpp"
 
 namespace staticlib {
@@ -70,14 +72,14 @@ public:
      * 
      * @param other other value
      */
-    json_field(json_field&& other); /* default */
+    json_field(json_field&& other) STATICLIB_NOEXCEPT;
 
     /**
      * Move assignment operator
      * 
      * @param other other value
      */
-    json_field& operator=(json_field&& other); /* default */
+    json_field& operator=(json_field&& other) STATICLIB_NOEXCEPT;
     
     /**
      * Default constructor

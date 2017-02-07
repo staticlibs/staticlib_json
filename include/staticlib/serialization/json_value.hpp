@@ -33,6 +33,8 @@
 #include <unicode/unistr.h>
 #endif // STATICLIB_WITH_ICU
 
+#include "staticlib/config/noexcept.hpp"
+
 #include "staticlib/serialization/json_type.hpp"
 #include "staticlib/serialization/serialization_exception.hpp"
 

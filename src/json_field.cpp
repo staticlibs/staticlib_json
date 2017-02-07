@@ -38,12 +38,13 @@ namespace su = staticlib::icu_utils;
 
 } // namespace
 
-json_field::json_field(json_field&& other) :
-field_name(std::move(other.field_name)), field_value(std::move(other.field_value)) { }
+json_field::json_field(json_field&& other) STATICLIB_NOEXCEPT :
+field_name(std::move(other.field_name)),
+field_value(std::move(other.field_value)) { }
 
-json_field& json_field::operator=(json_field&& other) {
-    this->field_name = std::move(other.field_name);
-    this->field_value = std::move(other.field_value);
+json_field& json_field::operator=(json_field&& other) STATICLIB_NOEXCEPT {
+    field_name = std::move(other.field_name);
+    field_value = std::move(other.field_value);
     return *this;
 }
 
