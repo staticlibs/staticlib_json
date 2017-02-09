@@ -150,6 +150,13 @@ json_value load_json_from_string(const std::string& str);
 json_value load_json_from_ustring(const icu::UnicodeString& str);
 #endif // STATICLIB_WITH_ICU
 
+/**
+ * Reference to null json value
+ * 
+ * @return null json value reference
+ */
+const json_value& null_json();
+
 } // namespace
 } 
 

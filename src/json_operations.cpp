@@ -390,6 +390,11 @@ json_value load_json_from_ustring(const icu::UnicodeString& str) {
 }
 #endif // STATICLIB_WITH_ICU
 
+const json_value& null_json() {
+    static json_value empty;
+    return empty;
+}
+
 }
 } // namespace
 
