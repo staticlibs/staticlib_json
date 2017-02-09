@@ -231,6 +231,22 @@ public:
      * @return string value
      */
     const std::string& as_string_or_throw(const std::string& context = "") const;
+
+    /**
+     * Access value as non-empty `STRING`
+     * If this value is not a non-empty `STRING`: "serialization_exception" will be thrown.
+     * 
+     * @return string value
+     */
+    std::string& as_string_nonempty_or_throw(const std::string& context = "");
+
+    /**
+     * Access value as non-empty `STRING`
+     * If this value is not a non-empty `STRING`: "serialization_exception" will be thrown.
+     * 
+     * @return string value
+     */
+    const std::string& as_string_nonempty_or_throw(const std::string& context = "") const;
     
     /**
      * Access value as a `STRING`,

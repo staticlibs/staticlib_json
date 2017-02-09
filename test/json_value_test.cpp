@@ -168,6 +168,7 @@ void test_string() {
     ref[1] = '3';
     slassert("43" == rv.as_string());
     slassert("43" == rv.as_string_or_throw());
+    slassert("43" == rv.as_string_nonempty_or_throw());
     // not string
     auto exval = ss::json_value(42);
     slassert(ss::json_type::integer == exval.type());
@@ -179,6 +180,10 @@ void test_string() {
     slassert(!rv.set_bool(true));
     slassert(!rv.set_int64(42));
     slassert(!rv.set_double(42.0));
+    // empty
+    slassert(!rv.set_string(""));
+    bool caught_empty = throws_exc([&rv] { rv.as_string_nonempty_or_throw(); });
+    slassert(caught_empty);
     // copy
     const std::string str{"43"};
     ss::json_value rvc{str};

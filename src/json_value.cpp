@@ -359,6 +359,20 @@ const std::string& json_value::as_string_or_throw(const std::string& context) co
             " context: [" + context + "]"));
 }
 
+std::string& json_value::as_string_nonempty_or_throw(const std::string& context) {
+    return const_cast<std::string&> (const_cast<const json_value*> (this)->as_string_nonempty_or_throw(context));
+}
+
+const std::string& json_value::as_string_nonempty_or_throw(const std::string& context) const {
+    const std::string& res = as_string_or_throw(context);
+    if (!res.empty()) {
+        return res;
+    }
+    // empty
+    throw serialization_exception(TRACEMSG("Specified string value is empty" +
+            " context: [" + context + "]"));
+}
+
 const std::string& json_value::as_string(const std::string& default_val) const {
     if (json_type::string == value_type) {
         return *(this->string_val);
@@ -366,7 +380,12 @@ const std::string& json_value::as_string(const std::string& default_val) const {
     return default_val;
 }
 
-bool json_value::set_string(std::string value) {
+bool json_value::set_string(const std::string& value) {
+    std::string copy(value.data(), value.length());
+    return set_string(std::move(copy));
+}
+
+bool json_value::set_string(std::string&& value) {
     if (json_type::string == value_type) {
         *(this->string_val) = std::move(value);
         return true;

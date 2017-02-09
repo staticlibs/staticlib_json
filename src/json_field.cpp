@@ -132,6 +132,14 @@ const std::string& json_field::as_string_or_throw(const std::string& context) co
     return value().as_string_or_throw(context);
 }
 
+std::string& json_field::as_string_nonempty_or_throw(const std::string& context) {
+    return value().as_string_nonempty_or_throw(context);
+}
+
+const std::string& json_field::as_string_nonempty_or_throw(const std::string& context) const {
+    return value().as_string_nonempty_or_throw(context);
+}
+
 const std::string& json_field::as_string(const std::string& default_val) const {
     return value().as_string(default_val);
 }
