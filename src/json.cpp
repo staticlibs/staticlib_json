@@ -68,7 +68,7 @@ namespace io = staticlib::io;
 
 namespace { // anonymous, dump part
 
-class JanssonDeleter {
+class jansson_deleter {
 public:
     void operator()(json_t* json) {
         json_decref(json);
@@ -76,18 +76,18 @@ public:
 };
 
 // forward declaration
-std::unique_ptr<json_t, JanssonDeleter> dump_internal(const json_value& value);
+std::unique_ptr<json_t, jansson_deleter> dump_internal(const json_value& value);
 
-std::unique_ptr<json_t, JanssonDeleter> dump_null() {
+std::unique_ptr<json_t, jansson_deleter> dump_null() {
     auto json_p = json_null();
     if (!json_p) throw serialization_exception(TRACEMSG("Error initializing JSON null"));
-    return std::unique_ptr<json_t, JanssonDeleter>{json_p, JanssonDeleter()};
+    return std::unique_ptr<json_t, jansson_deleter>{json_p, jansson_deleter()};
 }
 
-std::unique_ptr<json_t, JanssonDeleter> dump_object(const std::vector<json_field>& objectValue) {
+std::unique_ptr<json_t, jansson_deleter> dump_object(const std::vector<json_field>& objectValue) {
     auto json_p = json_object();
     if (!json_p) throw serialization_exception(TRACEMSG("Error initializing JSON object"));
-    std::unique_ptr<json_t, JanssonDeleter> obj{json_p, JanssonDeleter()};
+    std::unique_ptr<json_t, jansson_deleter> obj{json_p, jansson_deleter()};
     for (const auto& va : objectValue) {
         auto jval = dump_internal(va.value());
         auto err = json_object_set(obj.get(), va.name().c_str(), jval.get());
@@ -97,10 +97,10 @@ std::unique_ptr<json_t, JanssonDeleter> dump_object(const std::vector<json_field
     return obj;
 }
 
-std::unique_ptr<json_t, JanssonDeleter> dump_array(const std::vector<json_value>& arrayValue) {
+std::unique_ptr<json_t, jansson_deleter> dump_array(const std::vector<json_value>& arrayValue) {
     auto json_p = json_array();
     if (!json_p) throw serialization_exception(TRACEMSG("Error initializing JSON array"));
-    std::unique_ptr<json_t, JanssonDeleter> arr{json_p, JanssonDeleter()};
+    std::unique_ptr<json_t, jansson_deleter> arr{json_p, jansson_deleter()};
     for (const auto& va : arrayValue) {
         auto jval = dump_internal(va);
         auto err = json_array_append(arr.get(), jval.get());
@@ -110,35 +110,35 @@ std::unique_ptr<json_t, JanssonDeleter> dump_array(const std::vector<json_value>
     return arr;
 }
 
-std::unique_ptr<json_t, JanssonDeleter> dump_string(const std::string& stringValue) {
+std::unique_ptr<json_t, jansson_deleter> dump_string(const std::string& stringValue) {
     auto json_p = json_string(stringValue.c_str());
     if (!json_p) throw serialization_exception(TRACEMSG(
             "Error initializing JSON with value:[" + stringValue + "]"));
-    return std::unique_ptr<json_t, JanssonDeleter>{json_p, JanssonDeleter()};
+    return std::unique_ptr<json_t, jansson_deleter>{json_p, jansson_deleter()};
 }
 
-std::unique_ptr<json_t, JanssonDeleter> dump_integer(int64_t integerValue) {
+std::unique_ptr<json_t, jansson_deleter> dump_integer(int64_t integerValue) {
     auto json_p = json_integer(integerValue);
     if (!json_p) throw serialization_exception(TRACEMSG(
             "Error initializing JSON with value:[" + sc::to_string(integerValue) + "]"));
-    return std::unique_ptr<json_t, JanssonDeleter>{json_p, JanssonDeleter()};
+    return std::unique_ptr<json_t, jansson_deleter>{json_p, jansson_deleter()};
 }
 
-std::unique_ptr<json_t, JanssonDeleter> dump_real(double realValue) {
+std::unique_ptr<json_t, jansson_deleter> dump_real(double realValue) {
     auto json_p = json_real(realValue);
     if (!json_p) throw serialization_exception(TRACEMSG(
             "Error initializing JSON with value:[" + sc::to_string(realValue) + "]"));
-    return std::unique_ptr<json_t, JanssonDeleter>{json_p, JanssonDeleter()};
+    return std::unique_ptr<json_t, jansson_deleter>{json_p, jansson_deleter()};
 }
 
-std::unique_ptr<json_t, JanssonDeleter> dump_boolean(bool booleanValue) {
+std::unique_ptr<json_t, jansson_deleter> dump_boolean(bool booleanValue) {
     auto json_p = booleanValue? json_true() : json_false();
     if (!json_p) throw serialization_exception(TRACEMSG(
             "Error initializing JSON with value:[" + sc::to_string(booleanValue) + "]"));
-    return std::unique_ptr<json_t, JanssonDeleter>{json_p, JanssonDeleter()};
+    return std::unique_ptr<json_t, jansson_deleter>{json_p, jansson_deleter()};
 }
 
-std::unique_ptr<json_t, JanssonDeleter> dump_internal(const json_value& value) {
+std::unique_ptr<json_t, jansson_deleter> dump_internal(const json_value& value) {
     switch (value.type()) {
     case (json_type::nullt): return dump_null();
     case (json_type::object): return dump_object(value.as_object());
@@ -311,7 +311,7 @@ size_t load_callback(void* buffer, size_t buflen, void *data) {
 }
 #endif // JANSSON_VERSION_HEX >= 0x020400
 
-std::unique_ptr<json_t, JanssonDeleter> json_from_streambuf(std::streambuf& src) {
+std::unique_ptr<json_t, jansson_deleter> json_from_streambuf(std::streambuf& src) {
 #if JANSSON_VERSION_HEX >= 0x020400
     Loader loader{src};
     void* ldr_ptr = static_cast<void*>(std::addressof(loader));
@@ -324,7 +324,7 @@ std::unique_ptr<json_t, JanssonDeleter> json_from_streambuf(std::streambuf& src)
             " column: [" + sc::to_string(error.column) + "]" +
             " position: [" + sc::to_string(error.position) + "],"
             " callback error: [" + loader.get_error() + "]"));
-    return std::unique_ptr<json_t, JanssonDeleter>{json_p, JanssonDeleter()};
+    return std::unique_ptr<json_t, jansson_deleter>{json_p, jansson_deleter()};
 #else
     io::streambuf_source bufsrc{std::addressof(src)};
     io::string_sink sink{};
@@ -338,7 +338,7 @@ std::unique_ptr<json_t, JanssonDeleter> json_from_streambuf(std::streambuf& src)
             " line: [" + sc::to_string(error.line) + "]" +
             " column: [" + sc::to_string(error.column) + "]"+
             " position: [" + sc::to_string(error.position) + "]"));
-    return std::unique_ptr<json_t, JanssonDeleter>{json_p, JanssonDeleter()};
+    return std::unique_ptr<json_t, jansson_deleter>{json_p, jansson_deleter()};
 #endif    
 }
 
