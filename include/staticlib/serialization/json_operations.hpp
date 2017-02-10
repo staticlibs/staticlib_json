@@ -155,7 +155,7 @@ json_value load_json_from_ustring(const icu::UnicodeString& str);
  * 
  * @return null json value reference
  */
-const json_value& null_json();
+const json_value& null_json_ref();
 
 } // namespace
 } 
