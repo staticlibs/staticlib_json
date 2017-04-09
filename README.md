@@ -83,11 +83,11 @@ Visual Studio development command prompt
     git clone https://github.com/staticlibs/staticlib_support.git
     git clone https://github.com/staticlibs/staticlib_io.git
     git clone https://github.com/staticlibs/staticlib_json.git
-    cd staticlib_serialization
+    cd staticlib_json
     mkdir build
     cd build
     cmake .. 
-    msbuild staticlib_serialization.sln
+    msbuild staticlib_json.sln
 
 Cloning of [external_jansson](https://github.com/staticlibs/external_jansson.git) is not required on Linux - 
 system Jansson library will be used instead.
@@ -108,7 +108,7 @@ This project is released under the [Apache License 2.0](http://www.apache.org/li
 Changelog
 ---------
 
-**2016-09-01**
+**2017-04-28**
 
  * version 2.0.0
  * renamed to `staticlib_json`
