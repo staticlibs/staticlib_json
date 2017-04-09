@@ -15,10 +15,10 @@
 cmake_minimum_required ( VERSION 2.8.12 )
 
 # project
-project ( staticlib_serialization CXX )
-set ( ${PROJECT_NAME}_STATICLIB_VERSION 1.5.1 )
-set ( ${PROJECT_NAME}_DESCRIPTION "Staticlibs serialization library" )
-set ( ${PROJECT_NAME}_URL https://github.com/staticlibs/staticlib_serialization )
+project ( staticlib_json CXX )
+set ( ${PROJECT_NAME}_STATICLIB_VERSION 2.0.0 )
+set ( ${PROJECT_NAME}_DESCRIPTION "Staticlibs JSON library" )
+set ( ${PROJECT_NAME}_URL https://github.com/staticlibs/staticlib_json )
 include ( ${CMAKE_CURRENT_LIST_DIR}/resources/macros.cmake )
 
 # docs
@@ -39,43 +39,23 @@ if ( STATICLIB_USE_DEPLIBS_CACHE )
     endif ( )
 endif ( )
 
-# options, use SET ( OPTNAME ON CACHE BOOL "") in parent to override
-option ( STATICLIB_WITH_ICU "Build with ICU support" OFF )
-
 # standalone build
 if ( NOT DEFINED CMAKE_LIBRARY_OUTPUT_DIRECTORY )
     set ( CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR} )
 endif ( )
 if ( NOT DEFINED STATICLIB_TOOLCHAIN )
     if ( NOT ${CMAKE_SYSTEM_NAME} STREQUAL "Linux" ) 
-        staticlib_serialization_add_subdirectory ( ${CMAKE_CURRENT_LIST_DIR}/../external_jansson )
-        if ( STATICLIB_WITH_ICU )
-            staticlib_serialization_add_subdirectory ( ${CMAKE_CURRENT_LIST_DIR}/../external_icu )
-        endif ( )
+        staticlib_json_add_subdirectory ( ${CMAKE_CURRENT_LIST_DIR}/../external_jansson )
     endif (  )
-    staticlib_serialization_add_subdirectory ( ${CMAKE_CURRENT_LIST_DIR}/../staticlib_config )
-    staticlib_serialization_add_subdirectory ( ${CMAKE_CURRENT_LIST_DIR}/../staticlib_io )
-    staticlib_serialization_add_subdirectory ( ${CMAKE_CURRENT_LIST_DIR}/../staticlib_ranges )
-    if ( STATICLIB_WITH_ICU )
-        staticlib_serialization_add_subdirectory ( ${CMAKE_CURRENT_LIST_DIR}/../staticlib_icu )
-    endif ( )
+    staticlib_json_add_subdirectory ( ${CMAKE_CURRENT_LIST_DIR}/../staticlib_config )
+    staticlib_json_add_subdirectory ( ${CMAKE_CURRENT_LIST_DIR}/../staticlib_io )
 endif ( )
 
 # deps
-set ( ${PROJECT_NAME}_OPTIONS "" )
-set ( ${PROJECT_NAME}_DEPS_PUBLIC
-        staticlib_config
-        staticlib_io
-        staticlib_ranges )
-set ( ${PROJECT_NAME}_DEPS_PRIVATE 
-        jansson )
-if ( STATICLIB_WITH_ICU )
-    set ( ${PROJECT_NAME}_DEPS_PUBLIC ${${PROJECT_NAME}_DEPS_PUBLIC} icu-uc )
-    set ( ${PROJECT_NAME}_DEPS_PRIVATE ${${PROJECT_NAME}_DEPS_PRIVATE} staticlib_icu )
-    set ( ${PROJECT_NAME}_OPTIONS -DSTATICLIB_WITH_ICU )
-endif ( )
-staticlib_serialization_pkg_check_modules ( ${PROJECT_NAME}_DEPS_PUBLIC_PC REQUIRED ${PROJECT_NAME}_DEPS_PUBLIC )
-staticlib_serialization_pkg_check_modules ( ${PROJECT_NAME}_DEPS_PRIVATE_PC REQUIRED ${PROJECT_NAME}_DEPS_PRIVATE )
+set ( ${PROJECT_NAME}_DEPS_PUBLIC staticlib_io )
+set ( ${PROJECT_NAME}_DEPS_PRIVATE jansson )
+staticlib_json_pkg_check_modules ( ${PROJECT_NAME}_DEPS_PUBLIC_PC REQUIRED ${PROJECT_NAME}_DEPS_PUBLIC )
+staticlib_json_pkg_check_modules ( ${PROJECT_NAME}_DEPS_PRIVATE_PC REQUIRED ${PROJECT_NAME}_DEPS_PRIVATE )
 
 # library
 file ( GLOB_RECURSE ${PROJECT_NAME}_SRC ${CMAKE_CURRENT_LIST_DIR}/src/*.cpp )
@@ -89,17 +69,15 @@ target_include_directories ( ${PROJECT_NAME} BEFORE PRIVATE
         ${${PROJECT_NAME}_DEPS_PRIVATE_PC_INCLUDE_DIRS} )
 target_compile_options ( ${PROJECT_NAME} PRIVATE 
         ${${PROJECT_NAME}_DEPS_PUBLIC_PC_CFLAGS_OTHER}
-        ${${PROJECT_NAME}_DEPS_PRIVATE_PC_CFLAGS_OTHER}
-        ${${PROJECT_NAME}_OPTIONS} )
-if ( TARGET external_jansson )
-    add_dependencies ( ${PROJECT_NAME} external_jansson )
-endif ( )
+        ${${PROJECT_NAME}_DEPS_PRIVATE_PC_CFLAGS_OTHER} )
+#if ( TARGET external_jansson )
+#    add_dependencies ( ${PROJECT_NAME} external_jansson )
+#endif ( )
 
 # pkg-config
-staticlib_serialization_list_to_string ( ${PROJECT_NAME}_PC_CFLAGS_OPTS "" ${PROJECT_NAME}_OPTIONS )
-set ( ${PROJECT_NAME}_PC_CFLAGS "-I${CMAKE_CURRENT_LIST_DIR}/include ${${PROJECT_NAME}_PC_CFLAGS_OPTS}" )
+set ( ${PROJECT_NAME}_PC_CFLAGS "-I${CMAKE_CURRENT_LIST_DIR}/include" )
 set ( ${PROJECT_NAME}_PC_LIBS "-L${CMAKE_LIBRARY_OUTPUT_DIRECTORY} -l${PROJECT_NAME}" )
-staticlib_serialization_list_to_string ( ${PROJECT_NAME}_PC_REQUIRES "" ${PROJECT_NAME}_DEPS_PUBLIC )
-staticlib_serialization_list_to_string ( ${PROJECT_NAME}_PC_REQUIRES_PRIVATE "" ${PROJECT_NAME}_DEPS_PRIVATE )
+staticlib_json_list_to_string ( ${PROJECT_NAME}_PC_REQUIRES "" ${PROJECT_NAME}_DEPS_PUBLIC )
+staticlib_json_list_to_string ( ${PROJECT_NAME}_PC_REQUIRES_PRIVATE "" ${PROJECT_NAME}_DEPS_PRIVATE )
 configure_file ( ${CMAKE_CURRENT_LIST_DIR}/resources/pkg-config.in 
         ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/pkgconfig/${PROJECT_NAME}.pc )

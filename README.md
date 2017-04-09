@@ -1,23 +1,22 @@
-Staticlibs serialization library
-================================
+Staticlibs JSON library
+=======================
 
 This project is a part of [Staticlibs](http://staticlibs.net/).
 
-This project contains high level `dump_*` and `load_*` functions to convert 
-objects to/from raw data. JSON format is supported for serialization/deserialization of the
-arbitrary object trees (it is based on [Jansson library](https://github.com/akheron/jansson)).
-Binary serialization uses raw memory from POD objects with a support for a lazy deserialization.
+This project implements JSON encoding and decoding to/from `std::string`s or arbitrary `Source`s and `Sink`s
+(see [staticlib_io](https://github.com/staticlibs/staticlib_io) for details about streaming).
 
-Link to the [API documentation](http://staticlibs.github.io/staticlib_serialization/docs/html/namespacestaticlib_1_1serialization.html).
+Tagged union is used for in-memory JSON representation. [Jansson library](https://github.com/akheron/jansson) is used
+for JSON processing.
 
-JSON serialization
-------------------
+Link to the [API documentation](http://staticlibs.github.io/staticlib_json/docs/html/namespacestaticlib_1_1json.html).
 
-To support serialization objects should implement converting to/from "JSON representation".
+JSON encoding
+-------------
 
-Example of implementing `to_json` logic using C++11 literals:
+Method to covert object to in-memory `sl::json::value`:
 
-    JsonValue get_json_value() const {
+    sl::json::value to_json() const {
         return {
             {"field1", field1},
             {"field2", field3},
@@ -26,41 +25,45 @@ Example of implementing `to_json` logic using C++11 literals:
         };
     }
 
-Example implementing `from_json` constructor using a loop over `name`->`value` pairs:
+Use the method above to encode object into JSON string:
 
-    MyClass(const JsonValue& val) {
+    sl::json::value jval = myobj.to_json();
+    std::string str = jval.dumps();
+
+JSON decoding
+-------------
+
+Implement constructor that takes `sl::json::value`:
+
+_Note: for most of the modern compilers this loop can be improved using `switch` and `constexpr`
+expressions, but this won't work for MS Visual Studio 2013._
+
+    my_class(const sl::json::value& val) {
         for(auto& fi : val.as_object()) {
             auto name = fi.name();
             if("f1" == name) {
-                this->f1 = fi.value().as_int32();
+                this->f1 = fi.as_uint32_or_throw();
             } else if("f2" == name) {
-                this->f2 = fi.value().as_string();
+                this->f2 = fi.as_string_or_throw();
             }
             ...
         }
     }
 
-For most of the modern compilers this loop can be optimized using `switch` and `constexpr`
-expressions, but this won't work for MS Visual Studio 2013.
+Parse JSON string and instantiate object:
+
+    sl::json::value jval = sl::json::loads(str);
+    my_class myobj{jval};
+
+Fluent API
+----------
 
 Example of using "fluent" API for inspecting object graph:
 
-    const JsonValue& obj = ...
+    const sl::json::value& obj = sl::json::loads(...);
     std::string& bazval = obj["foo"]["bar"]["baz"].as_string();
 
-Note: `operator[]` has `O(n)` complexity where n is a number of attributes in an object.
-
-Binary serialization
---------------------
-
-Binary serialization is implemented over `Range`s of [POD](http://en.cppreference.com/w/cpp/concept/PODType) 
-objects using [std::aligned_storage](http://en.cppreference.com/w/cpp/types/aligned_storage). It doesn't
-guarantee portable binary representation: even packed POD objects can have incompatible representation
-(for example: for `float` fields) and native endianness is used. If portable binary representation is
-required it may be better to look at full-fledged binary serialization tools like 
-[Apache Thrift](https://thrift.apache.org/) or [Cap'n Proto](https://capnproto.org/).
-
-Deserialization is a lazy operation - it opens a `Range` of POD objects over a specified binary `Source`.
+Note: `operator[]` has `O(n)` complexity where `n` is a number of attributes inside the object.
 
 How to build
 ------------
@@ -77,9 +80,9 @@ Visual Studio development command prompt
 
     git clone --recursive https://github.com/staticlibs/external_jansson.git
     git clone https://github.com/staticlibs/staticlib_config.git
+    git clone https://github.com/staticlibs/staticlib_support.git
     git clone https://github.com/staticlibs/staticlib_io.git
-    git clone https://github.com/staticlibs/staticlib_ranges.git
-    git clone https://github.com/staticlibs/staticlib_serialization.git
+    git clone https://github.com/staticlibs/staticlib_json.git
     cd staticlib_serialization
     mkdir build
     cd build
@@ -104,6 +107,14 @@ This project is released under the [Apache License 2.0](http://www.apache.org/li
 
 Changelog
 ---------
+
+**2016-09-01**
+
+ * version 2.0.0
+ * renamed to `staticlib_json`
+ * simplify encoding/decoding api
+ * ICU support dropped
+ * binary encoding dropped
 
 **2016-09-01**
 

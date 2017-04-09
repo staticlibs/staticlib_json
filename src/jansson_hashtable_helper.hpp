@@ -15,14 +15,14 @@
  */
 
 /* 
- * File:   jansson_hashtable_helper.h
+ * File:   jansson_hashtable_helper.hpp
  * Author: alex
  *
  * Created on September 12, 2015, 7:02 PM
  */
 
-#ifndef STATICLIB_JANSSON_HASHTABLE_HELPER_H
-#define	STATICLIB_JANSSON_HASHTABLE_HELPER_H
+#ifndef STATICLIB_JSON_JANSSON_HASHTABLE_HELPER_HPP
+#define	STATICLIB_JSON_JANSSON_HASHTABLE_HELPER_HPP
 
 // some logic from "hashtable.h", used for dict keys ordering, not exposed from .so
 extern "C" {
@@ -57,5 +57,4 @@ static size_t hashtable_iter_serial(void *iter) {
 
 }
 
-#endif	/* STATICLIB_JANSSON_HASHTABLE_HELPER_H */
-
+#endif	/* STATICLIB_JSON_JANSSON_HASHTABLE_HELPER_HPP */

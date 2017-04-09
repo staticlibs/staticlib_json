@@ -15,29 +15,31 @@
  */
 
 /* 
- * File:   json_type.cpp
+ * File:   json_field_test.cpp
  * Author: alex
- * 
- * Created on January 23, 2015, 9:52 PM
+ *
+ * Created on June 29, 2016, 9:47 AM
  */
 
-#include "staticlib/serialization/json_type.hpp"
+#include "staticlib/json/field.hpp"
 
-namespace staticlib {
-namespace serialization {
+#include <iostream>
 
-std::string stringify_json_type(json_type jt) { 
-    switch(jt) {
-    case json_type::nullt: return "NULL_T";
-    case json_type::object: return "OBJECT";
-    case json_type::array: return "ARRAY";
-    case json_type::string: return "STRING";
-    case json_type::integer: return "INTEGER";
-    case json_type::real: return "REAL";
-    case json_type::boolean: return "BOOLEAN";
-    default: return "UNKNOWN";
-    }
+#include "staticlib/config/assert.hpp"
+
+void test_string() {
+    sl::json::field fi{"foo", "bar"};
+    slassert("foo" == fi.name());
+    slassert("bar" == fi.val().as_string());
 }
 
-} // namespace
-} 
+int main() {
+    try {
+        test_string();
+    } catch (const std::exception& e) {
+        std::cout << e.what() << std::endl;
+        return 1;
+    }
+    return 0;
+}
+

@@ -21,7 +21,7 @@
  * Created on December 28, 2014, 9:38 PM
  */
 
-#include "staticlib/serialization/json_value.hpp"
+#include "staticlib/json/value.hpp"
 
 #include <iostream>
 #include <functional>
@@ -29,35 +29,35 @@
 
 #include "staticlib/config/assert.hpp"
 
-#include "staticlib/serialization/json_field.hpp"
-
-namespace ss = staticlib::serialization;
+#include "staticlib/json/field.hpp"
 
 bool throws_exc(std::function<void()> fun) {
     try {
         fun();
-    } catch (const ss::serialization_exception& e) {
+    } catch (const sl::json::json_exception& e) {
         (void) e;
         return true;
     }
     return false;
 }
 
-class TestRefl {
+class test_refl {
     int32_t f1 = 41;
     std::string f2 = "42";
     bool f3 = true;
 
 public:
-    ss::json_value get_reflected_value() const {
-        std::vector<ss::json_value> vec{};
-        vec.emplace_back(42);
-        vec.emplace_back("foo");
+    sl::json::value get_reflected() const {
         return {
             {"f1", f1},
             {"f2", f2},
             {"f3", f3},
-            {"transient_f4", std::move(vec)},
+            {"transient_f4", [] {
+                std::vector<sl::json::value> vec;
+                vec.emplace_back(42);
+                vec.emplace_back("foo");
+                return vec;
+            }()},
             {"transient_f5", {
                 {"key1", "val1"},
                 {"key2", "val2"}
@@ -68,8 +68,8 @@ public:
 };
 
 void test_null() { 
-    ss::json_value rv{};
-    slassert(ss::json_type::nullt == rv.type());
+    sl::json::value rv{};
+    slassert(sl::json::type::nullt == rv.json_type());
     slassert(0 == rv.as_object().size());
     slassert(0 == rv.as_array().size());
     slassert(0 == rv.as_string().length());
@@ -84,19 +84,19 @@ void test_null() {
 }
 
 void test_object() {
-    ss::json_value rv = TestRefl{}.get_reflected_value().clone();
-    slassert(ss::json_type::object == rv.type());
+    sl::json::value rv = test_refl{}.get_reflected().clone();
+    slassert(sl::json::type::object == rv.json_type());
     slassert(6 == rv.as_object().size());
     slassert("f1" == rv.as_object()[0].name());
-    slassert(41 == rv.as_object()[0].value().as_int64());
+    slassert(41 == rv.as_object()[0].val().as_int64());
     slassert("f2" == rv.as_object()[1].name());
     slassert("42" == rv.as_object()[1].as_string());
-    slassert(ss::json_type::integer == rv.as_object()[0].value().type());
-    slassert(ss::json_type::string == rv.as_object()[1].value().type());
-    slassert(ss::json_type::boolean == rv.as_object()[2].value().type());
-    slassert(ss::json_type::array == rv.as_object()[3].value().type());
-    slassert(ss::json_type::object == rv.as_object()[4].value().type());    
-    slassert(ss::json_type::nullt == rv.as_object()[5].value().type());
+    slassert(sl::json::type::integer == rv.as_object()[0].val().json_type());
+    slassert(sl::json::type::string == rv.as_object()[1].val().json_type());
+    slassert(sl::json::type::boolean == rv.as_object()[2].val().json_type());
+    slassert(sl::json::type::array == rv.as_object()[3].val().json_type());
+    slassert(sl::json::type::object == rv.as_object()[4].val().json_type());    
+    slassert(sl::json::type::nullt == rv.as_object()[5].val().json_type());
     slassert(0 == rv.as_array().size());
     slassert(0 == rv.as_string().length());
     slassert(0 == rv.as_int64());
@@ -109,8 +109,8 @@ void test_object() {
     slassert(7 == rv.as_object().size());
     slassert("aaa" == rv.as_object()[6].as_string());
     // not object
-    ss::json_value& exval = rv.getattr_or_throw("f1");
-    slassert(ss::json_type::integer == exval.type());
+    sl::json::value& exval = rv.getattr_or_throw("f1");
+    slassert(sl::json::type::integer == exval.json_type());
     bool caught = throws_exc([&exval]{ exval.as_object_or_throw(); });
     slassert(caught);
     // setters
@@ -121,11 +121,11 @@ void test_object() {
 }
 
 void test_array() {
-    std::vector<ss::json_value> vec{};
+    std::vector<sl::json::value> vec{};
     vec.emplace_back(42);
     vec.emplace_back(true);
-    ss::json_value rv{std::move(vec)};
-    slassert(ss::json_type::array == rv.type());
+    sl::json::value rv{std::move(vec)};
+    slassert(sl::json::type::array == rv.json_type());
     slassert(0 == rv.as_object().size());
     slassert(2 == rv.as_array().size());
     slassert(42 == rv.as_array()[0].as_int64());
@@ -141,8 +141,8 @@ void test_array() {
     slassert(3 == rv.as_array().size());
     slassert("aaa" == rv.as_array()[2].as_string());
     // not array
-    auto exval = ss::json_value(42);
-    slassert(ss::json_type::integer == exval.type());
+    auto exval = sl::json::value(42);
+    slassert(sl::json::type::integer == exval.json_type());
     bool caught = throws_exc([&exval] { exval.as_array_or_throw(); });
     slassert(caught);
     // setters
@@ -153,8 +153,8 @@ void test_array() {
 }
 
 void test_string() {
-    ss::json_value rv{"42"};
-    slassert(ss::json_type::string == rv.type());
+    sl::json::value rv{"42"};
+    slassert(sl::json::type::string == rv.json_type());
     slassert(0 == rv.as_object().size());
     slassert(0 == rv.as_array().size());
     slassert(2 == rv.as_string().length());
@@ -170,8 +170,8 @@ void test_string() {
     slassert("43" == rv.as_string_or_throw());
     slassert("43" == rv.as_string_nonempty_or_throw());
     // not string
-    auto exval = ss::json_value(42);
-    slassert(ss::json_type::integer == exval.type());
+    auto exval = sl::json::value(42);
+    slassert(sl::json::type::integer == exval.json_type());
     bool caught = throws_exc([&exval] { exval.as_string_or_throw(); });
     slassert(caught);
     // setters
@@ -186,19 +186,19 @@ void test_string() {
     slassert(caught_empty);
     // copy
     const std::string str{"43"};
-    ss::json_value rvc{str};
+    sl::json::value rvc{str};
     slassert("43" == rvc.as_string());       
 }
 
 void test_string_default() {
-    ss::json_value rv{};
+    sl::json::value rv{};
     (void) rv;
     slassert("42" == rv.as_string("42"));
 }
 
 void test_int() {
-    ss::json_value rv{42};
-    slassert(ss::json_type::integer == rv.type());
+    sl::json::value rv{42};
+    slassert(sl::json::type::integer == rv.json_type());
     slassert(0 == rv.as_object().size());
     slassert(0 == rv.as_array().size());
     slassert(0 == rv.as_string().length());
@@ -213,7 +213,7 @@ void test_int() {
     slassert(!rv.set_string("foo"));
     // limits
     // int64
-    auto st = ss::json_value("foo");
+    auto st = sl::json::value("foo");
     slassert(throws_exc([&st] { st.as_int64_or_throw(); }))
     rv.set_int64(std::numeric_limits<int64_t>::max());
     slassert(!throws_exc([&rv] { rv.as_int64_or_throw(); }))
@@ -252,13 +252,13 @@ void test_int() {
 }
 
 void test_int_default() {
-    ss::json_value rv{};
+    sl::json::value rv{};
     slassert(42 == rv.as_int64(42));
 }
 
 void test_real() {
-    ss::json_value rv{42.0};
-    slassert(ss::json_type::real == rv.type());
+    sl::json::value rv{42.0};
+    slassert(sl::json::type::real == rv.json_type());
     slassert(0 == rv.as_object().size());
     slassert(0 == rv.as_array().size());
     slassert(0 == rv.as_string().length());
@@ -275,7 +275,7 @@ void test_real() {
     slassert(!rv.set_int64(42));
     slassert(!rv.set_string("foo"));
     // limits
-    auto st = ss::json_value("foo");
+    auto st = sl::json::value("foo");
     slassert(throws_exc([&st] { st.as_double_or_throw(); }))
     rv.set_double(std::numeric_limits<double>::max());
     slassert(!throws_exc([&rv] { rv.as_double_or_throw(); }))
@@ -287,13 +287,13 @@ void test_real() {
 }
 
 void test_real_default() {
-    ss::json_value rv{};
+    sl::json::value rv{};
     slassert(41 < rv.as_double(42) && rv.as_double(42) < 43);
 }
 
 void test_boolean() {
-    ss::json_value rvt{true};
-    slassert(ss::json_type::boolean == rvt.type());
+    sl::json::value rvt{true};
+    slassert(sl::json::type::boolean == rvt.json_type());
     slassert(0 == rvt.as_object().size());
     slassert(0 == rvt.as_array().size());
     slassert(0 == rvt.as_string().length());
@@ -307,8 +307,8 @@ void test_boolean() {
     slassert(!rvt.set_double(43.0));
     slassert(!rvt.set_string("foo"));
 
-    ss::json_value rvf{false};
-    slassert(ss::json_type::boolean == rvf.type());
+    sl::json::value rvf{false};
+    slassert(sl::json::type::boolean == rvf.json_type());
     slassert(0 == rvf.as_object().size());
     slassert(0 == rvf.as_array().size());
     slassert(0 == rvf.as_string().length());
@@ -323,81 +323,72 @@ void test_boolean() {
     slassert(!rvf.set_string("foo"));
     
     // throw
-    auto st = ss::json_value("foo");
+    auto st = sl::json::value("foo");
     slassert(throws_exc([&st] { st.as_bool_or_throw(); }))
 }
 
 void test_boolean_default() {
-    ss::json_value rv{};
+    sl::json::value rv{};
     slassert(rv.as_bool(true));
     slassert(!rv.as_bool(false));
 }
 
 void test_field_by_name() {
-    TestRefl tr{};
-    auto rv = tr.get_reflected_value();
+    test_refl tr{};
+    auto rv = tr.get_reflected();
     
     auto& rvf = rv["transient_f4"];
-    slassert(ss::json_type::array == rvf.type());
+    slassert(sl::json::type::array == rvf.json_type());
     slassert(2 == rvf.as_array().size());
     slassert(42 == rvf.as_array()[0].as_int64());
     slassert("foo" == rvf.as_array()[1].as_string());
     
     auto& rv_null = rv["aaa"];
-    slassert(ss::json_type::nullt == rv_null.type());
+    slassert(sl::json::type::nullt == rv_null.json_type());
 }
-
-#ifdef STATICLIB_WITH_ICU
-void test_icu() {
-    icu::UnicodeString st{"foo"};
-    ss::json_value val{st};
-    slassert(icu::UnicodeString{"foo"} == val.as_ustring());
-    val.set_ustring("bar");
-    slassert(icu::UnicodeString{"bar"} == val.as_ustring());
-}
-#endif // STATICLIB_WITH_ICU
 
 void test_get_or_throw() {
-    TestRefl tr{};
-    auto rv = tr.get_reflected_value();
+    test_refl tr{};
+    auto rv = tr.get_reflected();
     
     // get existing
     slassert(41 == rv["f1"].as_int32());
     slassert(41 == rv.getattr("f1").as_int32());
     slassert(41 == rv.getattr_or_throw("f1").as_int32());
-#ifdef STATICLIB_WITH_ICU
-    slassert(41 == rv.getattru("f1").as_int32());
-    slassert(41 == rv.getattru_or_throw("f1").as_int32());
-#endif // STATICLIB_WITH_ICU
     
     // create new attr
-    ss::json_value& nval = rv.getattr_or_throw("foo");
-    slassert(ss::json_type::nullt == nval.type());
+    sl::json::value& nval = rv.getattr_or_throw("foo");
+    slassert(sl::json::type::nullt == nval.json_type());
     nval.set_int32(42);
-    slassert(ss::json_type::integer == nval.type());
+    slassert(sl::json::type::integer == nval.json_type());
     nval.set_string("foo");
-    slassert(ss::json_type::string == nval.type());
+    slassert(sl::json::type::string == nval.json_type());
     nval.set_float(static_cast<float>(0.1));
-    slassert(ss::json_type::real == nval.type());
+    slassert(sl::json::type::real == nval.json_type());
     nval.set_bool(false);
-    slassert(ss::json_type::boolean == nval.type());
-    std::vector<ss::json_value> arrval{};
+    slassert(sl::json::type::boolean == nval.json_type());
+    std::vector<sl::json::value> arrval{};
     arrval.emplace_back("bar");
     nval.set_array(std::move(arrval));
-    slassert(ss::json_type::array == nval.type());
+    slassert(sl::json::type::array == nval.json_type());
     slassert("bar" == nval.as_array()[0].as_string());
-    std::vector<ss::json_field> objval{};
+    std::vector<sl::json::field> objval{};
     objval.emplace_back("baz", 42);
     nval.set_object(std::move(objval));
-    slassert(ss::json_type::object == nval.type());
+    slassert(sl::json::type::object == nval.json_type());
     slassert("baz" == nval.as_object()[0].name());
-    slassert(42 == nval.as_object()[0].value().as_int32());
+    slassert(42 == nval.as_object()[0].val().as_int32());
     
     // not object
-    ss::json_value& exval = rv.getattr_or_throw("f1");
-    slassert(ss::json_type::integer == exval.type());
+    sl::json::value& exval = rv.getattr_or_throw("f1");
+    slassert(sl::json::type::integer == exval.json_type());
     bool caught = throws_exc([&exval] { exval.getattr_or_throw("foo"); });
     slassert(caught);
+}
+
+void test_tmp() {
+    auto val = sl::json::value("42");
+    std::cout << sl::json::stringify_json_type(val.json_type()) << std::endl;
 }
 
 int main() {
@@ -414,9 +405,6 @@ int main() {
         test_boolean();
         test_boolean_default();
         test_field_by_name();
-#ifdef STATICLIB_WITH_ICU
-        test_icu();
-#endif // STATICLIB_WITH_ICU
         test_get_or_throw();
     } catch (const std::exception& e) {
         std::cout << e.what() << std::endl;
