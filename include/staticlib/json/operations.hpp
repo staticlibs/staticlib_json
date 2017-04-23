@@ -65,7 +65,7 @@ value load(std::streambuf* src);
  * @throws json_exception      
  */
 template <typename Source>
-static value load(Source& src) {
+value load(Source& src) {
     auto sbuf = sl::io::make_unbuffered_istreambuf(src);
     return load(std::addressof(sbuf));
 }
