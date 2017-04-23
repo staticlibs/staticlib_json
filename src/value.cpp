@@ -171,6 +171,14 @@ value_type(type::integer), integer_val(integer_value) { }
 value::value(uint32_t integer_value) :
 value(static_cast<int64_t> (integer_value)) { }
 
+value::value(uint64_t integer_value) :
+value([integer_value]{
+    if (!sl::support::is_int64(integer_value)) {
+        throw json_exception(TRACEMSG("Cannot store integer value that exceeds in64_t::max()"));
+    }
+    return static_cast<int64_t> (integer_value);
+}()) { }
+
 value::value(int16_t integer_value) :
 value(static_cast<int64_t> (integer_value)) { }
 

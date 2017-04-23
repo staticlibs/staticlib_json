@@ -192,6 +192,13 @@ public:
      * 
      * @param integer_value int value
      */
+    value(uint64_t integer_value);
+
+    /**
+     * Constructs `INTEGER` value
+     * 
+     * @param integer_value int value
+     */
     value(int16_t integer_value);
 
     /**
