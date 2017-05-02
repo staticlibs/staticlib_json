@@ -108,6 +108,11 @@ This project is released under the [Apache License 2.0](http://www.apache.org/li
 Changelog
 ---------
 
+**2017-05-02**
+
+ * version 2.1.0
+ * `array_writer` added
+
 **2017-04-08**
 
  * version 2.0.0

@@ -26,6 +26,7 @@
 
 #include "staticlib/config.hpp"
 
+#include "staticlib/json/array_writer.hpp"
 #include "staticlib/json/field.hpp"
 #include "staticlib/json/json_exception.hpp"
 #include "staticlib/json/operations.hpp"
