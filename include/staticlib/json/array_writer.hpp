@@ -45,7 +45,7 @@ class array_writer {
 public:
     array_writer(Sink&& sink) :
     sink(std::move(sink)) {
-        sl::io::write_all(sink, {"[\n"});
+        sl::io::write_all(this->sink, {"[\n"});
     }
     
     ~array_writer() STATICLIB_NOEXCEPT {
