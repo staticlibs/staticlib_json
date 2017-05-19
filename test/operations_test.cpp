@@ -162,6 +162,10 @@ void test_dump_string() {
     slassert("\"Not Found\"" == dumped);    
 }
 
+void test_dumps_short() {
+    slassert("\"foo\"" == sl::json::dumps("foo"));
+}
+
 int main() {
     try {
         test_init();
@@ -169,6 +173,7 @@ int main() {
         test_loads();
         test_preserve_order();
         test_dump_string();
+        test_dumps_short();
     } catch (const std::exception& e) {
         std::cout << e.what() << std::endl;
         return 1;

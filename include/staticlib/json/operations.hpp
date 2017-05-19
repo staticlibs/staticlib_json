@@ -83,6 +83,15 @@ value load(Source& src) {
 value loads(const std::string& str);
 
 /**
+ * Shortcut function that can create 'json::value' from
+ * literal and dump it to string
+ * 
+ * @param json json, possible literal
+ * @return string representation
+ */
+std::string dumps(const value& json);
+
+/**
  * Reference to null json value
  * 
  * @return null json value reference

@@ -40,6 +40,10 @@ value loads(const std::string& str) {
     return jansson_load_from_string(str);
 }
 
+std::string dumps(const value& json) {
+    return json.dumps();
+}
+
 const value& null_value_ref() {
     static value empty;
     return empty;
