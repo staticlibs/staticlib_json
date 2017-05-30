@@ -151,6 +151,10 @@ uint32_t field::as_uint32_or_throw(const std::string& context) const {
     return val().as_uint32_or_throw(context);
 }
 
+uint32_t field::as_uint32_positive_or_throw(const std::string& context) const {
+    return val().as_uint32_positive_or_throw(context);
+}
+
 uint32_t field::as_uint32(uint32_t default_val) const {
     return val().as_uint32(default_val);
 }
@@ -173,6 +177,10 @@ uint16_t field::as_uint16() const {
 
 uint16_t field::as_uint16_or_throw(const std::string& context) const {
     return val().as_uint16_or_throw(context);
+}
+
+uint16_t field::as_uint16_positive_or_throw(const std::string& context) const {
+    return val().as_uint16_positive_or_throw(context);
 }
 
 uint16_t field::as_uint16(uint16_t default_val) const {
