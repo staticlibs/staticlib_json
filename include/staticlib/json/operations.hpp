@@ -27,6 +27,8 @@
 #include <streambuf>
 #include <string>
 
+#include "staticlib/io.hpp"
+
 #include "staticlib/json/field.hpp"
 #include "staticlib/json/value.hpp"
 #include "staticlib/json/json_exception.hpp"
@@ -68,6 +70,36 @@ template <typename Source>
 value load(Source& src) {
     auto sbuf = sl::io::make_unbuffered_istreambuf(src);
     return load(std::addressof(sbuf));
+}
+
+/**
+ * Deserializes data from specified source into 'json::value'.
+ * Supports 'bare' (non-object, non-array) JSON input.
+ * Supports partial input: will read only first valid JSON element 
+ * from input source.
+ * 
+ * @param span source span with JSON
+ * @return instance of 'json::value'
+ * @throws json_exception      
+ */
+inline value load(sl::io::span<const char> span) {
+    auto src = sl::io::array_source(span);
+    return load(src);
+}
+
+/**
+ * Deserializes data from specified source into 'json::value'.
+ * Supports 'bare' (non-object, non-array) JSON input.
+ * Supports partial input: will read only first valid JSON element 
+ * from input source.
+ * 
+ * @param span source span with JSON
+ * @return instance of 'json::value'
+ * @throws json_exception      
+ */
+inline value load(sl::io::span<char> span) {
+    auto src = sl::io::array_source(span);
+    return load(src);
 }
 
 /**
