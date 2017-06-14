@@ -415,6 +415,57 @@ bool value::set_int64(int64_t int_value) {
     return false;
 }
 
+uint64_t value::as_uint64() const {
+    if (type::integer == value_type) {
+        return static_cast<uint64_t> (this->integer_val);
+    }
+    return 0;
+}
+
+uint64_t value::as_uint64_or_throw(const std::string& context) const {
+    int64_t val = this->as_int64_or_throw(context);
+    if (sl::support::is_uint64(val)) {
+        return static_cast<uint64_t> (val);
+    }
+    // not uint64_t
+    throw json_exception(TRACEMSG("Cannot access 'uint64'" +
+            " from target value: [" + dumps() + "]," +
+            " context: [" + context + "]"));
+}
+
+uint64_t value::as_uint64_positive_or_throw(const std::string& context) const {
+    int64_t val = this->as_int64_or_throw(context);
+    if (sl::support::is_uint64_positive(val)) {
+        return static_cast<uint64_t> (val);
+    }
+    // not positive uint64_t
+    throw json_exception(TRACEMSG("Cannot access positive 'uint64'" +
+            " from target value: [" + dumps() + "]," +
+            " context: [" + context + "]"));
+}
+
+uint64_t value::as_uint64(uint64_t default_val) const {
+    if (type::integer == value_type) {
+        return static_cast<uint64_t> (this->integer_val);
+    }
+    return default_val;
+}
+
+bool value::set_uint64(uint64_t uint_value) {
+    if (sl::support::is_int64(uint_value)) {
+        int64_t sval = static_cast<int64_t>(uint_value);
+        if (type::integer == value_type) {
+            this->integer_val = sval;
+            return true;
+        }
+        *this = value(sval);
+        return false;
+    }
+    // not positive uint64_t
+    throw json_exception(TRACEMSG("Cannot assign 'uint64' that is larger than max 'int64'" +
+            " value: [" + dumps() + "]"));
+}
+
 int32_t value::as_int32() const {
     if (type::integer == value_type) {
         return static_cast<int32_t> (this->integer_val);

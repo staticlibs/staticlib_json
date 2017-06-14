@@ -255,6 +255,40 @@ public:
     int64_t as_int64(int64_t default_val) const;
 
     /**
+     * Access value as an `uint64_t` `INTEGER`
+     * 
+     * @return int value
+     */
+    uint64_t as_uint64() const;
+
+    /**
+     * Access value as `uint64_t` `INTEGER`
+     * If this value is not an `INTEGER` or cannot be converted to `uint64_t`: 
+     * "json_exception" will be thrown.
+     * 
+     * @return int value
+     */
+    uint64_t as_uint64_or_throw(const std::string& context = "") const;
+
+    /**
+     * Access value as positive `uint64_t` `INTEGER`
+     * If this value is not a positive `INTEGER` or cannot be converted to `uint64_t`: 
+     * "json_exception" will be thrown.
+     * 
+     * @return int value
+     */
+    uint64_t as_uint64_positive_or_throw(const std::string& context = "") const;
+
+    /**
+     * Access value as an `uint64_t` `INTEGER`,
+     * returns specified `default_val` if this value is not an `INTEGER`
+     * 
+     * @param default_val default value
+     * @return int value
+     */
+    uint64_t as_uint64(uint64_t default_val) const;
+    
+    /**
      * Access value as an `int32_t` `INTEGER`
      * 
      * @return int value

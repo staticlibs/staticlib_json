@@ -217,6 +217,15 @@ void test_int() {
     slassert(throws_exc([&st] { st.as_int64_or_throw(); }))
     rv.set_int64(std::numeric_limits<int64_t>::max());
     slassert(!throws_exc([&rv] { rv.as_int64_or_throw(); }))
+    // uint64
+    rv.set_uint64(0);
+    slassert(!throws_exc([&rv] {rv.as_uint64_or_throw(); }))
+    slassert(0 == rv.as_uint64());
+    rv.set_uint64(static_cast<uint64_t>(std::numeric_limits<int64_t>::max()));
+    slassert(!throws_exc([&rv] {rv.as_uint64_or_throw(); }))
+    slassert(std::numeric_limits<int64_t>::max() == rv.as_int64());
+    slassert(static_cast<uint64_t> (std::numeric_limits<int64_t>::max()) == rv.as_uint64());
+    slassert(throws_exc([&rv] { rv.set_uint64(static_cast<uint64_t> (std::numeric_limits<int64_t>::max()) + 1); }))
     // int32
     rv.set_int64(std::numeric_limits<int32_t>::max());
     slassert(!throws_exc([&rv] { rv.as_int32_or_throw(); }))

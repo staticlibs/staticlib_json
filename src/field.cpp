@@ -131,6 +131,22 @@ int64_t field::as_int64(int64_t default_val) const {
     return val().as_int64(default_val);
 }
 
+uint64_t field::as_uint64() const {
+    return val().as_uint64();
+}
+
+uint64_t field::as_uint64_or_throw(const std::string& context) const {
+    return val().as_uint64_or_throw(context);
+}
+
+uint64_t field::as_uint64_positive_or_throw(const std::string& context) const {
+    return val().as_uint64_positive_or_throw(context);
+}
+
+uint64_t field::as_uint64(uint64_t default_val) const {
+    return val().as_uint64(default_val);
+}
+    
 int32_t field::as_int32() const {
     return val().as_int32();
 }
