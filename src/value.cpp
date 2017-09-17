@@ -603,7 +603,7 @@ uint16_t value::as_uint16_positive_or_throw(const std::string& context) const {
         return static_cast<int16_t> (val);
     }
     // not positive unt16_t
-    throw json_exception(TRACEMSG("Cannot access 'int16'" +
+    throw json_exception(TRACEMSG("Cannot access positive 'uint16'" +
             " from target value: [" + dumps() + "]," +
             " context: [" + context + "]"));
 }
