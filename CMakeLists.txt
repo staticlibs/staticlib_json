@@ -48,6 +48,7 @@ if ( NOT DEFINED STATICLIB_TOOLCHAIN )
         staticlib_json_add_subdirectory ( ${CMAKE_CURRENT_LIST_DIR}/../external_jansson )
     endif (  )
     staticlib_json_add_subdirectory ( ${CMAKE_CURRENT_LIST_DIR}/../staticlib_config )
+    staticlib_json_add_subdirectory ( ${CMAKE_CURRENT_LIST_DIR}/../staticlib_support )
     staticlib_json_add_subdirectory ( ${CMAKE_CURRENT_LIST_DIR}/../staticlib_io )
 endif ( )
 
