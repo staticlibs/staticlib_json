@@ -23,7 +23,7 @@
   <td id="projectlogo"><img alt="Logo" src="logo.png"/></td>
   <td style="padding-left: 0.5em;">
    <div id="projectname">staticlib_json
-   &#160;<span id="projectnumber">2.0.0</span>
+   &#160;<span id="projectnumber">2.1.1</span>
    </div>
   </td>
  </tr>
@@ -133,6 +133,8 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:ac654c6c4c412fba374eb86b42a784c64"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs <code>INTEGER</code> value.  <a href="#ac654c6c4c412fba374eb86b42a784c64"></a><br/></td></tr>
 <tr class="memitem:ac33dd936915c07cf3b64909a2fe5e68c"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstaticlib_1_1json_1_1value.html#ac33dd936915c07cf3b64909a2fe5e68c">value</a> (uint32_t integer_value)</td></tr>
 <tr class="memdesc:ac33dd936915c07cf3b64909a2fe5e68c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs <code>INTEGER</code> value.  <a href="#ac33dd936915c07cf3b64909a2fe5e68c"></a><br/></td></tr>
+<tr class="memitem:a9bce938eb77c12620f6edfd5e8a7f550"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstaticlib_1_1json_1_1value.html#a9bce938eb77c12620f6edfd5e8a7f550">value</a> (uint64_t integer_value)</td></tr>
+<tr class="memdesc:a9bce938eb77c12620f6edfd5e8a7f550"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs <code>INTEGER</code> value.  <a href="#a9bce938eb77c12620f6edfd5e8a7f550"></a><br/></td></tr>
 <tr class="memitem:abfb9ea5d9398c0568ce8d683fc9b1813"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstaticlib_1_1json_1_1value.html#abfb9ea5d9398c0568ce8d683fc9b1813">value</a> (int16_t integer_value)</td></tr>
 <tr class="memdesc:abfb9ea5d9398c0568ce8d683fc9b1813"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs <code>INTEGER</code> value.  <a href="#abfb9ea5d9398c0568ce8d683fc9b1813"></a><br/></td></tr>
 <tr class="memitem:a540edb8e57cdbff028c26b22c9e8f5fb"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstaticlib_1_1json_1_1value.html#a540edb8e57cdbff028c26b22c9e8f5fb">value</a> (uint16_t integer_value)</td></tr>
@@ -200,6 +202,16 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:a8542b1f390f18bb16a734b3fefeef48e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Access value as an <code>INTEGER</code>, returns specified <code>default_val</code> if this value is not an <code>INTEGER</code>  <a href="#a8542b1f390f18bb16a734b3fefeef48e"></a><br/></td></tr>
 <tr class="memitem:a647ba4b8b2a5c789f4f78da7c477056a"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstaticlib_1_1json_1_1value.html#a647ba4b8b2a5c789f4f78da7c477056a">set_int64</a> (int64_t int_value)</td></tr>
 <tr class="memdesc:a647ba4b8b2a5c789f4f78da7c477056a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Setter for the <code>INTEGER</code> value.  <a href="#a647ba4b8b2a5c789f4f78da7c477056a"></a><br/></td></tr>
+<tr class="memitem:ad55539772d9a170e4e31fa2464438da5"><td class="memItemLeft" align="right" valign="top">uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstaticlib_1_1json_1_1value.html#ad55539772d9a170e4e31fa2464438da5">as_uint64</a> () const </td></tr>
+<tr class="memdesc:ad55539772d9a170e4e31fa2464438da5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Access value as an <code>uint64_t</code> <code>INTEGER</code>  <a href="#ad55539772d9a170e4e31fa2464438da5"></a><br/></td></tr>
+<tr class="memitem:aa327945127643a7b4def424589e8bb20"><td class="memItemLeft" align="right" valign="top">uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstaticlib_1_1json_1_1value.html#aa327945127643a7b4def424589e8bb20">as_uint64_or_throw</a> (const std::string &amp;context=&quot;&quot;) const </td></tr>
+<tr class="memdesc:aa327945127643a7b4def424589e8bb20"><td class="mdescLeft">&#160;</td><td class="mdescRight">Access value as <code>uint64_t</code> <code>INTEGER</code> If this value is not an <code>INTEGER</code> or cannot be converted to <code>uint64_t</code>: "json_exception" will be thrown.  <a href="#aa327945127643a7b4def424589e8bb20"></a><br/></td></tr>
+<tr class="memitem:ac04b5396046ac11b9ef94795288c8ef8"><td class="memItemLeft" align="right" valign="top">uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstaticlib_1_1json_1_1value.html#ac04b5396046ac11b9ef94795288c8ef8">as_uint64_positive_or_throw</a> (const std::string &amp;context=&quot;&quot;) const </td></tr>
+<tr class="memdesc:ac04b5396046ac11b9ef94795288c8ef8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Access value as positive <code>uint64_t</code> <code>INTEGER</code> If this value is not a positive <code>INTEGER</code> or cannot be converted to <code>uint64_t</code>: "json_exception" will be thrown.  <a href="#ac04b5396046ac11b9ef94795288c8ef8"></a><br/></td></tr>
+<tr class="memitem:a5d29b34bf858e7ff74d3489acb19bfee"><td class="memItemLeft" align="right" valign="top">uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstaticlib_1_1json_1_1value.html#a5d29b34bf858e7ff74d3489acb19bfee">as_uint64</a> (uint64_t default_val) const </td></tr>
+<tr class="memdesc:a5d29b34bf858e7ff74d3489acb19bfee"><td class="mdescLeft">&#160;</td><td class="mdescRight">Access value as an <code>uint64_t</code> <code>INTEGER</code>, returns specified <code>default_val</code> if this value is not an <code>INTEGER</code>  <a href="#a5d29b34bf858e7ff74d3489acb19bfee"></a><br/></td></tr>
+<tr class="memitem:acf208664a15e616c95e8bc8422580c33"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstaticlib_1_1json_1_1value.html#acf208664a15e616c95e8bc8422580c33">set_uint64</a> (uint64_t uint_value)</td></tr>
+<tr class="memdesc:acf208664a15e616c95e8bc8422580c33"><td class="mdescLeft">&#160;</td><td class="mdescRight">Setter for the <code>INTEGER</code> value.  <a href="#acf208664a15e616c95e8bc8422580c33"></a><br/></td></tr>
 <tr class="memitem:a486cc544739d69e7fb502ef4dc220b80"><td class="memItemLeft" align="right" valign="top">int32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstaticlib_1_1json_1_1value.html#a486cc544739d69e7fb502ef4dc220b80">as_int32</a> () const </td></tr>
 <tr class="memdesc:a486cc544739d69e7fb502ef4dc220b80"><td class="mdescLeft">&#160;</td><td class="mdescRight">Access value as an <code>int32_t</code> <code>INTEGER</code>  <a href="#a486cc544739d69e7fb502ef4dc220b80"></a><br/></td></tr>
 <tr class="memitem:a7e39a233740f7ce54968b0343ef47bcf"><td class="memItemLeft" align="right" valign="top">int32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstaticlib_1_1json_1_1value.html#a7e39a233740f7ce54968b0343ef47bcf">as_int32_or_throw</a> (const std::string &amp;context=&quot;&quot;) const </td></tr>
@@ -574,6 +586,30 @@ Public Member Functions</h2></td></tr>
           <td class="memname">staticlib::json::value::value </td>
           <td>(</td>
           <td class="paramtype">uint32_t&#160;</td>
+          <td class="paramname"><em>integer_value</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Constructs <code>INTEGER</code> value. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">integer_value</td><td>int value </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="a9bce938eb77c12620f6edfd5e8a7f550"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">staticlib::json::value::value </td>
+          <td>(</td>
+          <td class="paramtype">uint64_t&#160;</td>
           <td class="paramname"><em>integer_value</em></td><td>)</td>
           <td></td>
         </tr>
@@ -1476,6 +1512,87 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
+<a class="anchor" id="ad55539772d9a170e4e31fa2464438da5"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint64_t staticlib::json::value::as_uint64 </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Access value as an <code>uint64_t</code> <code>INTEGER</code> </p>
+<dl class="section return"><dt>Returns</dt><dd>int value </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a5d29b34bf858e7ff74d3489acb19bfee"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint64_t staticlib::json::value::as_uint64 </td>
+          <td>(</td>
+          <td class="paramtype">uint64_t&#160;</td>
+          <td class="paramname"><em>default_val</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Access value as an <code>uint64_t</code> <code>INTEGER</code>, returns specified <code>default_val</code> if this value is not an <code>INTEGER</code> </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">default_val</td><td>default value </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>int value </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="aa327945127643a7b4def424589e8bb20"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint64_t staticlib::json::value::as_uint64_or_throw </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>context</em> = <code>&quot;&quot;</code></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Access value as <code>uint64_t</code> <code>INTEGER</code> If this value is not an <code>INTEGER</code> or cannot be converted to <code>uint64_t</code>: "json_exception" will be thrown. </p>
+<dl class="section return"><dt>Returns</dt><dd>int value </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="ac04b5396046ac11b9ef94795288c8ef8"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint64_t staticlib::json::value::as_uint64_positive_or_throw </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>context</em> = <code>&quot;&quot;</code></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Access value as positive <code>uint64_t</code> <code>INTEGER</code> If this value is not a positive <code>INTEGER</code> or cannot be converted to <code>uint64_t</code>: "json_exception" will be thrown. </p>
+<dl class="section return"><dt>Returns</dt><dd>int value </dd></dl>
+
+</div>
+</div>
 <a class="anchor" id="a5d188f6511e23ab7a4c7c41d48bd741b"></a>
 <div class="memitem">
 <div class="memproto">
@@ -2029,6 +2146,31 @@ template&lt;typename Sink &gt; </div>
 
 </div>
 </div>
+<a class="anchor" id="acf208664a15e616c95e8bc8422580c33"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool staticlib::json::value::set_uint64 </td>
+          <td>(</td>
+          <td class="paramtype">uint64_t&#160;</td>
+          <td class="paramname"><em>uint_value</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Setter for the <code>INTEGER</code> value. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">value</td><td>new value </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd><code>true</code> if current instance was initially a <code>INTEGER</code>, <code>false</code> if current instance was changed <code>INTEGER</code> </dd></dl>
+
+</div>
+</div>
 <h2>Member Data Documentation</h2>
 <a class="anchor" id="a772af54499d49178f8e90a6c7618cdb7"></a>
 <div class="memitem">
@@ -2120,7 +2262,7 @@ template&lt;typename Sink &gt; </div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Sun Apr 9 2017 22:26:03 for staticlib_json by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Sun Dec 24 2017 21:38:23 for staticlib_json by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.1.2
 </small></address>

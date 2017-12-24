@@ -23,7 +23,7 @@
   <td id="projectlogo"><img alt="Logo" src="logo.png"/></td>
   <td style="padding-left: 0.5em;">
    <div id="projectname">staticlib_json
-   &#160;<span id="projectnumber">2.0.0</span>
+   &#160;<span id="projectnumber">2.1.1</span>
    </div>
   </td>
  </tr>
@@ -157,6 +157,14 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:a93117fea3b6f15e347a4b7d5fa5ee1ec"><td class="mdescLeft">&#160;</td><td class="mdescRight">Access value as an <code>INTEGER</code> If this value is not an <code>INTEGER</code>: "serialization_exception" will be thrown.  <a href="#a93117fea3b6f15e347a4b7d5fa5ee1ec"></a><br/></td></tr>
 <tr class="memitem:a3c8a0ce4e214301acc2a9215c37aaebc"><td class="memItemLeft" align="right" valign="top">int64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstaticlib_1_1json_1_1field.html#a3c8a0ce4e214301acc2a9215c37aaebc">as_int64</a> (int64_t default_val) const </td></tr>
 <tr class="memdesc:a3c8a0ce4e214301acc2a9215c37aaebc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Access value as an <code>INTEGER</code>, returns specified <code>default_val</code> if this value is not an <code>INTEGER</code>  <a href="#a3c8a0ce4e214301acc2a9215c37aaebc"></a><br/></td></tr>
+<tr class="memitem:a490c8f3c8fbe8d80cb52b212078f34dc"><td class="memItemLeft" align="right" valign="top">uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstaticlib_1_1json_1_1field.html#a490c8f3c8fbe8d80cb52b212078f34dc">as_uint64</a> () const </td></tr>
+<tr class="memdesc:a490c8f3c8fbe8d80cb52b212078f34dc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Access value as an <code>uint64_t</code> <code>INTEGER</code>  <a href="#a490c8f3c8fbe8d80cb52b212078f34dc"></a><br/></td></tr>
+<tr class="memitem:a2e7544bba36dcb1d12471ec9c8b3444b"><td class="memItemLeft" align="right" valign="top">uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstaticlib_1_1json_1_1field.html#a2e7544bba36dcb1d12471ec9c8b3444b">as_uint64_or_throw</a> (const std::string &amp;context=&quot;&quot;) const </td></tr>
+<tr class="memdesc:a2e7544bba36dcb1d12471ec9c8b3444b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Access value as <code>uint64_t</code> <code>INTEGER</code> If this value is not an <code>INTEGER</code> or cannot be converted to <code>uint64_t</code>: "json_exception" will be thrown.  <a href="#a2e7544bba36dcb1d12471ec9c8b3444b"></a><br/></td></tr>
+<tr class="memitem:a454849cc12e2fb6d64fd91afac73c564"><td class="memItemLeft" align="right" valign="top">uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstaticlib_1_1json_1_1field.html#a454849cc12e2fb6d64fd91afac73c564">as_uint64_positive_or_throw</a> (const std::string &amp;context=&quot;&quot;) const </td></tr>
+<tr class="memdesc:a454849cc12e2fb6d64fd91afac73c564"><td class="mdescLeft">&#160;</td><td class="mdescRight">Access value as positive <code>uint64_t</code> <code>INTEGER</code> If this value is not a positive <code>INTEGER</code> or cannot be converted to <code>uint64_t</code>: "json_exception" will be thrown.  <a href="#a454849cc12e2fb6d64fd91afac73c564"></a><br/></td></tr>
+<tr class="memitem:ae6e931b2b34cdcbc1fa280f6ae0e6885"><td class="memItemLeft" align="right" valign="top">uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstaticlib_1_1json_1_1field.html#ae6e931b2b34cdcbc1fa280f6ae0e6885">as_uint64</a> (uint64_t default_val) const </td></tr>
+<tr class="memdesc:ae6e931b2b34cdcbc1fa280f6ae0e6885"><td class="mdescLeft">&#160;</td><td class="mdescRight">Access value as an <code>uint64_t</code> <code>INTEGER</code>, returns specified <code>default_val</code> if this value is not an <code>INTEGER</code>  <a href="#ae6e931b2b34cdcbc1fa280f6ae0e6885"></a><br/></td></tr>
 <tr class="memitem:a0474e60a8de1d2ad429aa282e7f220df"><td class="memItemLeft" align="right" valign="top">int32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstaticlib_1_1json_1_1field.html#a0474e60a8de1d2ad429aa282e7f220df">as_int32</a> () const </td></tr>
 <tr class="memdesc:a0474e60a8de1d2ad429aa282e7f220df"><td class="mdescLeft">&#160;</td><td class="mdescRight">Access value as an <code>int32_t</code> <code>INTEGER</code>  <a href="#a0474e60a8de1d2ad429aa282e7f220df"></a><br/></td></tr>
 <tr class="memitem:a8cc219c361b53325f15c4242f6ee9f7c"><td class="memItemLeft" align="right" valign="top">int32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstaticlib_1_1json_1_1field.html#a8cc219c361b53325f15c4242f6ee9f7c">as_int32_or_throw</a> (const std::string &amp;context=&quot;&quot;) const </td></tr>
@@ -167,6 +175,8 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:a9f8ef3f30b71002aad9a2284bdb8730b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Access value as an <code>uint32_t</code> <code>INTEGER</code>  <a href="#a9f8ef3f30b71002aad9a2284bdb8730b"></a><br/></td></tr>
 <tr class="memitem:ad25e8679841fe1e0e74167b45654a7f0"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstaticlib_1_1json_1_1field.html#ad25e8679841fe1e0e74167b45654a7f0">as_uint32_or_throw</a> (const std::string &amp;context=&quot;&quot;) const </td></tr>
 <tr class="memdesc:ad25e8679841fe1e0e74167b45654a7f0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Access value as <code>uint32_t</code> <code>INTEGER</code> If this value is not an <code>INTEGER</code> or cannot be converted to <code>uint32_t</code>: "serialization_exception" will be thrown.  <a href="#ad25e8679841fe1e0e74167b45654a7f0"></a><br/></td></tr>
+<tr class="memitem:a7570cdfaff0be38b96321ed6198de025"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstaticlib_1_1json_1_1field.html#a7570cdfaff0be38b96321ed6198de025">as_uint32_positive_or_throw</a> (const std::string &amp;context=&quot;&quot;) const </td></tr>
+<tr class="memdesc:a7570cdfaff0be38b96321ed6198de025"><td class="mdescLeft">&#160;</td><td class="mdescRight">Access value as positive <code>uint32_t</code> <code>INTEGER</code> If this value is not a positive <code>INTEGER</code> or cannot be converted to <code>uint32_t</code>: "json_exception" will be thrown.  <a href="#a7570cdfaff0be38b96321ed6198de025"></a><br/></td></tr>
 <tr class="memitem:a705baeb01b87ec467c862c8d47fe5a1a"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstaticlib_1_1json_1_1field.html#a705baeb01b87ec467c862c8d47fe5a1a">as_uint32</a> (uint32_t default_val) const </td></tr>
 <tr class="memdesc:a705baeb01b87ec467c862c8d47fe5a1a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Access value as an <code>uint32_t</code> <code>INTEGER</code>, returns specified <code>default_val</code> if this value is not an <code>INTEGER</code>  <a href="#a705baeb01b87ec467c862c8d47fe5a1a"></a><br/></td></tr>
 <tr class="memitem:a84545092786f5b5d843c8560b114f54e"><td class="memItemLeft" align="right" valign="top">int16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstaticlib_1_1json_1_1field.html#a84545092786f5b5d843c8560b114f54e">as_int16</a> () const </td></tr>
@@ -179,6 +189,8 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:a0e496cb20f8402e0f8b28c25b29a1c47"><td class="mdescLeft">&#160;</td><td class="mdescRight">Access value as an <code>uint16_t</code> <code>INTEGER</code>  <a href="#a0e496cb20f8402e0f8b28c25b29a1c47"></a><br/></td></tr>
 <tr class="memitem:a57bba8d8ad01bc539a5e0a2179b2bf21"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstaticlib_1_1json_1_1field.html#a57bba8d8ad01bc539a5e0a2179b2bf21">as_uint16_or_throw</a> (const std::string &amp;context=&quot;&quot;) const </td></tr>
 <tr class="memdesc:a57bba8d8ad01bc539a5e0a2179b2bf21"><td class="mdescLeft">&#160;</td><td class="mdescRight">Access value as <code>uint16_t</code> <code>INTEGER</code> If this value is not an <code>INTEGER</code> or cannot be converted to <code>uint16_t</code>: "serialization_exception" will be thrown.  <a href="#a57bba8d8ad01bc539a5e0a2179b2bf21"></a><br/></td></tr>
+<tr class="memitem:aecdfe018b009461853ae9e612ce0cbf8"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstaticlib_1_1json_1_1field.html#aecdfe018b009461853ae9e612ce0cbf8">as_uint16_positive_or_throw</a> (const std::string &amp;context=&quot;&quot;) const </td></tr>
+<tr class="memdesc:aecdfe018b009461853ae9e612ce0cbf8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Access value as positive <code>uint16_t</code> <code>INTEGER</code> If this value is not a positive <code>INTEGER</code> or cannot be converted to <code>uint16_t</code>: "json_exception" will be thrown.  <a href="#aecdfe018b009461853ae9e612ce0cbf8"></a><br/></td></tr>
 <tr class="memitem:af5b53081eb152d55c1b6c89d2c84e7c4"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstaticlib_1_1json_1_1field.html#af5b53081eb152d55c1b6c89d2c84e7c4">as_uint16</a> (uint16_t default_val) const </td></tr>
 <tr class="memdesc:af5b53081eb152d55c1b6c89d2c84e7c4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Access value as an <code>uint16_t</code> <code>INTEGER</code>, returns specified <code>default_val</code> if this value is not an <code>INTEGER</code>  <a href="#af5b53081eb152d55c1b6c89d2c84e7c4"></a><br/></td></tr>
 <tr class="memitem:af34d7a4543d8745c9eca85103c173a23"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstaticlib_1_1json_1_1field.html#af34d7a4543d8745c9eca85103c173a23">as_double</a> () const </td></tr>
@@ -1005,6 +1017,25 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
+<a class="anchor" id="aecdfe018b009461853ae9e612ce0cbf8"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint16_t staticlib::json::field::as_uint16_positive_or_throw </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>context</em> = <code>&quot;&quot;</code></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Access value as positive <code>uint16_t</code> <code>INTEGER</code> If this value is not a positive <code>INTEGER</code> or cannot be converted to <code>uint16_t</code>: "json_exception" will be thrown. </p>
+<dl class="section return"><dt>Returns</dt><dd>int value </dd></dl>
+
+</div>
+</div>
 <a class="anchor" id="a9f8ef3f30b71002aad9a2284bdb8730b"></a>
 <div class="memitem">
 <div class="memproto">
@@ -1063,6 +1094,106 @@ Public Member Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Access value as <code>uint32_t</code> <code>INTEGER</code> If this value is not an <code>INTEGER</code> or cannot be converted to <code>uint32_t</code>: "serialization_exception" will be thrown. </p>
+<dl class="section return"><dt>Returns</dt><dd>int value </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a7570cdfaff0be38b96321ed6198de025"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint32_t staticlib::json::field::as_uint32_positive_or_throw </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>context</em> = <code>&quot;&quot;</code></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Access value as positive <code>uint32_t</code> <code>INTEGER</code> If this value is not a positive <code>INTEGER</code> or cannot be converted to <code>uint32_t</code>: "json_exception" will be thrown. </p>
+<dl class="section return"><dt>Returns</dt><dd>int value </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a490c8f3c8fbe8d80cb52b212078f34dc"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint64_t staticlib::json::field::as_uint64 </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Access value as an <code>uint64_t</code> <code>INTEGER</code> </p>
+<dl class="section return"><dt>Returns</dt><dd>int value </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="ae6e931b2b34cdcbc1fa280f6ae0e6885"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint64_t staticlib::json::field::as_uint64 </td>
+          <td>(</td>
+          <td class="paramtype">uint64_t&#160;</td>
+          <td class="paramname"><em>default_val</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Access value as an <code>uint64_t</code> <code>INTEGER</code>, returns specified <code>default_val</code> if this value is not an <code>INTEGER</code> </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">default_val</td><td>default value </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>int value </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a2e7544bba36dcb1d12471ec9c8b3444b"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint64_t staticlib::json::field::as_uint64_or_throw </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>context</em> = <code>&quot;&quot;</code></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Access value as <code>uint64_t</code> <code>INTEGER</code> If this value is not an <code>INTEGER</code> or cannot be converted to <code>uint64_t</code>: "json_exception" will be thrown. </p>
+<dl class="section return"><dt>Returns</dt><dd>int value </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a454849cc12e2fb6d64fd91afac73c564"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint64_t staticlib::json::field::as_uint64_positive_or_throw </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>context</em> = <code>&quot;&quot;</code></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Access value as positive <code>uint64_t</code> <code>INTEGER</code> If this value is not a positive <code>INTEGER</code> or cannot be converted to <code>uint64_t</code>: "json_exception" will be thrown. </p>
 <dl class="section return"><dt>Returns</dt><dd>int value </dd></dl>
 
 </div>
@@ -1235,7 +1366,7 @@ Public Member Functions</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Sun Apr 9 2017 22:26:03 for staticlib_json by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Sun Dec 24 2017 21:38:23 for staticlib_json by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.1.2
 </small></address>

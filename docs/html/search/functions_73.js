@@ -11,6 +11,7 @@ var searchData=
   ['set_5fstring',['set_string',['../classstaticlib_1_1json_1_1value.html#afb3b276dfdd758adbde9f93f9c551163',1,'staticlib::json::value::set_string(const std::string &amp;string_value)'],['../classstaticlib_1_1json_1_1value.html#a040e04b799fedaab261440de69a480e5',1,'staticlib::json::value::set_string(std::string &amp;&amp;string_value)']]],
   ['set_5fuint16',['set_uint16',['../classstaticlib_1_1json_1_1value.html#a5a6b9ef9e5cd44edaa175dc758174ee7',1,'staticlib::json::value']]],
   ['set_5fuint32',['set_uint32',['../classstaticlib_1_1json_1_1value.html#a2ffcfad9f2d68f6fd02f913558439e06',1,'staticlib::json::value']]],
+  ['set_5fuint64',['set_uint64',['../classstaticlib_1_1json_1_1value.html#acf208664a15e616c95e8bc8422580c33',1,'staticlib::json::value']]],
   ['set_5fvalue',['set_value',['../classstaticlib_1_1json_1_1field.html#ae354a0f14652630fa4fcdddfc140707b',1,'staticlib::json::field']]],
   ['stringify_5fjson_5ftype',['stringify_json_type',['../namespacestaticlib_1_1json.html#a5c943786244f0b45cfe9cd4486ec3d80',1,'staticlib::json']]]
 ];

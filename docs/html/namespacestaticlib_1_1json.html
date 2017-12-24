@@ -23,7 +23,7 @@
   <td id="projectlogo"><img alt="Logo" src="logo.png"/></td>
   <td style="padding-left: 0.5em;">
    <div id="projectname">staticlib_json
-   &#160;<span id="projectnumber">2.0.0</span>
+   &#160;<span id="projectnumber">2.1.1</span>
    </div>
   </td>
  </tr>
@@ -96,6 +96,8 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2><a name="nested-classes"></a>
 Classes</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstaticlib_1_1json_1_1array__writer.html">array_writer</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Writes entries to the underlying sink formatting the output as JSON array.  <a href="classstaticlib_1_1json_1_1array__writer.html#details">More...</a><br/></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstaticlib_1_1json_1_1field.html">field</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Representation of the reflected object field.  <a href="classstaticlib_1_1json_1_1field.html#details">More...</a><br/></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstaticlib_1_1json_1_1json__exception.html">json_exception</a></td></tr>
@@ -110,15 +112,26 @@ Enumerations</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2><a name="func-members"></a>
 Functions</h2></td></tr>
+<tr class="memitem:aecd444a597986c560a53d3ff7fd7b97b"><td class="memTemplParams" colspan="2">template&lt;typename Sink , class  = typename std::enable_if&lt;!std::is_lvalue_reference&lt;Sink&gt;::value&gt;::type&gt; </td></tr>
+<tr class="memitem:aecd444a597986c560a53d3ff7fd7b97b"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classstaticlib_1_1json_1_1array__writer.html">array_writer</a>&lt; Sink &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacestaticlib_1_1json.html#aecd444a597986c560a53d3ff7fd7b97b">make_array_writer</a> (Sink &amp;&amp;sink)</td></tr>
+<tr class="memdesc:aecd444a597986c560a53d3ff7fd7b97b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Factory function for creating array writers, created writer will own specified sink.  <a href="#aecd444a597986c560a53d3ff7fd7b97b"></a><br/></td></tr>
+<tr class="memitem:a4b2caf343657a4257e78bc4a26127a4a"><td class="memTemplParams" colspan="2">template&lt;typename Sink &gt; </td></tr>
+<tr class="memitem:a4b2caf343657a4257e78bc4a26127a4a"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classstaticlib_1_1json_1_1array__writer.html">array_writer</a><br class="typebreak"/>
+&lt; sl::io::reference_sink&lt; Sink &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacestaticlib_1_1json.html#a4b2caf343657a4257e78bc4a26127a4a">make_array_writer</a> (Sink &amp;sink)</td></tr>
+<tr class="memdesc:a4b2caf343657a4257e78bc4a26127a4a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Factory function for creating array writers, created writer will NOT own specified sink.  <a href="#a4b2caf343657a4257e78bc4a26127a4a"></a><br/></td></tr>
 <tr class="memitem:a6fc7f4e2961830b53b4a979635fa0f2a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacestaticlib_1_1json.html#a6fc7f4e2961830b53b4a979635fa0f2a">init</a> ()</td></tr>
 <tr class="memdesc:a6fc7f4e2961830b53b4a979635fa0f2a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes Jansson hash function, not thread-safe, can be called before first JSON operations, not required in single-thread environment.  <a href="#a6fc7f4e2961830b53b4a979635fa0f2a"></a><br/></td></tr>
 <tr class="memitem:a35046cf87170abb96ca9fca349175d24"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classstaticlib_1_1json_1_1value.html">value</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacestaticlib_1_1json.html#a35046cf87170abb96ca9fca349175d24">load</a> (std::streambuf *src)</td></tr>
 <tr class="memdesc:a35046cf87170abb96ca9fca349175d24"><td class="mdescLeft">&#160;</td><td class="mdescRight">Deserializes data from specified streambuf into '<a class="el" href="classstaticlib_1_1json_1_1value.html" title="Representation of single arbitrary value for reflected classes.">json::value</a>'.  <a href="#a35046cf87170abb96ca9fca349175d24"></a><br/></td></tr>
-<tr class="memitem:a6f139000da97f4cb747815bc278e4aa3"><td class="memTemplParams" colspan="2">template&lt;typename Source &gt; </td></tr>
-<tr class="memitem:a6f139000da97f4cb747815bc278e4aa3"><td class="memTemplItemLeft" align="right" valign="top">static <a class="el" href="classstaticlib_1_1json_1_1value.html">value</a>&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacestaticlib_1_1json.html#a6f139000da97f4cb747815bc278e4aa3">load</a> (Source &amp;src)</td></tr>
-<tr class="memdesc:a6f139000da97f4cb747815bc278e4aa3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Deserializes data from specified source into '<a class="el" href="classstaticlib_1_1json_1_1value.html" title="Representation of single arbitrary value for reflected classes.">json::value</a>'.  <a href="#a6f139000da97f4cb747815bc278e4aa3"></a><br/></td></tr>
+<tr class="memitem:af8bd6bcaba645dc42e1c568691041fcb"><td class="memTemplParams" colspan="2">template&lt;typename Source &gt; </td></tr>
+<tr class="memitem:af8bd6bcaba645dc42e1c568691041fcb"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classstaticlib_1_1json_1_1value.html">value</a>&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacestaticlib_1_1json.html#af8bd6bcaba645dc42e1c568691041fcb">load</a> (Source &amp;src)</td></tr>
+<tr class="memdesc:af8bd6bcaba645dc42e1c568691041fcb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Deserializes data from specified source into '<a class="el" href="classstaticlib_1_1json_1_1value.html" title="Representation of single arbitrary value for reflected classes.">json::value</a>'.  <a href="#af8bd6bcaba645dc42e1c568691041fcb"></a><br/></td></tr>
+<tr class="memitem:af19aa90104de4d386b3cfdcc0e9aa045"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classstaticlib_1_1json_1_1value.html">value</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacestaticlib_1_1json.html#af19aa90104de4d386b3cfdcc0e9aa045">load</a> (sl::io::span&lt; const char &gt; span)</td></tr>
+<tr class="memdesc:af19aa90104de4d386b3cfdcc0e9aa045"><td class="mdescLeft">&#160;</td><td class="mdescRight">Deserializes data from specified source into '<a class="el" href="classstaticlib_1_1json_1_1value.html" title="Representation of single arbitrary value for reflected classes.">json::value</a>'.  <a href="#af19aa90104de4d386b3cfdcc0e9aa045"></a><br/></td></tr>
 <tr class="memitem:a17e67b1590bc0d66dbe2288debca928a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classstaticlib_1_1json_1_1value.html">value</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacestaticlib_1_1json.html#a17e67b1590bc0d66dbe2288debca928a">loads</a> (const std::string &amp;str)</td></tr>
 <tr class="memdesc:a17e67b1590bc0d66dbe2288debca928a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Deserializes specified string into '<a class="el" href="classstaticlib_1_1json_1_1value.html" title="Representation of single arbitrary value for reflected classes.">json::value</a>'.  <a href="#a17e67b1590bc0d66dbe2288debca928a"></a><br/></td></tr>
+<tr class="memitem:a1ed07206c08ec25821c9f547743a3ad6"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacestaticlib_1_1json.html#a1ed07206c08ec25821c9f547743a3ad6">dumps</a> (const <a class="el" href="classstaticlib_1_1json_1_1value.html">value</a> &amp;json)</td></tr>
+<tr class="memdesc:a1ed07206c08ec25821c9f547743a3ad6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Shortcut function that can create '<a class="el" href="classstaticlib_1_1json_1_1value.html" title="Representation of single arbitrary value for reflected classes.">json::value</a>' from literal and dump it to string.  <a href="#a1ed07206c08ec25821c9f547743a3ad6"></a><br/></td></tr>
 <tr class="memitem:abcfbfbec2b7565ec7198402127fe05ff"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="classstaticlib_1_1json_1_1value.html">value</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacestaticlib_1_1json.html#abcfbfbec2b7565ec7198402127fe05ff">null_value_ref</a> ()</td></tr>
 <tr class="memdesc:abcfbfbec2b7565ec7198402127fe05ff"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reference to null json value.  <a href="#abcfbfbec2b7565ec7198402127fe05ff"></a><br/></td></tr>
 <tr class="memitem:a5c943786244f0b45cfe9cd4486ec3d80"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacestaticlib_1_1json.html#a5c943786244f0b45cfe9cd4486ec3d80">stringify_json_type</a> (<a class="el" href="namespacestaticlib_1_1json.html#a8aabc554abadc238e23e4a2ccbb22e6c">type</a> jt)</td></tr>
@@ -141,6 +154,31 @@ Functions</h2></td></tr>
 </div>
 </div>
 <h2>Function Documentation</h2>
+<a class="anchor" id="a1ed07206c08ec25821c9f547743a3ad6"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string staticlib::json::dumps </td>
+          <td>(</td>
+          <td class="paramtype">const value &amp;&#160;</td>
+          <td class="paramname"><em>json</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Shortcut function that can create '<a class="el" href="classstaticlib_1_1json_1_1value.html" title="Representation of single arbitrary value for reflected classes.">json::value</a>' from literal and dump it to string. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">json</td><td>json, possible literal </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>string representation </dd></dl>
+
+</div>
+</div>
 <a class="anchor" id="a6fc7f4e2961830b53b4a979635fa0f2a"></a>
 <div class="memitem">
 <div class="memproto">
@@ -196,26 +234,58 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a6f139000da97f4cb747815bc278e4aa3"></a>
+<a class="anchor" id="af8bd6bcaba645dc42e1c568691041fcb"></a>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;typename Source &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">static <a class="el" href="classstaticlib_1_1json_1_1value.html">value</a> staticlib::json::load </td>
+          <td class="memname"><a class="el" href="classstaticlib_1_1json_1_1value.html">value</a> staticlib::json::load </td>
           <td>(</td>
           <td class="paramtype">Source &amp;&#160;</td>
           <td class="paramname"><em>src</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
+</div><div class="memdoc">
+
+<p>Deserializes data from specified source into '<a class="el" href="classstaticlib_1_1json_1_1value.html" title="Representation of single arbitrary value for reflected classes.">json::value</a>'. </p>
+<p>Supports 'bare' (non-object, non-array) JSON input. Supports partial input: will read only first valid JSON element from input source.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">src</td><td>source with JSON </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>instance of '<a class="el" href="classstaticlib_1_1json_1_1value.html" title="Representation of single arbitrary value for reflected classes.">json::value</a>' </dd></dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname"><a class="el" href="classstaticlib_1_1json_1_1json__exception.html" title="Module specific exception.">json_exception</a></td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="af19aa90104de4d386b3cfdcc0e9aa045"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classstaticlib_1_1json_1_1value.html">value</a> staticlib::json::load </td>
+          <td>(</td>
+          <td class="paramtype">sl::io::span&lt; const char &gt;&#160;</td>
+          <td class="paramname"><em>span</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -224,7 +294,7 @@ template&lt;typename Source &gt; </div>
 <p>Supports 'bare' (non-object, non-array) JSON input. Supports partial input: will read only first valid JSON element from input source.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">src</td><td>source with JSON </td></tr>
+    <tr><td class="paramname">span</td><td>source span with JSON </td></tr>
   </table>
   </dd>
 </dl>
@@ -267,6 +337,60 @@ template&lt;typename Source &gt; </div>
   </table>
   </dd>
 </dl>
+
+</div>
+</div>
+<a class="anchor" id="aecd444a597986c560a53d3ff7fd7b97b"></a>
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Sink , class  = typename std::enable_if&lt;!std::is_lvalue_reference&lt;Sink&gt;::value&gt;::type&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classstaticlib_1_1json_1_1array__writer.html">array_writer</a>&lt;Sink&gt; staticlib::json::make_array_writer </td>
+          <td>(</td>
+          <td class="paramtype">Sink &amp;&amp;&#160;</td>
+          <td class="paramname"><em>sink</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Factory function for creating array writers, created writer will own specified sink. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">sink</td><td>destination sink </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>writer instance </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a4b2caf343657a4257e78bc4a26127a4a"></a>
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Sink &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classstaticlib_1_1json_1_1array__writer.html">array_writer</a>&lt;sl::io::reference_sink&lt;Sink&gt; &gt; staticlib::json::make_array_writer </td>
+          <td>(</td>
+          <td class="paramtype">Sink &amp;&#160;</td>
+          <td class="paramname"><em>sink</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Factory function for creating array writers, created writer will NOT own specified sink. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">sink</td><td>destination sink </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>writer instance </dd></dl>
 
 </div>
 </div>
@@ -316,7 +440,7 @@ template&lt;typename Source &gt; </div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Sun Apr 9 2017 22:26:03 for staticlib_json by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Sun Dec 24 2017 21:38:23 for staticlib_json by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.1.2
 </small></address>
