@@ -22,7 +22,7 @@
  */
 
 #ifndef STATICLIB_JSON_JANSSON_DELETER_HPP
-#define	STATICLIB_JSON_JANSSON_DELETER_HPP
+#define STATICLIB_JSON_JANSSON_DELETER_HPP
 
 namespace staticlib {
 namespace json {
@@ -37,5 +37,5 @@ public:
 } // namespace
 }
 
-#endif	/* STATICLIB_JSON_JANSSON_DELETER_HPP */
+#endif /* STATICLIB_JSON_JANSSON_DELETER_HPP */
 

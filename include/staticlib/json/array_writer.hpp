@@ -22,7 +22,7 @@
  */
 
 #ifndef STATICLIB_JSON_ARRAY_WRITER_HPP
-#define	STATICLIB_JSON_ARRAY_WRITER_HPP
+#define STATICLIB_JSON_ARRAY_WRITER_HPP
 
 #include "staticlib/config.hpp"
 #include "staticlib/io.hpp"
@@ -136,5 +136,5 @@ array_writer<sl::io::reference_sink<Sink>> make_array_writer(Sink& sink) {
 } // namespace
 }
 
-#endif	/* STATICLIB_JSON_ARRAY_WRITER_HPP */
+#endif /* STATICLIB_JSON_ARRAY_WRITER_HPP */
 

@@ -1,6 +1,9 @@
 Staticlibs JSON library
 =======================
 
+[![travis](https://travis-ci.org/staticlibs/staticlib_json.svg?branch=master)](https://travis-ci.org/staticlibs/staticlib_json)
+[![appveyor](https://ci.appveyor.com/api/projects/status/github/staticlibs/staticlib_json?svg=true)](https://ci.appveyor.com/project/staticlibs/staticlib-json)
+
 This project is a part of [Staticlibs](http://staticlibs.net/).
 
 This project implements JSON encoding and decoding to/from `std::string`s or arbitrary `Source`s and `Sink`s
@@ -107,6 +110,11 @@ This project is released under the [Apache License 2.0](http://www.apache.org/li
 
 Changelog
 ---------
+
+**2017-12-24**
+
+ * version 2.1.1
+ * vs2017 support
 
 **2017-05-02**
 

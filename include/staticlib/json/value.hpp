@@ -22,7 +22,7 @@
  */
 
 #ifndef STATICLIB_JSON_VALUE_HPP
-#define	STATICLIB_JSON_VALUE_HPP
+#define STATICLIB_JSON_VALUE_HPP
 
 #include <cstdint>
 #include <streambuf>
@@ -775,5 +775,5 @@ public:
 } // namespace
 }
 
-#endif	/* STATICLIB_JSON_VALUE_HPP */
+#endif /* STATICLIB_JSON_VALUE_HPP */
 

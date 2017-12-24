@@ -22,7 +22,7 @@
  */
 
 #ifndef STATICLIB_JSON_JSON_EXCEPTION_HPP
-#define	STATICLIB_JSON_JSON_EXCEPTION_HPP
+#define STATICLIB_JSON_JSON_EXCEPTION_HPP
 
 #include "staticlib/support.hpp"
 
@@ -52,5 +52,5 @@ public:
 } // namespace
 
 
-#endif	/* STATICLIB_JSON_JSON_EXCEPTION_HPP */
+#endif /* STATICLIB_JSON_JSON_EXCEPTION_HPP */
 

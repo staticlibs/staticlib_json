@@ -22,7 +22,7 @@
  */
 
 #ifndef STATICLIB_JSON_OPERATIONS_HPP
-#define	STATICLIB_JSON_OPERATIONS_HPP
+#define STATICLIB_JSON_OPERATIONS_HPP
 
 #include <streambuf>
 #include <string>
@@ -133,5 +133,5 @@ const value& null_value_ref();
 } // namespace
 }
 
-#endif	/* STATICLIB_JSON_OPERATIONS_HPP */
+#endif /* STATICLIB_JSON_OPERATIONS_HPP */
 

@@ -22,7 +22,7 @@
  */
 
 #ifndef STATICLIB_JSON_JANSSON_HASHTABLE_HELPER_HPP
-#define	STATICLIB_JSON_JANSSON_HASHTABLE_HELPER_HPP
+#define STATICLIB_JSON_JANSSON_HASHTABLE_HELPER_HPP
 
 // some logic from "hashtable.h", used for dict keys ordering, not exposed from .so
 extern "C" {
@@ -57,4 +57,4 @@ static size_t hashtable_iter_serial(void *iter) {
 
 }
 
-#endif	/* STATICLIB_JSON_JANSSON_HASHTABLE_HELPER_HPP */
+#endif /* STATICLIB_JSON_JANSSON_HASHTABLE_HELPER_HPP */

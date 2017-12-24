@@ -22,7 +22,7 @@
  */
 
 #ifndef STATICLIB_JSON_FIELD_HPP
-#define	STATICLIB_JSON_FIELD_HPP
+#define STATICLIB_JSON_FIELD_HPP
 
 #include <cstdint>
 #include <string>
@@ -486,5 +486,5 @@ public:
 } // namespace
 }
 
-#endif	/* STATICLIB_JSON_FIELD_HPP */
+#endif /* STATICLIB_JSON_FIELD_HPP */
 

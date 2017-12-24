@@ -22,7 +22,7 @@
  */
 
 #ifndef STATICLIB_JSON_TYPE_HPP
-#define	STATICLIB_JSON_TYPE_HPP
+#define STATICLIB_JSON_TYPE_HPP
 
 #include <cstdint>
 #include <string>
@@ -57,5 +57,5 @@ std::string stringify_json_type(type jt);
 }
 
 
-#endif	/* STATICLIB_JSON_TYPE_HPP */
+#endif /* STATICLIB_JSON_TYPE_HPP */
 

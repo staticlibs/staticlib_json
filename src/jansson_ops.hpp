@@ -22,7 +22,7 @@
  */
 
 #ifndef STATICLIB_JSON_JANSSON_OPS_HPP
-#define	STATICLIB_JSON_JANSSON_OPS_HPP
+#define STATICLIB_JSON_JANSSON_OPS_HPP
 
 #include <cstddef>
 #include <cstdint>
@@ -39,9 +39,9 @@
 // for older janssons
 #ifndef json_array_foreach
 #define json_array_foreach(array, index, value) \
-	for(index = 0; \
-		index < json_array_size(array) && (value = json_array_get(array, index)); \
-		index++)
+ for(index = 0; \
+  index < json_array_size(array) && (value = json_array_get(array, index)); \
+  index++)
 #endif // json_array_foreach
 
 #include "staticlib/config.hpp"
@@ -363,5 +363,5 @@ inline void jansson_init() {
 }
 } // namespace
 
-#endif	/* STATICLIB_JSON_JANSSON_OPS_HPP */
+#endif /* STATICLIB_JSON_JANSSON_OPS_HPP */
 

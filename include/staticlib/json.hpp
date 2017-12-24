@@ -22,7 +22,7 @@
  */
 
 #ifndef STATICLIB_JSON_HPP
-#define	STATICLIB_JSON_HPP
+#define STATICLIB_JSON_HPP
 
 #include "staticlib/config.hpp"
 
@@ -33,5 +33,5 @@
 #include "staticlib/json/type.hpp"
 #include "staticlib/json/value.hpp"
 
-#endif	/* STATICLIB_JSON_HPP */
+#endif /* STATICLIB_JSON_HPP */
 
