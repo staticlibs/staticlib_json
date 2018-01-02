@@ -117,9 +117,9 @@ value& value::operator=(value&& other) STATICLIB_NOEXCEPT {
 value::value() :
 value_type(type::nullt) { }
 
-value::value(std::nullptr_t null_value) :
+value::value(std::nullptr_t nullt_value) :
 value_type(type::nullt) {
-    (void) null_value;
+    (void) nullt_value;
 }
 
 value::value(std::vector<field>&& object_value) :
