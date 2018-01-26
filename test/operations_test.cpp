@@ -48,10 +48,6 @@ static const std::string test_json_str =
     }
 })";
 
-void test_init() {
-    sl::json::init();
-}
-
 class test_refl_inner {
 public:    
     sl::json::value get_reflected_value() const {
@@ -159,7 +155,7 @@ void test_dump_string() {
     sl::json::value val{"Not Found"};
     slassert(sl::json::type::string == val.json_type());
     auto dumped = val.dumps();
-    slassert("\"Not Found\"" == dumped);    
+    slassert("\"Not Found\"" == dumped);
 }
 
 void test_dumps_short() {
@@ -168,12 +164,9 @@ void test_dumps_short() {
 
 int main() {
     try {
-        test_init();
         test_dumps();
-        // todo: fixme, broken on 2.10
-        // test_loads();
-        // todo: fixme, broken on 2.10
-        // test_preserve_order();
+        test_loads();
+        test_preserve_order();
         test_dump_string();
         test_dumps_short();
     } catch (const std::exception& e) {

@@ -37,14 +37,6 @@ namespace staticlib {
 namespace json {
 
 /**
- * Initializes Jansson hash function, not thread-safe, can be called before
- * first JSON operations, not required in single-thread environment
- * 
- * @throws nothing
- */
-void init();
-
-/**
  * Deserializes data from specified streambuf into 'json::value'.
  * Supports 'bare' (non-object, non-array) JSON input.
  * Supports partial input: will read only first valid JSON element 

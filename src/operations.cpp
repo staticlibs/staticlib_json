@@ -28,10 +28,6 @@
 namespace staticlib {
 namespace json {
 
-void init() {
-    jansson_init();
-}
-
 value load(std::streambuf* src) {
     return jansson_load_from_streambuf(src);
 }

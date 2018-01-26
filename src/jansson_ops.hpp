@@ -34,7 +34,9 @@
 #include <utility>
 
 #include "jansson.h"
+#if JANSSON_VERSION_HEX < 0x020800
 #include "jansson_hashtable_helper.hpp"
+#endif
 
 // for older janssons
 #ifndef json_array_foreach
@@ -193,14 +195,20 @@ namespace detail_load {
 value load_internal(json_t* jvalue);
 
 inline value load_object(json_t* object_value) {
-    std::vector<field> obj{};
+    auto obj = std::vector<field>();
     size_t size = json_object_size(object_value);
     obj.reserve(size);
 
+#if JANSSON_VERSION_HEX >= 0x020800
+    // https://github.com/akheron/jansson/pull/293
+    const char* key;
+    json_t* va;
+    json_object_foreach(object_value, key, va) {
+        obj.emplace_back(std::string(key), load_internal(va));
+    }
+#else // JANSSON_VERSION_HEX < 0x020800
     // https://github.com/akheron/jansson/blob/23b1b7ba9a6bfce36d6e42623146c815e6b4e234/src/dump.c#L302
-    std::vector<std::pair < std::string, size_t >> keys
-    {
-    };
+    auto keys = std::vector<std::pair<std::string, size_t>>();
     keys.reserve(size);
 
     auto iter = json_object_iter(object_value);
@@ -218,6 +226,7 @@ inline value load_object(json_t* object_value) {
         auto va = json_object_get(object_value, pair.first.c_str());
         obj.emplace_back(std::move(pair.first), load_internal(va));
     }
+#endif // JANSSON_VERSION_HEX >= 0x020800
     return value(std::move(obj));
 }
 
@@ -352,12 +361,6 @@ inline value jansson_load_from_string(const std::string& str) {
     auto streambuf = sl::io::make_unbuffered_istreambuf(io::array_source{str.data(), str.size()});
     auto json = detail_load::json_from_streambuf(streambuf);
     return detail_load::load_internal(json.get());
-}
-
-inline void jansson_init() {
-#if JANSSON_VERSION_HEX >= 0x020600
-    json_object_seed(0);
-#endif    
 }
 
 }
