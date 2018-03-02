@@ -16,7 +16,7 @@ cmake_minimum_required ( VERSION 2.8.12 )
 
 # project
 project ( staticlib_json CXX )
-set ( ${PROJECT_NAME}_STATICLIB_VERSION 2.1.1 )
+set ( ${PROJECT_NAME}_STATICLIB_VERSION 2.1.2 )
 set ( ${PROJECT_NAME}_DESCRIPTION "Staticlibs JSON library" )
 set ( ${PROJECT_NAME}_URL https://github.com/staticlibs/staticlib_json )
 include ( ${CMAKE_CURRENT_LIST_DIR}/resources/macros.cmake )

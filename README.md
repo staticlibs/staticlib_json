@@ -111,6 +111,11 @@ This project is released under the [Apache License 2.0](http://www.apache.org/li
 Changelog
 ---------
 
+**2018-01-26**
+
+ * version 2.1.2
+ * jansson 2.8+ compat, init dropped
+
 **2017-12-24**
 
  * version 2.1.1
