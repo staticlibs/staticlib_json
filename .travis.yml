@@ -62,7 +62,8 @@ before_script:
   - cd ..
   - git clone https://github.com/staticlibs/cmake.git
 # mac and android
-  - git clone --recursive https://github.com/staticlibs/external_jansson.git
+  - git clone https://github.com/staticlibs/external_jansson.git
+  - git clone https://github.com/staticlibs/lookaside_jansson.git
 # all platforms
   - git clone https://github.com/staticlibs/staticlib_config.git
   - git clone https://github.com/staticlibs/staticlib_support.git
